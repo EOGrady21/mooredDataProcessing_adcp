@@ -15,18 +15,18 @@ limit_depth <- function(x, lat = x[['latitude']]){
   d <- x[['depth']]
 
   if(!missing(lat)){
-  d <- swDepth(x@data$pressure, latitude = lat, eos = getOption("oceEOS", default = "gsw"))
-  x@data$depth[d < rmax] <- NA
-  mdt <- mean(d)
+  x@data$depth <- swDepth(x@data$pressure, latitude = lat, eos = getOption("oceEOS", default = "gsw"))
+  x@data$depth[x@data$depth < rmax] <- NA
+  mdt <- mean(x@data$depth)
   x <- oceSetMetadata(x, 'sensorDepth', mdt )
 
   }
   if (missing(lat)){
     if(!is.na(x@metadata$latitude)){
       lat <- x@metadata$latitude
-      d <- swDepth(x@data$pressure, latitude = lat, eos = getOption("oceEOS", default = "gsw"))
-       x@data$depth[d < rmax] <- NA
-       mdt <- mean(d)
+      x@data$depth <- swDepth(x@data$pressure, latitude = lat, eos = getOption("oceEOS", default = "gsw"))
+       x@data$depth[x@data$depth < rmax] <- NA
+       mdt <- mean(x@data$depth)
        x <- oceSetMetadata(x, 'sensorDepth', mdt )
     }
     if (is.na(x@metadata$latitude)){
@@ -35,4 +35,6 @@ limit_depth <- function(x, lat = x[['latitude']]){
     return(x)
   }
 }
+###not setting snsor depth
+###not changing adp[['depth']] to swDepth values
 

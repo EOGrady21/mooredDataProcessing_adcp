@@ -26,6 +26,9 @@
 
 adpFlag <- function(adp, metadata, pg, er){
   require(oce)
+  if (!inherits(x, "adp"))
+    stop("method is only for objects of class '", "adp", "'")
+
   deg2rad <- function(deg) {(deg * pi) / (180)}
   rmax <- adp[['depth']] *(cos(deg2rad(adp[['beamAngle']])))
 
