@@ -16,24 +16,46 @@
 #'
 
 
-limit_time <- function(x, tz = 'UTC', dt = adp[['deploymentTime']], rt = adp[['recoveryTime']]){
+limit_time <- function(x, tz = 'UTC', dt = x[['deploymentTime']], rt = x[['recoveryTime']]){
 
-if (!missing(dt)){
-  t1 <- as.POSIXct(dt, tz = tz)
-  t <- adp[['time', "numeric"]]
-  t <- as.numeric(t, tz = tz)
-  adp[['v']][t < t1] <- NA
-}
-  else if (missing(dt)){
-    warning('No deployment time provided ; untrimmed')}
-if( !missing(rt)){
-  t2 <- as.POSIXct(rt)
-  adp[['v']][t > t2] <- NA
-}
-  else if (missing(rt)){
-    warning('No recovery time provided ; untrimmed')
+  if (!inherits(x, "adp")){
+    stop("method is only for objects of class '", "adp", "'")
   }
+        #FIX ME : if deployment or recovery time is out of bounds
+
+if(!missing(dt)){
+  t1 <- as.POSIXct(dt, tz = tz)
+  t <- x[['time', "numeric"]]
+  t <- as.POSIXct(t, tz = tz)
+  x[['v']][t < t1] <- NA
+}
+  else if(missing(dt)){
+    if (!is.null(x@metadata$deploymentTime)){
+    dt <- x@metadata$deploymentTime
+    t1 <- as.POSIXct(dt, tz = tz)
+    t <- x[['time', "numeric"]]
+    t <- as.POSIXct(t, tz = tz)
+    x[['v']][t < t1] <- NA
+    }
+    if (is.null(x@metadata$deploymentTime)){
+      warning('No deployment Time provided!')
+    }
 
 
-  return(adp)
+if(!missing(rt)){
+ t2 <- as.POSIXct(rt)
+ x[['v']][t > t2] <- NA
+}
+    else if (missing(rt))
+      if (!is.null(x@metadata$recoveryTime)){
+        t2 <- as.POSIXct(rt)
+        x[['v']][t > t2] <- NA
+      }
+    if (is.null(x@metadata$recoveryTime)){
+      warning('No recovery time provided!')
+    }
+
+
+  return(x)
+  }
 }
