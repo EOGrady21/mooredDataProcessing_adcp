@@ -1,6 +1,6 @@
 ###combine ODF###
 
-#' @export
+#'
 #' This function should be able to combine individual 'bin' ODF files
 #' from an ADCP profile into a single adp object (in oce)
 #' It needs to read in data and metadata from ODFs

@@ -4,8 +4,8 @@
 \alias{limit_time}
 \title{Limit Time ADCP Processing step 3.2}
 \usage{
-limit_time(x, tz = "UTC", dt = adp[["deploymentTime"]],
-  rt = adp[["recoveryTime"]])
+limit_time(x, tz = "UTC", dt = x[["deploymentTime"]],
+  rt = x[["recoveryTime"]])
 }
 \arguments{
 \item{x}{adp object from oce-class adp}

@@ -1,5 +1,5 @@
 ####bin by bin plot###
-#' @export
+#'
 #'use to plot each "bin" of any chosen variable (u, v, error, echo intensity)
 #'
 #'
