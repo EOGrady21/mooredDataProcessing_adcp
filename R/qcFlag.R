@@ -1,0 +1,55 @@
+####create flag####
+#' @export
+#'####adcp processing Step 3.8
+#'
+#'
+#' adpFlag function
+#' flag an adp object based on a series of parameters
+#' @param adp, an adp object, oce-class
+#' @param metadata, a list of metadata name = 'value'
+#' @param pg, The minimum percent good for evaluating beams one + four of the adcp (BIO standard is 25)
+#' @param er, Maximum error velocity for evaluating adcp data (BIO standard is 0.46)
+#'
+
+#
+#'
+
+####adcp process function
+
+
+adpFlag <- function(adp, metadata, pg, er){
+  require(oce)
+  deg2rad <- function(deg) {(deg * pi) / (180)}
+  rmax <- adp[['depth']] *(cos(deg2rad(adp[['beamAngle']])))
+
+  #create matrix of maximum acceptable depth
+  r <- matrix(rmax, ncol=length(adp[['distance']]), nrow=length(rmax))
+
+
+  #create matrix of distance (adp to surface)
+  dist <- adp[['distance']]
+  d <- t(matrix(dist, ncol = length(adp[['time']]), nrow = length(dist)))
+
+  #read in pg per beam
+  g <- adp[['g', "numeric"]]
+
+  #combine beam 1 and 4
+  lowpg <- g[,,1]+g[,,4]
+
+  #extract error velocities
+  ERRV <- adp[['v']][,,4]
+
+  #create logical array of flagged values based on low percent good, high error velocity or surface contamination
+  dim = dim(adp[['v']])
+  flag <- array(FALSE, dim= dim)
+  for (i in 1:3)
+    flag[,,i] <- (lowpg<pg) | (abs(ERRV) > er) | r < d
+
+  #initialize and set flag scheme
+  adp <- initializeFlags(adp, name = 'v', value = 0)
+
+  #set adp flags where logical array = TRUE, flag value = 4 (see flag scheme, BODC)
+  adp <- setFlags(adp, name = 'v', i= flag, value = 4)
+
+  return(adp)
+}
