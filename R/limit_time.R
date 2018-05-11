@@ -2,12 +2,15 @@
 #'
 #'Limit Time ADCP Processing step 3.2
 #'
+#'
+#'@description Function limits time from before deployment and after recovery of ADCP
+#'
 #'@param x adp object from oce-class adp
 #'@param tz time zone, default is 'UTC'
 #'@param dt deployment time of ADCP, default pulls value from metadata
 #'@param rt recovery time of ADCP, default pulls value from metadata
 #'
-#'@return adp object with times limited to deployment and recovery times
+#'@return adp object with velocities limited to active ADCP measurement times (after deployment and before recovery)
 #'
 #'
 #'

@@ -2,7 +2,7 @@
 % Please edit documentation in R/qcFlag.R
 \name{adpFlag}
 \alias{adpFlag}
-\title{adcp processing Step 3.8}
+\title{ADCP processing Step 3.8}
 \usage{
 adpFlag(adp, metadata, pg, er)
 }
@@ -19,7 +19,7 @@ adpFlag(adp, metadata, pg, er)
 adpFlag function
 flag an adp object based on a series of parameters including percent good, and error velocity.
 
-This functions also defaults to flagging depth values based on the Teledyne RDI standard
+This function also defaults to flagging depth values based on the Teledyne RDI standard
 
 Rmax = Dcosx
 
