@@ -1,10 +1,17 @@
 ####create flag####
-#' @export
-#'####adcp processing Step 3.8
+
+#' ADCP processing Step 3.8
+#'
 #'
 #'
 #' adpFlag function
-#' flag an adp object based on a series of parameters
+#' flag an adp object based on a series of parameters including percent good, and error velocity.
+#'
+#' This function also defaults to flagging depth values based on the Teledyne RDI standard
+#'
+#'  Rmax = Dcosx
+#'
+#'    where Rmax is the maximum acceptable distance range from the ADCP, D is total depth and x is the beam angle of the ADCP.
 #' @param adp, an adp object, oce-class
 #' @param metadata, a list of metadata name = 'value'
 #' @param pg, The minimum percent good for evaluating beams one + four of the adcp (BIO standard is 25)
