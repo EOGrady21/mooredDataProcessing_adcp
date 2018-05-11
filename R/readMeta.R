@@ -13,8 +13,8 @@
 
 read.meta <- function(file, obj){
   md <- read.csv(file, header = TRUE)
-  mn <- as.character(md$name)
-  mv <- as.character(md$value)
+  mn <- as.character(names(md[1]))
+  mv <- as.character(names(md[2]))
   meta <- as.list(mv)
   names(meta) <- mn
 
