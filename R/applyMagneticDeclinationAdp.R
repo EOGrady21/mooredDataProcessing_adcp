@@ -26,6 +26,8 @@
 applyMagneticDeclinationAdp <- function(x, lat = x[['latitude']], lon = x[['longitude']], st = x[['deploymentTime']], et = x[['recoveryTime']], type = 'average'){
   if (type =='average'){
     #ifs for different time formats? tz argument?
+    if (!is.na(lat) & !is.na(lon)){
+      if(!is.null(st) & !is.null(et)){
     s <- as.POSIXct(st, tz = 'UTC')
     e <- as.POSIXct(et, tz = 'UTC')
     a <- magneticField(lon, lat, s)
@@ -34,6 +36,11 @@ applyMagneticDeclinationAdp <- function(x, lat = x[['latitude']], lon = x[['long
     x <- enuToOther(x, heading = c)
     x <- oceSetMetadata(x, 'magneticVariation', c)
     x <- oceSetMetadata(x, 'oceCoordinate', 'enu')
+      }
+    }
+    else {
+      warning('Missing required arguments! No processing performed!')
+    }
     #x$processingLog <- processingLogAppend(x$processingLog, value = paste0('magnetic variation applied; declination =', c, 'degrees') )
   }
     if (type == 'interpolate'){
