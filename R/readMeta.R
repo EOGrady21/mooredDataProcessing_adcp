@@ -1,0 +1,25 @@
+##read metadata
+
+#' @title ADCP process step 2.2
+#'
+#'
+#' @description Read in all metadata from csv template to adp object, sourced from log sheets
+#'
+#' @param file csv file name
+#' @param obj adp oce object to assign metadata to
+#'
+#'
+#'
+
+read.meta <- function(file, obj){
+  md <- read.csv(file, header = TRUE)
+  mn <- as.character(md$name)
+  mv <- as.character(md$value)
+  meta <- as.list(mv)
+  names(meta) <- mn
+
+  for (m in seq_along(meta)) {
+    obj <- oceSetMetadata(obj, names(meta)[m], meta[[m]])
+  }
+  return(obj)
+}

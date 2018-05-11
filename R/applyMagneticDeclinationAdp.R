@@ -24,6 +24,9 @@
 
 
 applyMagneticDeclinationAdp <- function(x, lat = x[['latitude']], lon = x[['longitude']], st = x[['deploymentTime']], et = x[['recoveryTime']], type = 'average'){
+  if (!inherits(x, "adp")){
+    stop("method is only for objects of class '", "adp", "'")
+  }
   if (type =='average'){
     #ifs for different time formats? tz argument?
     if (!is.na(lat) & !is.na(lon)){
@@ -33,9 +36,15 @@ applyMagneticDeclinationAdp <- function(x, lat = x[['latitude']], lon = x[['long
     a <- magneticField(lon, lat, s)
     b <- magneticField(lon, lat, e)
     c <- round(mean(c(a$declination, b$declination)),digits = 2)
+    coord <- x@metadata$oceCoordinate
+    if (coord == enu){
     x <- enuToOther(x, heading = c)
     x <- oceSetMetadata(x, 'magneticVariation', c)
     x <- oceSetMetadata(x, 'oceCoordinate', 'enu')
+    }
+    if (coord != enu){
+      warning('Function cannot handle objects in ', coord, 'Object returned as is ; please convert to enu first')
+
       }
     }
     else {
@@ -49,5 +58,6 @@ applyMagneticDeclinationAdp <- function(x, lat = x[['latitude']], lon = x[['long
   return(x)
   return(x@metadata$magneticVariation)
   ##still not returning metadata updates
+}
 }
 
