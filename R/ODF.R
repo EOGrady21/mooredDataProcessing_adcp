@@ -10,11 +10,11 @@
 
 
 
-list.odf<- function(directory, extension){
-  od <- list.files(path = dircetory, pattern = extension "*.ODF")
-  list()
-  for(k in 1:length(od)){
-    list[[k]] <- read.odf(od[k])
-  }
-}
+#list.odf<- function(directory, extension){
+ # od <- list.files(path = dircetory, pattern = extension "*.ODF")
+  #list()
+  #for(k in 1:length(od)){
+   # list[[k]] <- read.odf(od[k])
+  #}
+#}
 
