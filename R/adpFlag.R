@@ -24,7 +24,7 @@
 ####adcp process function
 
 
-adpFlag <- function(adp, flagScheme, pg, er){
+adpFlag <- function(adp,  pg, er){
   require(oce)
   if (!inherits(x = adp, "adp")){
     stop("method is only for objects of class '", "adp", "'")
@@ -54,20 +54,17 @@ adpFlag <- function(adp, flagScheme, pg, er){
   dim = dim(adp[['v']])
   flag <- array(FALSE, dim= dim)
   for (i in 1:3)
-    flag[,,i] <- (lowpg<pg) | (abs(ERRV) > er) | r < d
+    flag[,,i] <- (lowpg< pg) | (abs(ERRV) > er) | r < d
 
   #initialize and set flag scheme
   adp <- initializeFlags(adp, name = 'v', value = 0)
-if(flagScheme == 'BODC'){
+
+
   #set adp flags where logical array = TRUE, flag value = 4 (see flag scheme, BODC)
   adp <- setFlags(adp, name = 'v', i= flag, value = 4)
-}
 
-if(flagScheme == 'MEDS'){
-  adp <- setFlags(adp, name = 'v', i= flag, value = 4)
-}
 
   #adp@processingLog$time <- processingLogAppend(adp@processingLog, date())
-  adp@processingLog <- processingLogAppend(paste0(adp@processingLog, 'Quality control flags set based on flag scheme  ', flagScheme))
+  adp@processingLog <- processingLogAppend(adp@processingLog, 'Quality control flags set based on flag scheme from BODC')
   return(adp)
 }

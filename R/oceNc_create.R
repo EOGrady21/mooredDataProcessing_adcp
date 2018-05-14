@@ -17,7 +17,7 @@
 
 
 ##nc metadata
-oceNc_create <- function(adp, name, metadata){
+oceNc_create <- function(adp, name,  metadata){
   if (!inherits(adp, "adp")){
     stop("method is only for objects of class '", "adp", "'")
   }
@@ -133,9 +133,9 @@ oceNc_create <- function(adp, name, metadata){
   ncvar_put(ncout, hght_def, adp[['depth']])
   ncvar_put(ncout, Tx_def, adp[['temperature']])
   ncvar_put(ncout, D_def, adp[['depth']])
-  ncvar_put(ncout, qc_u_def, flag[,,1])
-  ncvar_put(ncout, qc_v_def, flag[,,2])
-  ncvar_put(ncout, qc_w_def, flag[,,3])
+  ncvar_put(ncout, qc_u_def, adp@metadata$flags$v[,,1])
+  ncvar_put(ncout, qc_v_def, adp@metadata$flags$v[,,2])
+  ncvar_put(ncout, qc_w_def, adp@metadata$flags$v[,,3])
   ###metadata###
 
   ####pulled from adp object####
