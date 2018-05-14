@@ -29,6 +29,8 @@ read.adp.easy <- function(file, metadata){
     for (m in seq_along(md)) {
       adp <- oceSetMetadata(adp, names(md)[m], md[[m]])
     }
+    adp@metadata$latitude <- as.numeric(adp[['latitude']])
+    adp@metadata$longitude <- as.numeric(adp[['longitude']])
     adp@processingLog$time <-processingLogAppend(adp@processingLog, date() )
     adp@processingLog <- processingLogAppend(adp@processingLog, 'metadata read in from log sheet')
 
