@@ -37,12 +37,12 @@ applyMagneticDeclinationAdp <- function(x, lat = x[['latitude']], lon = x[['long
     b <- magneticField(lon, lat, e)
     c <- round(mean(c(a$declination, b$declination)),digits = 2)
     coord <- x@metadata$oceCoordinate
-    if (coord == enu){
+    if (coord == 'enu'){
     x <- enuToOther(x, heading = c)
-    x <- oceSetMetadata(x, 'magneticVariation', c)
-    x <- oceSetMetadata(x, 'oceCoordinate', 'enu')
+    x@metadata$magneticVariation <- c
+    x@metadata$oceCoordinate <- 'enu'
     }
-    if (coord != enu){
+    if (coord != 'enu'){
       warning('Function cannot handle objects in ', coord, 'Object returned as is ; please convert to enu first')
 
       }
@@ -50,14 +50,15 @@ applyMagneticDeclinationAdp <- function(x, lat = x[['latitude']], lon = x[['long
     else {
       warning('Missing required arguments! No processing performed!')
     }
-    #x$processingLog <- processingLogAppend(x$processingLog, value = paste0('magnetic variation applied; declination =', c, 'degrees') )
+      x@processingLog$time <- processingLogAppend(x@processingLog, date())
+    x@processingLog <- processingLogAppend(x@processingLog, value = paste0('magnetic variation applied; declination =', c, 'degrees') )
   }
     if (type == 'interpolate'){
       ;
     }
   return(x)
-  return(x@metadata$magneticVariation)
-  ##still not returning metadata updates
+
+
 }
 }
 
