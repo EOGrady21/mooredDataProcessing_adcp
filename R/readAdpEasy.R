@@ -5,25 +5,31 @@
 #' @description Load adp data into R with list that includes all metadata from mooring sheets
 #'
 #'
-#' searches working directory for .000 files, reads into adp objects and adds metadata supplied by list
-#' @param metadata list specifying all necessary metadata from log sheet
+#' @param file raw ADCP file (.000 format)
+#' @param metadata csv metadata file from template
 #'
 #'
 
-read.adp.easy <- function(metadata){
-  raw <- list.files(path = ".", pattern = "*.000")
-  if (raw == 0){
-    # stop()
-    # warning('No raw ADCP files found')
-  }
-  adp <- read.adp(raw, latitude = metadata[['latitude']], longitude =metadata[['longitude']] ) #insert lat and lon from mooring logs
+read.adp.easy <- function(file, metadata){
   if (missing(metadata)){
     warning('no metadata supplied')
   }
-  if (!missing(metadata)) {
-    for (m in seq_along(metadata)) {
-      adp <- oceSetMetadata(adp, names(metadata)[m], metadata[[m]])
+  metad <- read.csv(metadata, header = TRUE)
+
+  mn <- as.character(metad$Name)
+  mv <- as.character(metad$Value)
+
+
+  md <- as.list(mv)
+  names(md) <- mn
+
+  adp <- read.adp(file, latitude = md[['latitude']], longitude =md[['longitude']] ) #insert lat and lon from mooring logs
+
+  if (!missing(md)) {
+    for (m in seq_along(md)) {
+      adp <- oceSetMetadata(adp, names(md)[m], md[[m]])
     }
     return(adp)
   }
 }
+
