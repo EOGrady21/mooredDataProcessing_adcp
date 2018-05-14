@@ -79,6 +79,7 @@ limit_depthbytime <- function(adp){
   }
   adp[['depth']] <- swDepth(adp[['pressure']], latitude = adp[['latitude']], eos = getOption("oceEOS", default = "gsw"))
   depth <- adp[['depth']]
+  tz = 'UTC'      #FIX ME: time zone in metadata???
   depth[as.POSIXct(adp[['time']], tz) <= as.POSIXct(adp[['deploymentTime']], tz) | as.POSIXct(adp[['time']], tz) >= as.POSIXct(adp[['recoveryTime']], tz)] <- NA
 
  mdt <- round(mean(depth, na.rm = TRUE), digits = 2)
