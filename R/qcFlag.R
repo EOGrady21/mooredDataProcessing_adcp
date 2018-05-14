@@ -61,5 +61,8 @@ adpFlag <- function(adp, metadata, pg, er){
   #set adp flags where logical array = TRUE, flag value = 4 (see flag scheme, BODC)
   adp <- setFlags(adp, name = 'v', i= flag, value = 4)
 
+
+  adp@processingLog$time <- processingLogAppend(adp@processingLog, date())
+  adp@processingLog <- processingLogAppend(adp@processingLog, 'Quality control flags set')
   return(adp)
 }
