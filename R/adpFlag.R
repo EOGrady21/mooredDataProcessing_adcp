@@ -26,9 +26,9 @@
 
 adpFlag <- function(adp, flagScheme, pg, er){
   require(oce)
-  if (!inherits(adp, "adp"))
+  if (!inherits(adp, "adp")){
     stop("method is only for objects of class '", "adp", "'")
-
+}
   deg2rad <- function(deg) {(deg * pi) / (180)}
   rmax <- adp[['depth']] *(cos(deg2rad(adp[['beamAngle']])))
 
@@ -38,7 +38,8 @@ adpFlag <- function(adp, flagScheme, pg, er){
 
   #create matrix of distance (adp to surface)
   dist <- adp[['distance']]
-  d <- t(matrix(dist, ncol = length(adp[['time']]), nrow = length(dist)))
+  t <- adp[['time']]
+  d <- t(matrix(dist, ncol = length(t), nrow = length(dist)))
 
   #read in pg per beam
   g <- adp[['g', "numeric"]]
@@ -66,7 +67,7 @@ if(flagScheme == 'MEDS'){
   adp <- setFlags(adp, name = 'v', i= flag, value = 4)
 }
 
-  adp@processingLog$time <- processingLogAppend(adp@processingLog, date())
+  #adp@processingLog$time <- processingLogAppend(adp@processingLog, date())
   adp@processingLog <- processingLogAppend(paste0(adp@processingLog, 'Quality control flags set based on flag scheme  ', flagScheme))
   return(adp)
 }
