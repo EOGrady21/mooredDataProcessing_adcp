@@ -1,6 +1,6 @@
 #' @title ADCP Processing Toolbox
 #'
-#' @description ADCP processing steps 2.0 - 7.0
+#' @description ADCP processing steps 2.0 - 4.0
 #' used at BIO under BODC standards
 
 require(oce)
@@ -118,20 +118,28 @@ read.meta <- function(file, obj){
 #'
 
 
-applyMagneticDeclinationAdp <- function(x, lat = x[['latitude']], lon = x[['longitude']], st = x[['deploymentTime']], et = x[['recoveryTime']], type = 'average'){
+applyMagneticDeclinationAdp <- function(x, lat = x[['latitude']], lon = x[['longitude']], st = x[['deploymentTime']], et = x[['recoveryTime']],tz = 'UTC', type = 'average'){
   if (!inherits(x, "adp")){
     stop("method is only for objects of class '", "adp", "'")
+  }
+  if (is.na(lat) | is.na(lon)){
+    warning('No latitude or longitude values provided!')
+  }
+  if (is.null(st) | is.null(et)){
+    warning('deployment and recovery times not provided!')
   }
   if (type =='average'){
     #ifs for different time formats? tz argument?
     if (!is.na(lat) & !is.na(lon)){
       if(!is.null(st) & !is.null(et)){
-        s <- as.POSIXct(st, tz = 'UTC')
-        e <- as.POSIXct(et, tz = 'UTC')
+        s <- as.POSIXct(st, tz = tz)
+        e <- as.POSIXct(et, tz = tz)
         a <- magneticField(lon, lat, s)
         b <- magneticField(lon, lat, e)
         c <- round(mean(c(a$declination, b$declination)),digits = 2)
         coord <- x@metadata$oceCoordinate
+
+
         if (coord == 'enu'){
           x <- enuToOther(x, heading = c)
           x@metadata$magneticVariation <- c
@@ -207,8 +215,9 @@ limit_depthbyrmax <- function(x, lat = x[['latitude']]){
       x@data$depth <- d
     }
     if (is.na(x@metadata$latitude)){
-      stop()
       warning('No latitude provided; returning object as is')
+
+      stop()
     }
     adp@processingLog$time <-processingLogAppend(adp@processingLog, date() )
     adp@processingLog <- processingLogAppend(adp@processingLog, paste0('depth limited by maximum acceptable distance, calulated with Rmax = Dcos(x)'))
@@ -232,13 +241,12 @@ limit_depthbyrmax <- function(x, lat = x[['latitude']]){
 #'
 
 
-limit_depthbytime <- function(adp){
+limit_depthbytime <- function(adp, tz = 'UTC'){
   if (!inherits(adp, "adp")){
     stop("method is only for objects of class '", "adp", "'")
   }
   adp[['depth']] <- swDepth(adp[['pressure']], latitude = adp[['latitude']], eos = getOption("oceEOS", default = "gsw"))
   depth <- adp[['depth']]
-  tz = 'UTC'      #FIX ME: time zone in metadata???
   depth[as.POSIXct(adp[['time']], tz) <= as.POSIXct(adp[['deploymentTime']], tz) | as.POSIXct(adp[['time']], tz) >= as.POSIXct(adp[['recoveryTime']], tz)] <- NA
 
   mdt <- round(mean(depth, na.rm = TRUE), digits = 2)
@@ -384,6 +392,13 @@ adpFlag <- function(adp,  pg, er){
   adp@processingLog <- processingLogAppend(adp@processingLog, 'Quality control flags set based on flag scheme from BODC')
   return(adp)
 }
+
+
+
+#' @title ADCP processing step 3.6
+#' @description Use handleFlags() from oce to set values of flags to NA
+#' see oce help file for more info
+
 
 
 
