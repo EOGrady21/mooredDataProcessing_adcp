@@ -1,6 +1,6 @@
 ##read metadata
 
-#' @title ADCP process step 2.2
+#' @title ADCP process step 2.1
 #'
 #'
 #' @description Read in all metadata from csv template to adp object, sourced from log sheets

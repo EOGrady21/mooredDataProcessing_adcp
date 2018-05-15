@@ -1,6 +1,6 @@
 ###depth
 
-#' @title Limit Depth ADCP PRocessing Step 3.1
+#' @title Limit Depth ADCP PRocessing Step 3.3
 #'
 #'@description Functions to limit the bounds of ADCP depth data
 #'

@@ -1,6 +1,6 @@
 #time cut off
 #'
-#'Limit Time ADCP Processing step 3.2
+#'Limit Time ADCP Processing step 3.4
 #'
 #'
 #'@description Function limits time from before deployment and after recovery of ADCP

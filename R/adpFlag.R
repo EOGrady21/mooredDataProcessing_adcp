@@ -1,6 +1,6 @@
 ####create flag####
 
-#' ADCP processing Step 3.8
+#' ADCP processing Step 3.5
 #'
 #'
 #'

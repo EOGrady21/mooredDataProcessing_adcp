@@ -1,6 +1,6 @@
 
 #' @title Net CDF Export,
-#' ADCP Processing step 4.1
+#' ADCP Processing step 4.0
 #'
 #' @description Exports an adp object to a net cdf using variables and metadata within adp combined with optional additional metatdata
 #'

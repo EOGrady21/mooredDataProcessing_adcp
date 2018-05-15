@@ -1,6 +1,6 @@
 ###applyMAgneticDeclination
 
-#' @title ADCP Processing step 3.8
+#' @title ADCP Processing step 3.2
 #'
 #' @description apply magnetic declination to ADCP data
 #'
