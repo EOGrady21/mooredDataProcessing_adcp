@@ -77,20 +77,6 @@ read.meta <- function(file, obj){
   return(obj)
 }
 
-###swDepth
-
-#' @title ADCP Processing step 3.1
-#'
-#' @description use oce function swDepth to convert pressure into depth given latitude
-#'
-#' see oce help file for more info
-#'
-#'
-#'
-#'
-#'
-
-
 
 
 ###applyMAgneticDeclination
@@ -165,19 +151,10 @@ applyMagneticDeclinationAdp <- function(x, lat = x[['latitude']], lon = x[['long
   }
 }
 
-###depth
-
-#' @title Limit Depth ADCP PRocessing Step 3.3
-#'
-#'@description Functions to limit the bounds of ADCP depth data
-#'
-#'Can be limited by rmax or time (leaving both for now, one may be deleted in final versions)
-#'
-#'
-#'
 
 
-#'@title limit depth by rmax
+#'@title ADCP Processing step 3.3
+#'Limit depth by rmax
 #'
 #'@description Use maximum acceptable range values to determine acceptable depth values
 #'Uses Teledyne RDI equation, Rmax = Dcos(x)
@@ -262,7 +239,7 @@ limit_depthbytime <- function(adp, tz = 'UTC'){
 
 #time cut off
 #'
-#'Limit Time ADCP Processing step 3.4
+#' ADCP Processing step 3.4
 #'
 #'
 #'@description Function limits time from before deployment and after recovery of ADCP
@@ -395,15 +372,9 @@ adpFlag <- function(adp,  pg, er){
 
 
 
-#' @title ADCP processing step 3.6
-#' @description Use handleFlags() from oce to set values of flags to NA
-#' see oce help file for more info
 
-
-
-
-#' @title Net CDF Export,
-#' ADCP Processing step 4.1
+#' @title  ADCP Processing step 4.1
+#'
 #'
 #' @description Exports an adp object to a net cdf using variables and metadata within adp combined with optional additional metatdata
 #'
