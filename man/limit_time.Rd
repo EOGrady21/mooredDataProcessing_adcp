@@ -3,7 +3,7 @@
 \name{limit_time}
 \alias{limit_time}
 \alias{limit_time}
-\title{Limit Time ADCP Processing step 3.4}
+\title{ADCP Processing step 3.4}
 \usage{
 limit_time(x, tz = "UTC", dt = x[["deploymentTime"]],
   rt = x[["recoveryTime"]])
