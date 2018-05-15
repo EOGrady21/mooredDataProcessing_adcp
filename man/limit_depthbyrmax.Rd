@@ -3,7 +3,8 @@
 \name{limit_depthbyrmax}
 \alias{limit_depthbyrmax}
 \alias{limit_depthbyrmax}
-\title{Limit Depth ADCP PRocessing Step 3.3}
+\title{ADCP Processing step 3.3
+Limit depth by rmax}
 \usage{
 limit_depthbyrmax(x, lat = x[["latitude"]])
 
@@ -19,10 +20,6 @@ limit_depthbyrmax(x, lat = x[["latitude"]])
 \item{lat}{latitude of instrument during sampling}
 }
 \description{
-Functions to limit the bounds of ADCP depth data
-
-Can be limited by rmax or time (leaving both for now, one may be deleted in final versions)
-
 Use maximum acceptable range values to determine acceptable depth values
 Uses Teledyne RDI equation, Rmax = Dcos(x)
 

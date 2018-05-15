@@ -3,7 +3,7 @@
 \name{oceNc_create}
 \alias{oceNc_create}
 \alias{oceNc_create}
-\title{ADCP processing step 3.6}
+\title{ADCP Processing step 4.1}
 \usage{
 oceNc_create(adp, name, metadata)
 
@@ -23,9 +23,6 @@ oceNc_create(adp, name, metadata)
 \item{metadata}{csv file listing metadata names and values to be inserted into global attributes of net CDF}
 }
 \description{
-Use handleFlags() from oce to set values of flags to NA
-see oce help file for more info
-
 Exports an adp object to a net cdf using variables and metadata within adp combined with optional additional metatdata
 
 Exports an adp object to a net cdf using variables and metadata within adp combined with optional additional metatdata

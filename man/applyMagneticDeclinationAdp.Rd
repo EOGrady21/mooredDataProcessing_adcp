@@ -3,7 +3,7 @@
 \name{applyMagneticDeclinationAdp}
 \alias{applyMagneticDeclinationAdp}
 \alias{applyMagneticDeclinationAdp}
-\title{ADCP Processing step 3.1}
+\title{ADCP Processing step 3.2}
 \usage{
 applyMagneticDeclinationAdp(x, lat = x[["latitude"]],
   lon = x[["longitude"]], st = x[["deploymentTime"]],
@@ -52,10 +52,6 @@ If type == average, an average is taken from start and end time declinations and
 If type == interpolated, the rate of declination is used over time series
 }
 \description{
-use oce function swDepth to convert pressure into depth given latitude
-
-see oce help file for more info
-
 apply magnetic declination to ADCP data
 
 apply magnetic declination to ADCP data
