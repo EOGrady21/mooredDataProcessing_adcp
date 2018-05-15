@@ -417,7 +417,7 @@ oceNc_create <- function(adp, name,  metadata){
   latdim <- ncdim_def("lat", "degrees_north", as.double(lat))
 
   #set fill value
-  FillValue <- 1e35
+ FillValue <- 1e35
 
   #define variables
   dlname <- "eastward_sea_water_velocity"
@@ -642,7 +642,7 @@ oceNc_create <- function(adp, name,  metadata){
   ncatt_put(ncout, 0 , "flag_values", adp[['flagValues']])
   ncatt_put(ncout, 0, "source", "R code: adcpProcess, github:")
   ncatt_put(ncout, 0, "date_modified", date())
-  ncatt_put(ncout,0, "Fillvalue", "1e32")
+  ncatt_put(ncout,0, "_FillValue", "1e32")
 
   ncatt_put(ncout, 0, "date_metadata_modified", "2018-05-10") #link to processingLog?
   ncatt_put(ncout, 0, "featureType", "timeSeriesProfile") #link to oce object?
