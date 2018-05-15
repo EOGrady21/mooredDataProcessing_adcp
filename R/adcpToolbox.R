@@ -18,7 +18,7 @@ require(ncdf4)
 #' @param file raw ADCP file (.000 format)
 #' @param metadata csv metadata file from template
 #'
-#'@value returns an object of class adp (from oce package)
+#' returns an object of class adp (from oce package)
 
 read.adp.easy <- function(file, metadata){
   if (missing(metadata)){
@@ -37,7 +37,7 @@ read.adp.easy <- function(file, metadata){
 
   if (!missing(md)) {
     for (m in seq_along(md)) {
-      adp <- oceSetMetadata(adp, names(md)[m], md[[m]])
+      adp <- oceSetMetadata(adp, names(md)[m], md[[m]], processingLogOutput = FALSE)
     }
     adp@metadata$latitude <- as.numeric(adp[['latitude']])
     adp@metadata$longitude <- as.numeric(adp[['longitude']])
@@ -72,7 +72,7 @@ read.meta <- function(file, obj){
   names(meta) <- mn
 
   for (m in seq_along(meta)) {
-    obj <- oceSetMetadata(obj, names(meta)[m], meta[[m]])
+    obj <- oceSetMetadata(obj, names(meta)[m], meta[[m]], processingLogOutput = FALSE)
   }
   return(obj)
 }
@@ -643,9 +643,11 @@ oceNc_create <- function(adp, name,  metadata){
   ncatt_put(ncout, 0, "source", "R code: adcpProcess, github:")
   ncatt_put(ncout, 0, "date_modified", date())
   ncatt_put(ncout,0, "_FillValue", "1e32")
+  ncatt_put(ncout,0, "history", adp[['processingLog']])
+  ncatt_put(ncout, 0, "date_metadata_modified", tail(adp[['processingLog']][['time']][[1]])) #link to processingLog?
+  ncatt_put(ncout, 0, "featureType", "timeSeriesProfile") #link to oce object? ..... if adp == timeSeriesProfile
 
-  ncatt_put(ncout, 0, "date_metadata_modified", "2018-05-10") #link to processingLog?
-  ncatt_put(ncout, 0, "featureType", "timeSeriesProfile") #link to oce object?
+
   #BODC P01 names
   ncatt_put(ncout, "EWCT", "sdn_parameter_urn", "SDN:P01::LCEWAP01")
   ncatt_put(ncout, "NSCT", "sdn_parameter_urn", "SDN:P01::LCNSAP01")
