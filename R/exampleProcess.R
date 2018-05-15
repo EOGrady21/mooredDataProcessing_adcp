@@ -1,5 +1,10 @@
 ###example processing procedure
 
+library(oce)
+library(ncdf4)
+
+source('adcpToolbox.R')
+
 
 adp <- read.adp.easy('M1996000.000', 'metadataTemplate.csv')
 adp[['depth']] <- swDepth(adp[['pressure']], (adp[['latitude']]))
