@@ -37,7 +37,7 @@ read.adp.easy <- function(file, metadata){
 
   if (!missing(md)) {
     for (m in seq_along(md)) {
-      adp <- oceSetMetadata(adp, names(md)[m], md[[m]], processingLogOutput = FALSE)
+      adp <- oceSetMetadata(adp, names(md)[m], md[[m]], note = NULL)
     }
     adp@metadata$latitude <- as.numeric(adp[['latitude']])
     adp@metadata$longitude <- as.numeric(adp[['longitude']])
@@ -72,7 +72,7 @@ read.meta <- function(file, obj){
   names(meta) <- mn
 
   for (m in seq_along(meta)) {
-    obj <- oceSetMetadata(obj, names(meta)[m], meta[[m]], processingLogOutput = FALSE)
+    obj <- oceSetMetadata(obj, names(meta)[m], meta[[m]], note = NULL)
   }
   return(obj)
 }
@@ -417,7 +417,7 @@ oceNc_create <- function(adp, name,  metadata){
   latdim <- ncdim_def("lat", "degrees_north", as.double(lat))
 
   #set fill value
- FillValue <- 1e35
+  FillValue <- 1e35
 
   #define variables
   dlname <- "eastward_sea_water_velocity"
@@ -537,7 +537,7 @@ oceNc_create <- function(adp, name,  metadata){
   ncatt_put(ncout, 0, "platform", adp[['platform']])
   ncatt_put(ncout, 0, "sounding", adp[['sounding']])
   ncatt_put(ncout, 0, "chief_scientist", adp[['chiefScientist']])
-  ncatt_put(ncout, "depth", "xducer_offset_from_bottom", adp[['transducerDepth']])
+  ncatt_put(ncout, "depth", "xducer_offset_from_bottom", adp[['depthOffBottom']])
   ncatt_put(ncout, "depth", "bin_size", adp[['cellSize']])
   ncatt_put(ncout, "EWCT", "sensor_type", adp[['instrumentType']])
   ncatt_put(ncout, "EWCT", "sensor_depth", adp[['sensorDepth']])
@@ -625,6 +625,7 @@ oceNc_create <- function(adp, name,  metadata){
   ncatt_put(ncout, 0, "time_coverage_end", adp[['recoveryTime']])
   ncatt_put(ncout, 0, "geospatial_lat_min", adp[['latitude']])
   ncatt_put(ncout, 0, "geospatial_lat_max", adp[['latitude']])
+  ncatt_put(ncout, 0, "geosptial_lat_units", "degrees_north")
   ncatt_put(ncout, 0, "geospatial_lon_min", adp[['longitude']])
   ncatt_put(ncout, 0, "geosptial_lon_max", adp[['longitude']])
   ncatt_put(ncout, 0, "geosptial_lon_units", "degrees_east")
@@ -642,9 +643,9 @@ oceNc_create <- function(adp, name,  metadata){
   ncatt_put(ncout, 0 , "flag_values", adp[['flagValues']])
   ncatt_put(ncout, 0, "source", "R code: adcpProcess, github:")
   ncatt_put(ncout, 0, "date_modified", date())
-  ncatt_put(ncout,0, "_FillValue", "1e32")
-  ncatt_put(ncout,0, "history", adp[['processingLog']])
-  ncatt_put(ncout, 0, "date_metadata_modified", tail(adp[['processingLog']][['time']][[1]])) #link to processingLog?
+  ncatt_put(ncout,0, "_FillValue", "1e35")
+  ncatt_put(ncout,0, "history", "")
+  ncatt_put(ncout, 0, "date_metadata_modified", "") #link to processingLog?
   ncatt_put(ncout, 0, "featureType", "timeSeriesProfile") #link to oce object? ..... if adp == timeSeriesProfile
 
 
