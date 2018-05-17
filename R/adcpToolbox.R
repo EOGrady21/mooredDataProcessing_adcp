@@ -498,7 +498,7 @@ oceNc_create <- function(adp, name,  metadata){
 
     #define variables
     dlname <- "time_02"
-    t_def <- ncvar_def("SYTM", "POSIXct", list(timedim), FillValue, dlname, prec = "int")
+    t_def <- ncvar_def("SYTM", "POSIXct", list(timedim), FillValue, dlname, prec = "float")
 
     dlname <- "eastward_sea_water_velocity"
     u_def <- ncvar_def("EWCT", "m/sec", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
@@ -570,7 +570,7 @@ oceNc_create <- function(adp, name,  metadata){
   if (adp@metadata$source == 'odf'){
     #define variables
     dlname <- "time_02"
-    t_def <- ncvar_def("SYTM", "POSIXct", list(timedim), FillValue = 0, dlname, prec = "int")
+    t_def <- ncvar_def("SYTM", "POSIXct", list(timedim), FillValue, dlname, prec = "float")
 
     dlname <- "eastward_sea_water_velocity"
     u_def <- ncvar_def("EWCT", "m/sec", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
@@ -632,8 +632,6 @@ oceNc_create <- function(adp, name,  metadata){
 
   ###metadata###
   #dimensions
-  ncatt_put(ncout, "time", "_FillValue", "0")
-  ncatt_put(ncout, "time", "type", "uneven")
 
   if (adp@metadata$source == 'raw'){
     ####pulled from adp object####
