@@ -12,7 +12,10 @@ read.adp.easy(file, metadata)
 \arguments{
 \item{file}{raw ADCP file (.000 format)}
 
-\item{metadata}{csv metadata file from template}
+\item{metadata}{csv metadata file from template
+
+returns an object of class adp (from oce package)
+uses \code{\link[MASS:oce]{read.adp}}}
 
 \item{file}{raw ADCP file (.000 format)}
 

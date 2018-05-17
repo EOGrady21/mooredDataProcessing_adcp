@@ -1,7 +1,3 @@
-#' @title ADCP Processing Toolbox
-#'
-#' @description ADCP processing steps 2.0 - 4.0
-#' used at BIO under BODC standards
 
 require(oce)
 require(ncdf4)
@@ -10,15 +6,16 @@ require(ncdf4)
 
 ##read.adp.easy
 
-#' @title ADCP PRocessing step 2.0
+#'  ADCP PRocessing step 2.0
 #'
-#' @description Load adp data into R with list that includes all metadata from mooring sheets
+#'  Load adp data into R with list that includes all metadata from mooring sheets
 #'
 #'
 #' @param file raw ADCP file (.000 format)
 #' @param metadata csv metadata file from template
 #'
 #' returns an object of class adp (from oce package)
+#' uses \code{\link[MASS:oce]{read.adp}}
 
 read.adp.easy <- function(file, metadata){
   if (missing(metadata)){
