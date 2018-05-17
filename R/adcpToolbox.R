@@ -41,7 +41,6 @@ read.adp.easy <- function(file, metadata){
 
     adp@metadata$latitude <- as.numeric(adp[['latitude']])
     adp@metadata$longitude <- as.numeric(adp[['longitude']])
-    adp@processingLog$time <-processingLogAppend(adp@processingLog, date() )
     adp@processingLog <- processingLogAppend(adp@processingLog, 'metadata read in from log sheet')
 
     return(adp)
@@ -105,7 +104,7 @@ read.meta <- function(file, obj){
 #'
 
 
-applyMagneticDeclinationAdp <- function(x, lat = x[['latitude']], lon = x[['longitude']], st = x[['deploymentTime']], et = x[['recoveryTime']],tz = 'UTC', type = 'average'){
+applyMagneticDeclinationAdp <- function(x, lat = x[['latitude']], lon = x[['longitude']], st = x[['deployment_time']], et = x[['recovery_time']],tz = 'UTC', type = 'average'){
   if (!inherits(x, "adp")){
     stop("method is only for objects of class '", "adp", "'")
   }
@@ -129,7 +128,7 @@ applyMagneticDeclinationAdp <- function(x, lat = x[['latitude']], lon = x[['long
 
         if (coord == 'enu'){
           x <- enuToOther(x, heading = c)
-          x@metadata$magneticVariation <- c
+          x@metadata$magnetic_variation <- c
           x@metadata$oceCoordinate <- 'enu'
         }
         if (coord != 'enu'){
@@ -140,7 +139,6 @@ applyMagneticDeclinationAdp <- function(x, lat = x[['latitude']], lon = x[['long
       else {
         warning('Missing required arguments! No processing performed!')
       }
-      x@processingLog$time <- processingLogAppend(x@processingLog, date())
       x@processingLog <- processingLogAppend(x@processingLog, value = paste0('magnetic variation applied; declination =', c, 'degrees') )
     }
     if (type == 'interpolate'){
@@ -178,7 +176,7 @@ limit_depthbyrmax <- function(x, lat = x[['latitude']]){
     d <- swDepth(x@data$pressure, latitude = lat, eos = getOption("oceEOS", default = "gsw"))
     d[d < rmax] <- NA
     mdt <- round(mean(d), digits = 2)
-    x@metadata$sensorDepth <- mdt
+    x@metadata$sensor_depth <- mdt
     x@data$depth <- d
 
   }
@@ -189,7 +187,7 @@ limit_depthbyrmax <- function(x, lat = x[['latitude']]){
 
       d[d < rmax] <- NA
       mdt <- round(mean(x@data$depth, na.rm = TRUE), digits = 2)
-      x@metadata$sensorDepth <- mdt
+      x@metadata$sensor_depth <- mdt
       x@data$depth <- d
     }
     if (is.na(x@metadata$latitude)){
@@ -197,7 +195,6 @@ limit_depthbyrmax <- function(x, lat = x[['latitude']]){
 
       stop()
     }
-    adp@processingLog$time <-processingLogAppend(adp@processingLog, date() )
     adp@processingLog <- processingLogAppend(adp@processingLog, paste0('depth values adjusted to sea water depth using pressure and latitude'))
     adp@processingLog <- processingLogAppend(adp@processingLog, paste0('depth limited by maximum acceptable distance, calulated with Rmax = Dcos(x)'))
     adp@processingLog <- processingLogAppend(adp@processingLog, paste0('Sensor depth and mean depth set to  ', mdt , '  based on trimmed depth values'))
@@ -216,7 +213,7 @@ limit_depthbyrmax <- function(x, lat = x[['latitude']]){
 #'@param adp oce object of class adp to be limited
 #'
 #'requires certain meta data features to compute
-#'including pressure, latitude, time, deploymentTime, recoveryTime
+#'including pressure, latitude, time, deployment_time, recovery_time
 #'
 
 
@@ -226,14 +223,13 @@ limit_depthbytime <- function(adp, tz = 'UTC'){
   }
   adp[['depth']] <- swDepth(adp[['pressure']], latitude = adp[['latitude']], eos = getOption("oceEOS", default = "gsw"))
   depth <- adp[['depth']]
-  depth[as.POSIXct(adp[['time']], tz) <= as.POSIXct(adp[['deploymentTime']], tz) | as.POSIXct(adp[['time']], tz) >= as.POSIXct(adp[['recoveryTime']], tz)] <- NA
+  depth[as.POSIXct(adp[['time']], tz) <= as.POSIXct(adp[['deployment_time']], tz) | as.POSIXct(adp[['time']], tz) >= as.POSIXct(adp[['recovery_time']], tz)] <- NA
 
   mdt <- round(mean(depth, na.rm = TRUE), digits = 2)
   adp@metadata$sensorDepth <- mdt
   adp@metadata$depthMean <- mdt
   adp@data$depth <- depth
-  adp@processingLog$time <-processingLogAppend(adp@processingLog, date() )
-  adp@processingLog <- processingLogAppend(adp@processingLog, paste0('depth limited by deployment (', adp[['deploymentTime']], ') and recovery  (', adp[['recoveryTime']], ')  times'))
+  adp@processingLog <- processingLogAppend(adp@processingLog, paste0('depth limited by deployment (', adp[['deployment_time']], ') and recovery  (', adp[['recovery_time']], ')  times'))
   adp@processingLog <- processingLogAppend(adp@processingLog, paste0('Sensor depth and mean depth set to  ', mdt , '  based on trimmed depth values'))
 
   return(adp)
@@ -257,7 +253,7 @@ limit_depthbytime <- function(adp, tz = 'UTC'){
 #'
 
 
-limit_time <- function(x, tz = 'UTC', dt = x[['deploymentTime']], rt = x[['recoveryTime']]){
+limit_time <- function(x, tz = 'UTC', dt = x[['deployment_time']], rt = x[['recovery_time']]){
 
   if (!inherits(x, "adp")){
     stop("method is only for objects of class '", "adp", "'")
@@ -271,14 +267,14 @@ limit_time <- function(x, tz = 'UTC', dt = x[['deploymentTime']], rt = x[['recov
     x[['v']][t < t1] <- NA
   }
   else if(missing(dt)){
-    if (!is.null(x@metadata$deploymentTime)){
-      dt <- x@metadata$deploymentTime
+    if (!is.null(x@metadata$deployment_time)){
+      dt <- x@metadata$deployment_time
       t1 <- as.POSIXct(dt, tz = tz)
       t <- x[['time', "numeric"]]
       t <- as.POSIXct(t, tz = tz)
       x[['v']][t < t1] <- NA
     }
-    if (is.null(x@metadata$deploymentTime)){
+    if (is.null(x@metadata$deployment_time)){
       warning('No deployment Time provided!')
     }
 
@@ -288,11 +284,11 @@ limit_time <- function(x, tz = 'UTC', dt = x[['deploymentTime']], rt = x[['recov
       x[['v']][t > t2] <- NA
     }
     else if (missing(rt))
-      if (!is.null(x@metadata$recoveryTime)){
+      if (!is.null(x@metadata$recovery_time)){
         t2 <- as.POSIXct(rt)
         x[['v']][t > t2] <- NA
       }
-    if (is.null(x@metadata$recoveryTime)){
+    if (is.null(x@metadata$recovery_time)){
       warning('No recovery time provided!')
     }
 
@@ -369,7 +365,6 @@ adpFlag <- function(adp,  pg, er){
   adp <- setFlags(adp, name = 'v', i= flag, value = 4)
 
 
-  #adp@processingLog$time <- processingLogAppend(adp@processingLog, date())
   adp@processingLog <- processingLogAppend(adp@processingLog, 'Quality control flags set based on flag scheme from BODC')
   return(adp)
 }
@@ -389,7 +384,7 @@ adpFlag <- function(adp,  pg, er){
 #'
 name.file <- function(adp){
 
-  name <- paste('MADCP', adp[['cruiseNumber']], adp[['mooringNumber']], adp[['serialNumber']], adp[['samplingInterval']], sep = '_')
+  name <- paste('MADCP', adp[['cruiseNumber']], adp[['mooring_number']], adp[['serialNumber']], adp[['samplingInterval']], sep = '_')
 
   name
 }
@@ -574,9 +569,9 @@ oceNc_create <- function(adp, name,  metadata){
   ###metadata###
   if (adp@metadata$source == 'raw'){
     ####pulled from adp object####
-    ncatt_put(ncout, 0, "MOORING", adp[['mooringNumber']])
-    ncatt_put(ncout, 0, "Deployment_date", adp[['deploymentTime']])
-    ncatt_put(ncout, 0, "Recovery_date", adp[['recoveryTime']])
+    ncatt_put(ncout, 0, "MOORING", adp[['mooring_number']])
+    ncatt_put(ncout, 0, "Deployment_date", adp[['deployment_time']])
+    ncatt_put(ncout, 0, "Recovery_date", adp[['recovery_time']])
     ncatt_put(ncout, 0, "firmware_version", adp[['firmwareVersion']])
     ncatt_put(ncout, 0, "frequency", adp[['frequency']])
     ncatt_put(ncout, 0, "beam_pattern", adp[['beamPattern']])
@@ -594,15 +589,15 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "COORD_SYSTEM", adp[['oceCoordinate']])
     ncatt_put(ncout, 0, "longitude", adp[['longitude']])
     ncatt_put(ncout, 0, "latitude", adp[['latitude']])
-    ncatt_put(ncout, 0, "magnetic_variation", adp[['magneticVariation']])
+    ncatt_put(ncout, 0, "magnetic_variation", adp[['magnetic_variation']])
     ncatt_put(ncout, 0, "platform", adp[['platform']])
     ncatt_put(ncout, 0, "sounding", adp[['sounding']])
-    ncatt_put(ncout, 0, "chief_scientist", adp[['chiefScientist']])
+    ncatt_put(ncout, 0, "chief_scientist", adp[['chief_scientist']])
     ncatt_put(ncout, 0, "DATA_ORIGIN", adp[['institution']])
-    ncatt_put(ncout, 0, "WATER_DEPTH", adp[['waterDepth']])
-    ncatt_put(ncout, 0, "DELTA_T_sec",adp[['TimeOffset']])
+    ncatt_put(ncout, 0, "WATER_DEPTH", adp[['water_depth']])
+    ncatt_put(ncout, 0, "DELTA_T_sec",adp[['time_offset']])
     ncatt_put(ncout, 0, "pred_accuracy", adp[['velocityResolution']])
-    ncatt_put(ncout, "depth", "xducer_offset_from_bottom", adp[['depthOffBottom']])
+    ncatt_put(ncout, "depth", "xducer_offset_from_bottom", adp[['depth_off_bottom']])
     ncatt_put(ncout, "depth", "bin_size", adp[['cellSize']])
     ncatt_put(ncout, "EWCT", "sensor_type", adp[['instrumentType']])
     ncatt_put(ncout, "EWCT", "sensor_depth", adp[['sensorDepth']])
@@ -665,17 +660,17 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, "Tx", "sensor_depth", adp[['depthMean']])
     ncatt_put(ncout, "Tx", "serial_number", adp[['serialNumber']])
     ncatt_put(ncout, "QC_flag_u", "comment", "Quality flag resulting from quality control")
-    ncatt_put(ncout, "QC_flag_u", "flag_meanings",adp[['flagMeaning']])
-    ncatt_put(ncout, "QC_flag_u", "flag_values", adp[['flagValues']])
-    ncatt_put(ncout, "QC_flag_u", "References", adp[['flagReferences']])
+    ncatt_put(ncout, "QC_flag_u", "flag_meanings",adp[['flag_meaning']])
+    ncatt_put(ncout, "QC_flag_u", "flag_values", adp[['flag_values']])
+    ncatt_put(ncout, "QC_flag_u", "References", adp[['flag_references']])
     ncatt_put(ncout, "QC_flag_v", "comment", "Quality flag resulting from quality control")
-    ncatt_put(ncout, "QC_flag_v", "flag_meanings", adp[['flagMeaning']])
-    ncatt_put(ncout, "QC_flag_v", "flag_values", adp[['flagValues']])
-    ncatt_put(ncout, "QC_flag_v", "References", adp[['flagReferences']])
+    ncatt_put(ncout, "QC_flag_v", "flag_meanings", adp[['flag_meaning']])
+    ncatt_put(ncout, "QC_flag_v", "flag_values", adp[['flag_values']])
+    ncatt_put(ncout, "QC_flag_v", "References", adp[['flag_references']])
     ncatt_put(ncout, "QC_flag_w", "comment", "Quality flag resulting from quality control")
-    ncatt_put(ncout, "QC_flag_w", "flag_meanings", adp[['flagMeaning']])
-    ncatt_put(ncout, "QC_flag_w", "flag_values", adp[['flagValues']])
-    ncatt_put(ncout, "QC_flag_w", "References", adp[['flagReferences']])
+    ncatt_put(ncout, "QC_flag_w", "flag_meanings", adp[['flag_meaning']])
+    ncatt_put(ncout, "QC_flag_w", "flag_values", adp[['flag_values']])
+    ncatt_put(ncout, "QC_flag_w", "References", adp[['flag_references']])
 
     #CF conventions
 
@@ -683,9 +678,9 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "creator_type", "person")
     ncatt_put(ncout, 0, "creator_institution", adp[['institution']])
     ncatt_put(ncout, 0, "program", adp[['program']])
-    ncatt_put(ncout, 0, "sea_name", adp[['seaName']])
-    ncatt_put(ncout, 0, "time_coverage_start", adp[['deploymentTime']])
-    ncatt_put(ncout, 0, "time_coverage_end", adp[['recoveryTime']])
+    ncatt_put(ncout, 0, "sea_name", adp[['sea_name']])
+    ncatt_put(ncout, 0, "time_coverage_start", adp[['deployment_time']])
+    ncatt_put(ncout, 0, "time_coverage_end", adp[['recovery_time']])
     ncatt_put(ncout, 0, "geospatial_lat_min", adp[['latitude']])
     ncatt_put(ncout, 0, "geospatial_lat_max", adp[['latitude']])
     ncatt_put(ncout, 0, "geosptial_lat_units", "degrees_north")
@@ -697,13 +692,13 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "geosptial_vertical_units", "metres")
     ncatt_put(ncout, 0, "geosptial_vertical_positive", adp[['orientation']])     #eg up or down
     ncatt_put(ncout, 0, "institution", adp[['institution']])
-    ncatt_put(ncout, 0, "creator_name", adp[['creatorName']])
-    ncatt_put(ncout, 0, "creator_url", adp[['creatorUrl']])
-    ncatt_put(ncout, 0, "creator_email", adp[['creatorEmail']])
+    ncatt_put(ncout, 0, "creator_name", adp[['creator_name']])
+    ncatt_put(ncout, 0, "creator_url", adp[['creator_url']])
+    ncatt_put(ncout, 0, "creator_email", adp[['creator_email']])
     ncatt_put(ncout, 0, "project", adp[['project']])
-    ncatt_put(ncout, 0, "processing_level", adp[['processingLevel']])
-    ncatt_put(ncout, 0 , "flag_meanings", adp[['flagMeaning']])
-    ncatt_put(ncout, 0 , "flag_values", adp[['flagValues']])
+    ncatt_put(ncout, 0, "processing_level", adp[['processing_level']])
+    ncatt_put(ncout, 0 , "flag_meanings", adp[['flag_meaning']])
+    ncatt_put(ncout, 0 , "flag_values", adp[['flag_values']])
     ncatt_put(ncout, 0, "source", "R code: adcpProcess, github:")
     ncatt_put(ncout, 0, "date_modified", date())
     ncatt_put(ncout,0, "_FillValue", "1e35")
@@ -813,9 +808,9 @@ oceNc_create <- function(adp, name,  metadata){
   }
 
   if (adp@metadata$source == 'odf'){
-    ncatt_put(ncout, 0, "MOORING", adp[['mooringNumber']])
-    ncatt_put(ncout, 0, "Deployment_date", adp[['deploymentTime']])
-    ncatt_put(ncout, 0, "Recovery_date", adp[['recoveryTime']])
+    ncatt_put(ncout, 0, "MOORING", adp[['mooring_number']])
+    ncatt_put(ncout, 0, "Deployment_date", adp[['deployment_time']])
+    ncatt_put(ncout, 0, "Recovery_date", adp[['recovery_time']])
     ncatt_put(ncout, 0, "firmware_version", adp[['firmwareVersion']])
     ncatt_put(ncout, 0, "frequency", adp[['frequency']])
     ncatt_put(ncout, 0, "beam_pattern", adp[['beamPattern']])
@@ -836,12 +831,12 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "magnetic_variation", adp[['magneticVariation']])
     ncatt_put(ncout, 0, "platform", adp[['platform']])
     ncatt_put(ncout, 0, "sounding", adp[['sounding']])
-    ncatt_put(ncout, 0, "chief_scientist", adp[['chiefScientist']])
+    ncatt_put(ncout, 0, "chief_scientist", adp[['chief_scientist']])
     ncatt_put(ncout, 0, "DATA_ORIGIN", adp[['institution']])
-    ncatt_put(ncout, 0, "WATER_DEPTH", adp[['waterDepth']])
-    ncatt_put(ncout, 0, "DELTA_T_sec",adp[['TimeOffset']])
+    ncatt_put(ncout, 0, "WATER_DEPTH", adp[['water_depth']])
+    ncatt_put(ncout, 0, "DELTA_T_sec",adp[['time_offset']])
     ncatt_put(ncout, 0, "pred_accuracy", adp[['velocityResolution']])
-    ncatt_put(ncout, "depth", "xducer_offset_from_bottom", adp[['depthOffBottom']])
+    ncatt_put(ncout, "depth", "xducer_offset_from_bottom", adp[['depth_off_bottom']])
     ncatt_put(ncout, "depth", "bin_size", adp[['cellSize']])
     ncatt_put(ncout, "EWCT", "sensor_type", adp[['instrumentType']])
     ncatt_put(ncout, "EWCT", "sensor_depth", adp[['sensorDepth']])
@@ -873,27 +868,27 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "creator_type", "person")
     ncatt_put(ncout, 0, "creator_institution", adp[['institution']])
     ncatt_put(ncout, 0, "program", adp[['program']])
-    ncatt_put(ncout, 0, "sea_name", adp[['seaName']])
-    ncatt_put(ncout, 0, "time_coverage_start", adp[['deploymentTime']])
-    ncatt_put(ncout, 0, "time_coverage_end", adp[['recoveryTime']])
+    ncatt_put(ncout, 0, "sea_name", adp[['sea_name']])
+    ncatt_put(ncout, 0, "time_coverage_start", adp[['deployment_time']])
+    ncatt_put(ncout, 0, "time_coverage_end", adp[['recovery_time']])
     ncatt_put(ncout, 0, "geospatial_lat_min", adp[['latitude']])
     ncatt_put(ncout, 0, "geospatial_lat_max", adp[['latitude']])
     ncatt_put(ncout, 0, "geosptial_lat_units", "degrees_north")
     ncatt_put(ncout, 0, "geospatial_lon_min", adp[['longitude']])
     ncatt_put(ncout, 0, "geosptial_lon_max", adp[['longitude']])
     ncatt_put(ncout, 0, "geosptial_lon_units", "degrees_east")
-    ncatt_put(ncout, 0, "geospatial_vertical_min", min(adp[['depth']]))
-    ncatt_put(ncout, 0, "geosptial_vertical_max", max(adp[['depth']]))
+    ncatt_put(ncout, 0, "geospatial_vertical_min", min(adp[['distance']]))
+    ncatt_put(ncout, 0, "geosptial_vertical_max", max(adp[['distance']]))
     ncatt_put(ncout, 0, "geosptial_vertical_units", "metres")
     ncatt_put(ncout, 0, "geosptial_vertical_positive", adp[['orientation']])     #eg up or down
     ncatt_put(ncout, 0, "institution", adp[['institution']])
-    ncatt_put(ncout, 0, "creator_name", adp[['creatorName']])
-    ncatt_put(ncout, 0, "creator_url", adp[['creatorUrl']])
-    ncatt_put(ncout, 0, "creator_email", adp[['creatorEmail']])
+    ncatt_put(ncout, 0, "creator_name", adp[['creator_name']])
+    ncatt_put(ncout, 0, "creator_url", adp[['creator_url']])
+    ncatt_put(ncout, 0, "creator_email", adp[['creator_email']])
     ncatt_put(ncout, 0, "project", adp[['project']])
     ncatt_put(ncout, 0, "processing_level", adp[['processingLevel']])
-    ncatt_put(ncout, 0 , "flag_meanings", adp[['flagMeaning']])
-    ncatt_put(ncout, 0 , "flag_values", adp[['flagValues']])
+    ncatt_put(ncout, 0 , "flag_meanings", adp[['flag_meaning']])
+    ncatt_put(ncout, 0 , "flag_values", adp[['flag_values']])
     ncatt_put(ncout, 0, "source", "R code: adcpProcess, github:")
     ncatt_put(ncout, 0, "date_modified", date())
     ncatt_put(ncout,0, "_FillValue", "1e35")
@@ -982,16 +977,16 @@ oceNc_create <- function(adp, name,  metadata){
   }
 
 
-  metad <- read.csv(metadata, header = TRUE)
+  if (!missing(metadata)) {
+    metad <- read.csv(metadata, header = TRUE)
 
-  mn <- as.character(metad[,1])
-  mv <- as.character(metad[,2])
+    mn <- as.character(metad[,1])
+    mv <- as.character(metad[,2])
 
 
-  md <- as.list(mv)
-  names(md) <- mn
+    md <- as.list(mv)
+    names(md) <- mn
 
-  if (!missing(md)) {
     for (m in seq_along(md)) {
       ncatt_put(ncout, 0, names(md)[m], md[[m]])
     }
