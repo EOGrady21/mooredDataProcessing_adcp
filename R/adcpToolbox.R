@@ -9,13 +9,13 @@ require(ncdf4)
 #'  ADCP PRocessing step 2.0
 #'
 #'  Load adp data into R with list that includes all metadata from mooring sheets
-#'
+#'#' returns an object of class adp (from oce package)
+#' uses \code{\link[oce:read.adp]{read.adp}}
 #'
 #' @param file raw ADCP file (.000 format)
 #' @param metadata csv metadata file from template
 #'
-#' returns an object of class adp (from oce package)
-#' uses \code{\link[MASS:oce]{read.adp}}
+
 
 read.adp.easy <- function(file, metadata){
   if (missing(metadata)){
@@ -48,10 +48,10 @@ read.adp.easy <- function(file, metadata){
 
 ##read metadata
 
-#' @title ADCP process step 2.1
+#'  ADCP process step 2.1
 #'
 #'
-#' @description Read in all metadata from csv template to adp object, sourced from log sheets
+#'  Read in all metadata from csv template to adp object, sourced from log sheets
 #'
 #' @param file csv file name
 #' @param obj adp oce object to assign metadata to
@@ -78,10 +78,11 @@ read.meta <- function(file, obj){
 
 ###applyMAgneticDeclination
 
-#' @title ADCP Processing step 3.2
+#'  ADCP Processing step 3.2
 #'
-#' @description apply magnetic declination to ADCP data
-#'
+#'  apply magnetic declination to ADCP data
+#' uses \code{\link[oce:magneticField]{magneticField}} to calculate declination and
+#' \code{\link[oce:enuToOther]{enuToOTher}} to apply variation to data set
 #'
 #' @param x adp object from oce-class
 #' @param lat latitude
@@ -150,10 +151,10 @@ applyMagneticDeclinationAdp <- function(x, lat = x[['latitude']], lon = x[['long
 
 
 
-#'@title ADCP Processing step 3.3
+#' ADCP Processing step 3.3
 #'Limit depth by rmax
 #'
-#'@description Use maximum acceptable range values to determine acceptable depth values
+#'Use maximum acceptable range values to determine acceptable depth values
 #'Uses Teledyne RDI equation, Rmax = Dcos(x)
 #'
 #'@param x oce object of class adp to be limited
@@ -194,6 +195,7 @@ limit_depthbyrmax <- function(x, lat = x[['latitude']]){
       stop()
     }
     adp@processingLog$time <-processingLogAppend(adp@processingLog, date() )
+    adp@processingLog <- processingLogAppend(adp@processingLog, paste0('depth values adjusted to sea water depth using pressure and latitude'))
     adp@processingLog <- processingLogAppend(adp@processingLog, paste0('depth limited by maximum acceptable distance, calulated with Rmax = Dcos(x)'))
     adp@processingLog <- processingLogAppend(adp@processingLog, paste0('Sensor depth and mean depth set to  ', mdt , '  based on trimmed depth values'))
 
@@ -308,8 +310,10 @@ limit_time <- function(x, tz = 'UTC', dt = x[['deploymentTime']], rt = x[['recov
 #' This function also defaults to flagging depth values based on the Teledyne RDI standard
 #'
 #'  Rmax = Dcosx
-#'
 #'    where Rmax is the maximum acceptable distance range from the ADCP, D is total depth and x is the beam angle of the ADCP.
+#' This function uses \code{\link[oce:initializeFlags]{initializeFlags}} to initialize blank flagging scheme for values to be inserted in
+#' Then \code{\link[oce: setFlags]{setFlags}} to set flag values based on desired scheme
+#'
 #' @param adp, an adp object, oce-class
 #' @param flagScheme, scheme of flags that will be followed, BODC, MEDS, etc
 #' @param pg, The minimum percent good for evaluating beams one + four of the adcp (BIO standard is 25)
@@ -370,19 +374,15 @@ adpFlag <- function(adp,  pg, er){
 
 
 
-#' @title  ADCP Processing step 4.1
+#'   ADCP Processing step 4.1
 #'
 #'
-#' @description Exports an adp object to a net cdf using variables and metadata within adp combined with optional additional metatdata
-#'
+#' Exports an adp object to a net cdf using variables and metadata within adp combined with optional additional metatdata
+#'see details in \code{\link[ncdf4:ncdf4]{ncdf4}} package
 #'
 #' @param obj an adp object from the oce class
 #' @param name name of the NetCDF file to be produced
 #' @param metadata csv file listing metadata names and values to be inserted into global attributes of net CDF
-
-
-
-
 
 
 
