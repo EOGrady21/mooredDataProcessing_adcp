@@ -495,6 +495,10 @@ oceNc_create <- function(adp, name,  metadata){
   if (adp@metadata$source == 'raw'){
 
     #define variables
+    dlname <- "station_name"
+    st_def <- ncvar_def("Unique identifier for each time series feature instance", list(londim, latdim), FillValue, dlname, prec = "integer")
+
+
     dlname <- "eastward_sea_water_velocity"
     u_def <- ncvar_def("EWCT", "m/sec", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
 
@@ -566,6 +570,9 @@ oceNc_create <- function(adp, name,  metadata){
 
   if (adp@metadata$source == 'odf'){
     #define variables
+    dlname <- "station_name"
+    st_def <- ncvar_def("Unique identifier for each time series feature instance", list(londim, latdim), FillValue, dlname, prec = "integer")
+
     dlname <- "eastward_sea_water_velocity"
     u_def <- ncvar_def("EWCT", "m/sec", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
 
@@ -601,6 +608,7 @@ oceNc_create <- function(adp, name,  metadata){
   ncvar_put(ncout, w_def, adp[['v']][,,3])
   ncvar_put(ncout, e_def, adp[['v']][,,4])
   ncvar_put(ncout, t_def, adp[['time']])
+  ncvar_put(ncout, st_def, adp[['mooring_number']])
 
   if (adp@metadata$source == 'raw'){
     ncvar_put(ncout, b1_def, adp[['a', 'numeric']][,,1])
@@ -627,6 +635,9 @@ oceNc_create <- function(adp, name,  metadata){
   }
 
   ###metadata###
+
+  ncatt_put(ncout, 'station_name', 'cf_role', 'timeseries_id')
+
   if (adp@metadata$source == 'raw'){
     ####pulled from adp object####
     ncatt_put(ncout, 0, "mooring_number", adp[['mooring_number']])
