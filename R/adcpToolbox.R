@@ -389,7 +389,6 @@ name.file <- function(adp){
   name
 }
 
-
 #' ADCP Processing ODF to NetCDF
 #'
 #' Converting individuasl odf bins to Net cdf standard format
@@ -451,7 +450,6 @@ odf2adp <- function(files, metadata) {
   return(adp)
 }
 
-
 #'   ADCP Processing step 4.1
 #'
 #'
@@ -497,45 +495,44 @@ oceNc_create <- function(adp, name,  metadata){
   if (adp@metadata$source == 'raw'){
 
     #define variables
-    dlname <- "time_02"
-    t_def <- ncvar_def("SYTM", "POSIXct", list(timedim), FillValue, dlname, prec = "float")
-
     dlname <- "eastward_sea_water_velocity"
-    u_def <- ncvar_def("EWCT", "m/sec", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    u_def <- ncvar_def("EWCT", "m/sec", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
 
     dlname <- "northward_sea_water_velocity"
-    v_def <- ncvar_def("NSCT", "m/sec", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    v_def <- ncvar_def("NSCT", "m/sec", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
 
     dlname <- "upward_sea_water_velocity"
-    w_def <- ncvar_def("VCSP", "m/sec", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    w_def <- ncvar_def("VCSP", "m/sec", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
 
+    dlname <- "time_02"
+    t_def <- ncvar_def("SYTM", "POSIXct", list(timedim, londim, latdim), FillValue, dlname, prec = "float")
 
     dlname <- "error_velocity_in_sea_water"
-    e_def <- ncvar_def("ERRV", "m/sec", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    e_def <- ncvar_def("ERRV", "m/sec", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
 
     dlname <- "ADCP_echo_intensity_beam_1"
-    b1_def <- ncvar_def("BEAM_01", "counts", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    b1_def <- ncvar_def("BEAM_01", "a", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
 
     dlname <- "ADCP_echo_intensity_beam_2"
-    b2_def <- ncvar_def("BEAM_02", "counts", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    b2_def <- ncvar_def("BEAM_02", "a", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
 
     dlname <- "ADCP_echo_intensity_beam_3"
-    b3_def <- ncvar_def("BEAM_03", "counts", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    b3_def <- ncvar_def("BEAM_03", "a", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
 
     dlname <- "ADCP_echo_intensity_beam_4"
-    b4_def <- ncvar_def("BEAM_04", "counts", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    b4_def <- ncvar_def("BEAM_04", "a", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
 
     dlname <- "percent_good_beam_1"
-    pg1_def <- ncvar_def("PGDP_01", "counts", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    pg1_def <- ncvar_def("PGDP_01", "counts", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
 
     dlname <- "percent_good_beam_2"
-    pg2_def <- ncvar_def("PGDP_02", "counts", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    pg2_def <- ncvar_def("PGDP_02", "counts", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
 
     dlname <- "percent_good_beam_3"
-    pg3_def <- ncvar_def("PGDP_03", "counts", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    pg3_def <- ncvar_def("PGDP_03", "counts", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
 
     dlname <- "percent_good_beam_4"
-    pg4_def <- ncvar_def("PGDP_04", "counts", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    pg4_def <- ncvar_def("PGDP_04", "counts", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
 
     dlname <- "pitch"
     p_def <- ncvar_def("PTCH", "degrees", list(timedim, londim, latdim), FillValue, dlname, prec = "float")
@@ -554,46 +551,45 @@ oceNc_create <- function(adp, name,  metadata){
 
 
     dlname <- "quality_flag u"
-    qc_u_def <- ncvar_def("QC_flag_u", "", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    qc_u_def <- ncvar_def("QC_flag_u", "", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
 
     dlname <- "quality_flag v"
-    qc_v_def <- ncvar_def("QC_flag_v", "", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    qc_v_def <- ncvar_def("QC_flag_v", "", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
 
     dlname <- "quality_flag w"
-    qc_w_def <- ncvar_def("QC_flag_w", "", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    qc_w_def <- ncvar_def("QC_flag_w", "", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
 
     ####writing net CDF####
     #write out definitions to new nc file
-    ncout <- nc_create(ncfname, list(t_def, u_def, v_def, w_def, e_def,  b1_def, b2_def, b3_def, b4_def, pg1_def, pg2_def, pg3_def, pg4_def, p_def, r_def, hght_def, Tx_def, D_def, qc_u_def, qc_v_def, qc_w_def), force_v4 = TRUE)
+    ncout <- nc_create(ncfname, list(u_def, v_def, w_def, e_def, t_def, b1_def, b2_def, b3_def, b4_def, pg1_def, pg2_def, pg3_def, pg4_def, p_def, r_def, hght_def, Tx_def, D_def, qc_u_def, qc_v_def, qc_w_def), force_v4 = TRUE)
   }
 
   if (adp@metadata$source == 'odf'){
     #define variables
-    dlname <- "time_02"
-    t_def <- ncvar_def("SYTM", "POSIXct", list(timedim), FillValue, dlname, prec = "float")
-
     dlname <- "eastward_sea_water_velocity"
-    u_def <- ncvar_def("EWCT", "m/sec", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    u_def <- ncvar_def("EWCT", "m/sec", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
 
     dlname <- "northward_sea_water_velocity"
-    v_def <- ncvar_def("NSCT", "m/sec", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    v_def <- ncvar_def("NSCT", "m/sec", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
 
     dlname <- "upward_sea_water_velocity"
-    w_def <- ncvar_def("VCSP", "m/sec", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    w_def <- ncvar_def("VCSP", "m/sec", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
 
+    dlname <- "time_02"
+    t_def <- ncvar_def("SYTM", "POSIXct", list(timedim, londim, latdim), FillValue, dlname, prec = "float")
 
     dlname <- "error_velocity_in_sea_water"
-    e_def <- ncvar_def("ERRV", "m/sec", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    e_def <- ncvar_def("ERRV", "m/sec", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
 
     dlname <- "ADCP_echo_intensity_beam_1"
-    b1_def <- ncvar_def("BEAM_01", "counts", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    b1_def <- ncvar_def("BEAM_01", "a", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
 
     dlname <- "percent_good_beam_1"
-    pg1_def <- ncvar_def("PGDP_01", "counts", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    pg1_def <- ncvar_def("PGDP_01", "counts", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
 
     ####writing net CDF####
     #write out definitions to new nc file
-    ncout <- nc_create(ncfname, list(t_def, u_def, v_def, w_def, e_def,  b1_def,  pg1_def), force_v4 = TRUE)
+    ncout <- nc_create(ncfname, list(u_def, v_def, w_def, e_def, t_def, b1_def,  pg1_def), force_v4 = TRUE)
 
 
   }
@@ -631,8 +627,6 @@ oceNc_create <- function(adp, name,  metadata){
   }
 
   ###metadata###
-  #dimensions
-
   if (adp@metadata$source == 'raw'){
     ####pulled from adp object####
     ncatt_put(ncout, 0, "mooring_number", adp[['mooring_number']])
@@ -651,7 +645,7 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "false_target_reject_values", adp[['falseTargetThresh']])
     ncatt_put(ncout, 0, "serial_number", adp[['serialNumber']])
     ncatt_put(ncout, 0, "transform", adp[['oceCoordinate']])
-    ncatt_put(ncout, 0, "data_type", adp[['sensor_type']])
+    ncatt_put(ncout, 0, "data_type", adp[['instrumentType']])
     ncatt_put(ncout, 0, "coord_system", adp[['oceCoordinate']])
     ncatt_put(ncout, 0, "longitude", adp[['longitude']])
     ncatt_put(ncout, 0, "latitude", adp[['latitude']])
@@ -665,40 +659,40 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "pred_accuracy", adp[['velocityResolution']])
     ncatt_put(ncout, "depth", "xducer_offset_from_bottom", adp[['depth_off_bottom']])
     ncatt_put(ncout, "depth", "bin_size", adp[['cellSize']])
-    ncatt_put(ncout, "EWCT", "sensor_type", adp[['sensor_type']])
+    ncatt_put(ncout, "EWCT", "sensor_type", adp[['instrumentType']])
     ncatt_put(ncout, "EWCT", "sensor_depth", adp[['sensorDepth']])
     ncatt_put(ncout, "EWCT", "serial_number", adp[['serialNumber']])
-    ncatt_put(ncout, "NSCT", "sensor_type", adp[['sensor_type']])
+    ncatt_put(ncout, "NSCT", "sensor_type", adp[['instrumentType']])
     ncatt_put(ncout, "NSCT", "sensor_depth", adp[['sensorDepth']])
     ncatt_put(ncout, "NSCT", "serial_number", adp[['serialNumber']])
-    ncatt_put(ncout, "VCSP", "sensor_type", adp[['sensor_type']])
+    ncatt_put(ncout, "VCSP", "sensor_type", adp[['instrumentType']])
     ncatt_put(ncout, "VCSP", "sensor_depth", adp[['sensorDepth']])
     ncatt_put(ncout, "VCSP", "serial_number", adp[['serialNumber']])
-    ncatt_put(ncout, "ERRV", "sensor_type", adp[['sensor_type']])
+    ncatt_put(ncout, "ERRV", "sensor_type", adp[['instrumentType']])
     ncatt_put(ncout, "ERRV", "sensor_depth", adp[['sensorDepth']])
     ncatt_put(ncout, "ERRV", "serial_number", adp[['serialNumber']])
-    ncatt_put(ncout, "BEAM_01", "sensor_type", adp[['sensor_type']])
+    ncatt_put(ncout, "BEAM_01", "sensor_type", adp[['instrumentType']])
     ncatt_put(ncout, "BEAM_01", "sensor_depth", adp[['sensorDepth']])
     ncatt_put(ncout, "BEAM_01", "serial_number", adp[['serialNumber']])
-    ncatt_put(ncout, "BEAM_02", "sensor_type", adp[['sensor_type']])
+    ncatt_put(ncout, "BEAM_02", "sensor_type", adp[['instrumentType']])
     ncatt_put(ncout, "BEAM_02", "sensor_depth", adp[['sensorDepth']])
     ncatt_put(ncout, "BEAM_02", "serial_number", adp[['serialNumber']])
-    ncatt_put(ncout, "BEAM_03", "sensor_type", adp[['sensor_type']])
+    ncatt_put(ncout, "BEAM_03", "sensor_type", adp[['instrumentType']])
     ncatt_put(ncout, "BEAM_03", "sensor_depth", adp[['sensorDepth']])
     ncatt_put(ncout, "BEAM_03", "serial_number", adp[['serialNumber']])
-    ncatt_put(ncout, "BEAM_04", "sensor_type", adp[['sensor_type']])
+    ncatt_put(ncout, "BEAM_04", "sensor_type", adp[['instrumentType']])
     ncatt_put(ncout, "BEAM_04", "sensor_depth", adp[['depthMean']])
     ncatt_put(ncout, "BEAM_04", "serial_number", adp[['serialNumber']])
-    ncatt_put(ncout, "PGDP_01", "sensor_type", adp[['sensor_type']])
+    ncatt_put(ncout, "PGDP_01", "sensor_type", adp[['instrumentType']])
     ncatt_put(ncout, "PGDP_01", "sensor_depth", adp[['sensorDepth']])
     ncatt_put(ncout, "PGDP_01", "serial_number", adp[['serialNumber']])
-    ncatt_put(ncout, "PGDP_02", "sensor_type", adp[['sensor_type']])
+    ncatt_put(ncout, "PGDP_02", "sensor_type", adp[['instrumentType']])
     ncatt_put(ncout, "PGDP_02", "sensor_depth", adp[['sensorDepth']])
     ncatt_put(ncout, "PGDP_02", "serial_number", adp[['serialNumber']])
-    ncatt_put(ncout, "PGDP_03", "sensor_type", adp[['sensor_type']])
+    ncatt_put(ncout, "PGDP_03", "sensor_type", adp[['instrumentType']])
     ncatt_put(ncout, "PGDP_03", "sensor_depth", adp[['sensorDepth']])
     ncatt_put(ncout, "PGDP_03", "serial_number", adp[['serialNumber']])
-    ncatt_put(ncout, "PGDP_04", "sensor_type", adp[['sensor_type']])
+    ncatt_put(ncout, "PGDP_04", "sensor_type", adp[['instrumentType']])
     ncatt_put(ncout, "PGDP_04", "sensor_depth", adp[['sensorDepth']])
     ncatt_put(ncout, "PGDP_04", "serial_number", adp[['serialNumber']])
     ncatt_put(ncout, "EWCT", "generic_name", "u")
@@ -714,15 +708,15 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, "PGDP_03", "generic_name", "PGd")
     ncatt_put(ncout, "PGDP_04", "generic_name", "PGd")
     ncatt_put(ncout, "hght", "generic_name", "height")
-    ncatt_put(ncout, "hght", "sensor_type", adp[['sensor_type']])
+    ncatt_put(ncout, "hght", "sensor_type", adp[['instrumentType']])
     ncatt_put(ncout, "hght", "sensor_depth", adp[['depthMean']])
     ncatt_put(ncout, "hght", "serial_number", adp[['serialNumber']])
     ncatt_put(ncout, "D", "generic_name", "depth")
-    ncatt_put(ncout, "D", "sensor_type", adp[['sensor_type']])
+    ncatt_put(ncout, "D", "sensor_type", adp[['instrumentType']])
     ncatt_put(ncout, "D", "sensor_depth", adp[['depthMean']])
     ncatt_put(ncout, "D", "serial_number", adp[['serialNumber']])
     ncatt_put(ncout, "Tx", "generic_name", "temp")
-    ncatt_put(ncout, "Tx", "sensor_type", adp[['sensor_type']])
+    ncatt_put(ncout, "Tx", "sensor_type", adp[['instrumentType']])
     ncatt_put(ncout, "Tx", "sensor_depth", adp[['depthMean']])
     ncatt_put(ncout, "Tx", "serial_number", adp[['serialNumber']])
     ncatt_put(ncout, "QC_flag_u", "comment", "Quality flag resulting from quality control")
@@ -890,7 +884,7 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "false_target_reject_values", adp[['falseTargetThresh']])
     ncatt_put(ncout, 0, "serial_number", adp[['serialNumber']])
     ncatt_put(ncout, 0, "transform", adp[['oceCoordinate']])
-    ncatt_put(ncout, 0, "data_type", adp[['sensor_type']])
+    ncatt_put(ncout, 0, "data_type", adp[['instrumentType']])
     ncatt_put(ncout, 0, "coord_system", adp[['oceCoordinate']])
     ncatt_put(ncout, 0, "longitude", adp[['longitude']])
     ncatt_put(ncout, 0, "latitude", adp[['latitude']])
@@ -904,22 +898,22 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "pred_accuracy", adp[['velocityResolution']])
     ncatt_put(ncout, "depth", "xducer_offset_from_bottom", adp[['depth_off_bottom']])
     ncatt_put(ncout, "depth", "bin_size", adp[['cellSize']])
-    ncatt_put(ncout, "EWCT", "sensor_type", adp[['sensor_type']])
+    ncatt_put(ncout, "EWCT", "sensor_type", adp[['instrumentType']])
     ncatt_put(ncout, "EWCT", "sensor_depth", adp[['sensorDepth']])
     ncatt_put(ncout, "EWCT", "serial_number", adp[['serialNumber']])
-    ncatt_put(ncout, "NSCT", "sensor_type", adp[['sensor_type']])
+    ncatt_put(ncout, "NSCT", "sensor_type", adp[['instrumentType']])
     ncatt_put(ncout, "NSCT", "sensor_depth", adp[['sensorDepth']])
     ncatt_put(ncout, "NSCT", "serial_number", adp[['serialNumber']])
-    ncatt_put(ncout, "VCSP", "sensor_type", adp[['sensor_type']])
+    ncatt_put(ncout, "VCSP", "sensor_type", adp[['instrumentType']])
     ncatt_put(ncout, "VCSP", "sensor_depth", adp[['sensorDepth']])
     ncatt_put(ncout, "VCSP", "serial_number", adp[['serialNumber']])
-    ncatt_put(ncout, "ERRV", "sensor_type", adp[['sensor_type']])
+    ncatt_put(ncout, "ERRV", "sensor_type", adp[['instrumentType']])
     ncatt_put(ncout, "ERRV", "sensor_depth", adp[['sensorDepth']])
     ncatt_put(ncout, "ERRV", "serial_number", adp[['serialNumber']])
-    ncatt_put(ncout, "BEAM_01", "sensor_type", adp[['sensor_type']])
+    ncatt_put(ncout, "BEAM_01", "sensor_type", adp[['instrumentType']])
     ncatt_put(ncout, "BEAM_01", "sensor_depth", adp[['sensorDepth']])
     ncatt_put(ncout, "BEAM_01", "serial_number", adp[['serialNumber']])
-    ncatt_put(ncout, "PGDP_01", "sensor_type", adp[['sensor_type']])
+    ncatt_put(ncout, "PGDP_01", "sensor_type", adp[['instrumentType']])
     ncatt_put(ncout, "PGDP_01", "sensor_depth", adp[['sensorDepth']])
     ncatt_put(ncout, "PGDP_01", "serial_number", adp[['serialNumber']])
     ncatt_put(ncout, "EWCT", "generic_name", "u")
@@ -1003,84 +997,42 @@ oceNc_create <- function(adp, name,  metadata){
   ####
   ncatt_put(ncout, "EWCT", "data_max", max(adp[['v']][,,1], na.rm = TRUE))
   ncatt_put(ncout, "EWCT", "data_min", min(adp[['v']][,,1], na.rm = TRUE))
-  ncatt_put(ncout, "EWCT", "valid_range", 1000)
   ncatt_put(ncout, "NSCT", "data_max", max(adp[['v']][,,2], na.rm = TRUE))
   ncatt_put(ncout, "NSCT", "data_min", min(adp[['v']][,,2], na.rm = TRUE))
-  ncatt_put(ncout, "NSCT", "valid_range", 1000)
   ncatt_put(ncout, "VCSP", "data_max", max(adp[['v']][,,3], na.rm = TRUE))
   ncatt_put(ncout, "VCSP", "data_min", min(adp[['v']][,,3], na.rm = TRUE))
-  ncatt_put(ncout, "VCSP", "valid_range", 1000)
   ncatt_put(ncout, "ERRV", "data_max", max(adp[['v']][,,4], na.rm = TRUE))
   ncatt_put(ncout, "ERRV", "data_min", min(adp[['v']][,,4], na.rm = TRUE))
-  ncatt_put(ncout, "ERRV", "valid_range", 2000)
 
   if(adp@metadata$source == 'raw'){
     ncatt_put(ncout, "BEAM_01", "data_min", min(adp[['a', 'numeric']][,,1], na.rm= TRUE))
     ncatt_put(ncout, "BEAM_01", "data_max", max(adp[['a', 'numeric']][,,1], na.rm= TRUE))
-    ncatt_put(ncout, "BEAM_01", "valid_min", 50)
-    ncatt_put(ncout, "BEAM_01", "valid_max", 255)
-
     ncatt_put(ncout, "BEAM_02", "data_min", min(adp[['a' ,'numeric']][,,2], na.rm= TRUE))
     ncatt_put(ncout, "BEAM_02", "data_max", max(adp[['a', 'numeric']][,,2], na.rm= TRUE))
-    ncatt_put(ncout, "BEAM_02", "valid_min", 50)
-    ncatt_put(ncout, "BEAM_02", "valid_max", 255)
-
     ncatt_put(ncout, "BEAM_03", "data_min", min(adp[['a', 'numeric']][,,3], na.rm= TRUE))
     ncatt_put(ncout, "BEAM_03", "data_max", max(adp[['a', 'numeric']][,,3], na.rm= TRUE))
-    ncatt_put(ncout, "BEAM_03", "valid_min", 50)
-    ncatt_put(ncout, "BEAM_03", "valid_max", 255)
-
     ncatt_put(ncout, "BEAM_04", "data_min", min(adp[['a', 'numeric']][,,4], na.rm= TRUE))
     ncatt_put(ncout, "BEAM_04", "data_max", max(adp[['a', 'numeric']][,,4], na.rm= TRUE))
-    ncatt_put(ncout, "BEAM_04", "valid_min", 50)
-    ncatt_put(ncout, "BEAM_04", "valid_max", 255)
-
     ncatt_put(ncout, "PGDP_01", "data_min", min(adp[['g', 'numeric']][,,1], na.rm= TRUE))
     ncatt_put(ncout, "PGDP_01", "data_max", max(adp[['g', 'numeric']][,,1], na.rm= TRUE))# eg min 25 % good
-    ncatt_put(ncout, "PGDP_01", "valid_min", 0)
-    ncatt_put(ncout, "PGDP_01", "valid_max", 100)
-
     ncatt_put(ncout, "PGDP_02", "data_min", min(adp[['g', 'numeric']][,,2], na.rm= TRUE))
     ncatt_put(ncout, "PGDP_02", "data_max", max(adp[['g' ,'numeric']][,,2], na.rm= TRUE))
-    ncatt_put(ncout, "PGDP_02", "valid_min", 0)
-    ncatt_put(ncout, "PGDP_02", "valid_max", 100)
-
     ncatt_put(ncout, "PGDP_03", "data_min", min(adp[['g' ,'numeric']][,,3], na.rm= TRUE))
     ncatt_put(ncout, "PGDP_03", "data_max", max(adp[['g', 'numeric']][,,3], na.rm= TRUE))
-    ncatt_put(ncout, "PGDP_03", "valid_min", 0)
-    ncatt_put(ncout, "PGDP_03", "valid_max", 100)
-
     ncatt_put(ncout, "PGDP_04", "data_min", min(adp[['g', 'numeric']][,,4], na.rm= TRUE))
     ncatt_put(ncout, "PGDP_04", "data_max", max(adp[['g', 'numeric']][,,4], na.rm= TRUE))
-    ncatt_put(ncout, "PGDP_04", "valid_min", 0)
-    ncatt_put(ncout, "PGDP_04", "valid_max", 100)
-
     ncatt_put(ncout, "hght", "data_min", min(adp[['depth', 'numeric']]))
     ncatt_put(ncout, "hght", "data_max", max(adp[['depth', 'numeric']]))
-    ncatt_put(ncout, "hght", "valid_min", 0)
-    ncatt_put(ncout, "hght", "valid_max", 1000)
-
     ncatt_put(ncout, "D", "data_min", min(adp[['depth']]))
     ncatt_put(ncout, "D", "data_max", max(adp[['depth']]))
-    ncatt_put(ncout, "D", "valid_min", 0)
-    ncatt_put(ncout, "D", "valid_max", 5000)
-
     ncatt_put(ncout, "Tx", "data_min", min(adp[['temperature']]))
     ncatt_put(ncout, "Tx", "data_max", max(adp[['temperature']]))
-    ncatt_put(ncout, "Tx", "valid_min", -5)
-    ncatt_put(ncout, "Tx", "valid_max", 40)
-
   }
   if( adp@metadata$source == 'odf'){
     ncatt_put(ncout, "BEAM_01", "data_min", min(adp[['a', 'numeric']], na.rm= TRUE))
     ncatt_put(ncout, "BEAM_01", "data_max", max(adp[['a', 'numeric']], na.rm= TRUE))
-    ncatt_put(ncout, "BEAM_01", "valid_min", 50)
-    ncatt_put(ncout, "BEAM_01", "valid_max", 255)
-
     ncatt_put(ncout, "PGDP_01", "data_min", min(adp[['q', 'numeric']], na.rm= TRUE))
     ncatt_put(ncout, "PGDP_01", "data_max", max(adp[['q', 'numeric']], na.rm= TRUE))
-    ncatt_put(ncout, "PGDP_01", "valid_min", 0)
-    ncatt_put(ncout, "PGDP_01", "valid_max", 100)
 
   }
 
