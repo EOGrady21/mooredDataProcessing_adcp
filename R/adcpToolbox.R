@@ -495,11 +495,9 @@ oceNc_create <- function(adp, name,  metadata){
   if (adp@metadata$source == 'raw'){
 
     #define variables
-    dlname <- "feature_type_instance"
-    st_def <- ncvar_def(longname = "feature_type_instance", units = 'NULL',  dim =  list(londim, latdim), name = dlname, prec = 'char')
+    dlname <- "station_name"
+    st_def <- ncvar_def(longname = "station_name", units = '',  dim =  list(londim, latdim), name = dlname, prec = 'char')
 
-    dlname <- "profile_index"
-    pr_def <- ncvar_def(longname = "profile_index",units = 'NULL', dim = (timedim), name = dlname, prec = 'integer')
 
     dlname <- "eastward_sea_water_velocity"
     u_def <- ncvar_def("EWCT", "m/sec", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
@@ -567,16 +565,14 @@ oceNc_create <- function(adp, name,  metadata){
 
     ####writing net CDF####
     #write out definitions to new nc file
-    ncout <- nc_create(ncfname, list(u_def, v_def, w_def, e_def, t_def, b1_def, b2_def, b3_def, b4_def, pg1_def, pg2_def, pg3_def, pg4_def, p_def, r_def, hght_def, Tx_def, D_def, qc_u_def, qc_v_def, qc_w_def, st_def, pr_def), force_v4 = TRUE)
+    ncout <- nc_create(ncfname, list(u_def, v_def, w_def, e_def, t_def, b1_def, b2_def, b3_def, b4_def, pg1_def, pg2_def, pg3_def, pg4_def, p_def, r_def, hght_def, Tx_def, D_def, qc_u_def, qc_v_def, qc_w_def, st_def,), force_v4 = TRUE)
   }
 
   if (adp@metadata$source == 'odf'){
     #define variables
-    dlname <- "feature_type_instance"
-    st_def <- ncvar_def(longname = "feature_type_instance", units = 'NULL' , dim =  list(londim, latdim), name = dlname, prec = 'char')
+    dlname <- "station_name"
+    st_def <- ncvar_def(longname = "station_name", units = '' , dim =  list(londim, latdim), name = dlname, prec = 'char')
 
-    dlname <- "profile_index"
-    pr_def <- ncvar_def(longname = "profile_index", units = 'NULL' , dim = (timedim), name = dlname, prec = 'integer')
 
     dlname <- "eastward_sea_water_velocity"
     u_def <- ncvar_def("EWCT", "m/sec", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
@@ -601,7 +597,7 @@ oceNc_create <- function(adp, name,  metadata){
 
     ####writing net CDF####
     #write out definitions to new nc file
-    ncout <- nc_create(ncfname, list(u_def, v_def, w_def, e_def, t_def, b1_def,  pg1_def, st_def, pr_def), force_v4 = TRUE)
+    ncout <- nc_create(ncfname, list(u_def, v_def, w_def, e_def, t_def, b1_def,  pg1_def, st_def), force_v4 = TRUE)
 
 
   }
@@ -613,7 +609,7 @@ oceNc_create <- function(adp, name,  metadata){
   ncvar_put(ncout, w_def, adp[['v']][,,3])
   ncvar_put(ncout, e_def, adp[['v']][,,4])
   ncvar_put(ncout, t_def, adp[['time']])
-  ncvar_put(ncout, varid = st_def, vals = 'Identifier for each feature type instance')
+  ncvar_put(ncout, varid = st_def, vals = adp[['mooring_number']])
 
   if (adp@metadata$source == 'raw'){
     ncvar_put(ncout, b1_def, adp[['a', 'numeric']][,,1])
@@ -641,8 +637,9 @@ oceNc_create <- function(adp, name,  metadata){
 
   ###metadata###
 
-  ncatt_put(ncout, 'feature_type_instance', attname = 'cf_role',attval =  'timeseries_id')
-  ncatt_put(ncout, 'profile_index', attname = 'cf_role', attval = 'profile_id')
+  ncatt_put(ncout, 'station_name', attname = 'cf_role',attval =  'timeseries_id')
+  ncatt_put(ncout, 'SYTM', attname = 'cf_role', attval = 'profile_id')
+  ncatt_put(ncout, 'station_name', 'standard_name', 'platform_name')
 
   if (adp@metadata$source == 'raw'){
     ####pulled from adp object####
