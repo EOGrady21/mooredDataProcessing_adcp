@@ -997,12 +997,23 @@ oceNc_create <- function(adp, name,  metadata){
   ####
   ncatt_put(ncout, "EWCT", "data_max", max(adp[['v']][,,1], na.rm = TRUE))
   ncatt_put(ncout, "EWCT", "data_min", min(adp[['v']][,,1], na.rm = TRUE))
+  ncatt_put(ncout, "EWCT", "valid_max", 1000)
+  ncatt_put(ncout, "EWCT", "valid_min", -1000)
+
   ncatt_put(ncout, "NSCT", "data_max", max(adp[['v']][,,2], na.rm = TRUE))
   ncatt_put(ncout, "NSCT", "data_min", min(adp[['v']][,,2], na.rm = TRUE))
+  ncatt_put(ncout, "NSCT", "valid_max", 1000)
+  ncatt_put(ncout, "NSCT", "valid_min", -1000)
+
   ncatt_put(ncout, "VCSP", "data_max", max(adp[['v']][,,3], na.rm = TRUE))
   ncatt_put(ncout, "VCSP", "data_min", min(adp[['v']][,,3], na.rm = TRUE))
+  ncatt_put(ncout, "VCSP", "valid_max", 1000)
+  ncatt_put(ncout, "VCSP", "valid_min", -1000)
+
   ncatt_put(ncout, "ERRV", "data_max", max(adp[['v']][,,4], na.rm = TRUE))
   ncatt_put(ncout, "ERRV", "data_min", min(adp[['v']][,,4], na.rm = TRUE))
+  ncatt_put(ncout, "ERRV", "valid_max", 2000)
+  ncatt_put(ncout, "ERRV", "valid_min", -2000)
 
   if(adp@metadata$source == 'raw'){
     ncatt_put(ncout, "BEAM_01", "data_min", min(adp[['a', 'numeric']][,,1], na.rm= TRUE))
