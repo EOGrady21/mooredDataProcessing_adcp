@@ -496,43 +496,43 @@ oceNc_create <- function(adp, name,  metadata){
 
     #define variables
     dlname <- "eastward_sea_water_velocity"
-    u_def <- ncvar_def("EWCT", "m/sec", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
+    u_def <- ncvar_def("EWCT", "m/sec", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "northward_sea_water_velocity"
-    v_def <- ncvar_def("NSCT", "m/sec", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
+    v_def <- ncvar_def("NSCT", "m/sec", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "upward_sea_water_velocity"
-    w_def <- ncvar_def("VCSP", "m/sec", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
+    w_def <- ncvar_def("VCSP", "m/sec", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "time_02"
     t_def <- ncvar_def("SYTM", "POSIXct", list(timedim, londim, latdim), FillValue, dlname, prec = "float")
 
     dlname <- "error_velocity_in_sea_water"
-    e_def <- ncvar_def("ERRV", "m/sec", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
+    e_def <- ncvar_def("ERRV", "m/sec", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "ADCP_echo_intensity_beam_1"
-    b1_def <- ncvar_def("BEAM_01", "a", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
+    b1_def <- ncvar_def("BEAM_01", "a", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "ADCP_echo_intensity_beam_2"
-    b2_def <- ncvar_def("BEAM_02", "a", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
+    b2_def <- ncvar_def("BEAM_02", "a", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "ADCP_echo_intensity_beam_3"
-    b3_def <- ncvar_def("BEAM_03", "a", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
+    b3_def <- ncvar_def("BEAM_03", "a", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "ADCP_echo_intensity_beam_4"
-    b4_def <- ncvar_def("BEAM_04", "a", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
+    b4_def <- ncvar_def("BEAM_04", "a", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "percent_good_beam_1"
-    pg1_def <- ncvar_def("PGDP_01", "counts", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
+    pg1_def <- ncvar_def("PGDP_01", "counts", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "percent_good_beam_2"
-    pg2_def <- ncvar_def("PGDP_02", "counts", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
+    pg2_def <- ncvar_def("PGDP_02", "counts", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "percent_good_beam_3"
-    pg3_def <- ncvar_def("PGDP_03", "counts", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
+    pg3_def <- ncvar_def("PGDP_03", "counts", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "percent_good_beam_4"
-    pg4_def <- ncvar_def("PGDP_04", "counts", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
+    pg4_def <- ncvar_def("PGDP_04", "counts", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "pitch"
     p_def <- ncvar_def("PTCH", "degrees", list(timedim, londim, latdim), FillValue, dlname, prec = "float")
@@ -551,13 +551,13 @@ oceNc_create <- function(adp, name,  metadata){
 
 
     dlname <- "quality_flag u"
-    qc_u_def <- ncvar_def("QC_flag_u", "", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
+    qc_u_def <- ncvar_def("QC_flag_u", "", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "quality_flag v"
-    qc_v_def <- ncvar_def("QC_flag_v", "", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
+    qc_v_def <- ncvar_def("QC_flag_v", "", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "quality_flag w"
-    qc_w_def <- ncvar_def("QC_flag_w", "", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
+    qc_w_def <- ncvar_def("QC_flag_w", "", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
 
     ####writing net CDF####
     #write out definitions to new nc file
@@ -567,25 +567,25 @@ oceNc_create <- function(adp, name,  metadata){
   if (adp@metadata$source == 'odf'){
     #define variables
     dlname <- "eastward_sea_water_velocity"
-    u_def <- ncvar_def("EWCT", "m/sec", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
+    u_def <- ncvar_def("EWCT", "m/sec", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "northward_sea_water_velocity"
-    v_def <- ncvar_def("NSCT", "m/sec", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
+    v_def <- ncvar_def("NSCT", "m/sec", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "upward_sea_water_velocity"
-    w_def <- ncvar_def("VCSP", "m/sec", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
+    w_def <- ncvar_def("VCSP", "m/sec", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "time_02"
     t_def <- ncvar_def("SYTM", "POSIXct", list(timedim, londim, latdim), FillValue, dlname, prec = "float")
 
     dlname <- "error_velocity_in_sea_water"
-    e_def <- ncvar_def("ERRV", "m/sec", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
+    e_def <- ncvar_def("ERRV", "m/sec", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "ADCP_echo_intensity_beam_1"
-    b1_def <- ncvar_def("BEAM_01", "a", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
+    b1_def <- ncvar_def("BEAM_01", "a", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "percent_good_beam_1"
-    pg1_def <- ncvar_def("PGDP_01", "counts", list(timedim, depthdim, londim, latdim), FillValue, dlname, prec = "float")
+    pg1_def <- ncvar_def("PGDP_01", "counts", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
 
     ####writing net CDF####
     #write out definitions to new nc file
