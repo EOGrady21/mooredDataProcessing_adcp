@@ -638,7 +638,7 @@ oceNc_create <- function(adp, name,  metadata){
   ###metadata###
 
   ncatt_put(ncout, 'station_name', attname = 'cf_role',attval =  'timeseries_id')
-  ncatt_put(ncout, 'SYTM', attname = 'cf_role', attval = 'profile_id')
+  ncatt_put(ncout, 'time', attname = 'cf_role', attval = 'profile_id')
   ncatt_put(ncout, 'station_name', 'standard_name', 'platform_name')
   ncatt_put(ncout, 'station_name', 'coordinates', 'lon lat')
   ncatt_put(ncout, 'time' , 'calendar', 'gregorian')
