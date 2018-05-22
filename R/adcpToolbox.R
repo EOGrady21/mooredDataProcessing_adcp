@@ -484,7 +484,7 @@ oceNc_create <- function(adp, name,  metadata){
   lat <- adp[['latitude']]
 
   #create dimensions
-  timedim <- ncdim_def("time", "POSIXct", as.double(time))    #time formatting FIX
+  timedim <- ncdim_def("time", "seconds since 1970-01-01T00:00:00Z", as.double(time))    #time formatting FIX
   depthdim <- ncdim_def("depth", "m", as.double(dist))
   londim <- ncdim_def("lon", "degrees_east" , as.double(lon))
   latdim <- ncdim_def("lat", "degrees_north", as.double(lat))
@@ -509,7 +509,7 @@ oceNc_create <- function(adp, name,  metadata){
     w_def <- ncvar_def("VCSP", "m/sec", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "time_02"
-    t_def <- ncvar_def("SYTM", "POSIXct", list(timedim, londim, latdim), FillValue, dlname, prec = "float")
+    t_def <- ncvar_def("SYTM", "seconds since 1970-01-01T00:00:00Z", list( londim, latdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "error_velocity_in_sea_water"
     e_def <- ncvar_def("ERRV", "m/sec", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
@@ -584,7 +584,7 @@ oceNc_create <- function(adp, name,  metadata){
     w_def <- ncvar_def("VCSP", "m/sec", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "time_02"
-    t_def <- ncvar_def("SYTM", "POSIXct", list(timedim, londim, latdim), FillValue, dlname, prec = "float")
+    t_def <- ncvar_def("SYTM", "seconds since 1970-01-01T00:00:00Z", list( londim, latdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "error_velocity_in_sea_water"
     e_def <- ncvar_def("ERRV", "m/sec", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
@@ -608,7 +608,7 @@ oceNc_create <- function(adp, name,  metadata){
   ncvar_put(ncout, v_def, adp[['v']][,,2])
   ncvar_put(ncout, w_def, adp[['v']][,,3])
   ncvar_put(ncout, e_def, adp[['v']][,,4])
-  ncvar_put(ncout, t_def, adp[['time']])
+  ncvar_put(ncout, t_def, as.POSIXct(adp[['time']], tz = 'UTC', origin = '1970-01-01 00:00:00'))
   ncvar_put(ncout, varid = st_def, vals = adp[['mooring_number']])
 
   if (adp@metadata$source == 'raw'){
