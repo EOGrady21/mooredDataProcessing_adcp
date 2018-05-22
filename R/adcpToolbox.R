@@ -641,6 +641,7 @@ oceNc_create <- function(adp, name,  metadata){
   ncatt_put(ncout, 'SYTM', attname = 'cf_role', attval = 'profile_id')
   ncatt_put(ncout, 'station_name', 'standard_name', 'platform_name')
   ncatt_put(ncout, 'station_name', 'coordinates', 'lon lat')
+  ncatt_put(ncout, 'time' , 'calendar', 'gregorian')
 
   if (adp@metadata$source == 'raw'){
     ####pulled from adp object####
