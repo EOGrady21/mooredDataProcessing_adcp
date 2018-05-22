@@ -515,16 +515,16 @@ oceNc_create <- function(adp, name,  metadata){
     e_def <- ncvar_def("ERRV", "m/sec", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "ADCP_echo_intensity_beam_1"
-    b1_def <- ncvar_def("BEAM_01", "a", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    b1_def <- ncvar_def("BEAM_01", "counts", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "ADCP_echo_intensity_beam_2"
-    b2_def <- ncvar_def("BEAM_02", "a", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    b2_def <- ncvar_def("BEAM_02", "counts", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "ADCP_echo_intensity_beam_3"
-    b3_def <- ncvar_def("BEAM_03", "a", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    b3_def <- ncvar_def("BEAM_03", "counts", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "ADCP_echo_intensity_beam_4"
-    b4_def <- ncvar_def("BEAM_04", "a", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    b4_def <- ncvar_def("BEAM_04", "counts", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "percent_good_beam_1"
     pg1_def <- ncvar_def("PGDP_01", "counts", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
@@ -590,7 +590,7 @@ oceNc_create <- function(adp, name,  metadata){
     e_def <- ncvar_def("ERRV", "m/sec", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "ADCP_echo_intensity_beam_1"
-    b1_def <- ncvar_def("BEAM_01", "a", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    b1_def <- ncvar_def("BEAM_01", "counts", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "percent_good_beam_1"
     pg1_def <- ncvar_def("PGDP_01", "counts", list(londim, latdim, depthdim, timedim), FillValue, dlname, prec = "float")
