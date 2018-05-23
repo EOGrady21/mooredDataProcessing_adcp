@@ -981,12 +981,17 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, "ERRV", "sdn_parameter_urn", "SDN:P01::LERRAP01")
     ncatt_put(ncout, "BEAM_01", "sdn_parameter_urn", "SDN:P01::ASAMAP00")
     ncatt_put(ncout, "PGDP_01", "sdn_parameter_urn", "SDN:P01::PCGDAP00")
+    ncatt_put(ncout, "lon", "sdn_parameter_urn", "SDN:P01::ALONZZ01")
+    ncatt_put(ncout, "lat", "sdn_parameter_urn", "SDN:P01::ALATZZ01")
     ncatt_put(ncout, "EWCT", "sdn_parameter_name", "Eastward current velocity (Eulerian) in the water body by moored acoustic doppler current profiler (ADCP)")
     ncatt_put(ncout, "NSCT", "sdn_parameter_name", "Northward current velocity (Eulerian) in the water body by moored acoustic doppler current profiler (ADCP)")
     ncatt_put(ncout, "VCSP", "sdn_parameter_name", "Upward current velocity in the water body by moored acoustic doppler current profiler (ADCP)")
     ncatt_put(ncout, "ERRV", "sdn_parameter_name", "Current velocity error in the water body by moored acoustic doppler current profiler (ADCP)")
     ncatt_put(ncout, "BEAM_01", "sdn_parameter_name", "Signal return amplitude from the water body by moored acoustic doppler current profiler (ADCP) beam 1")
     ncatt_put(ncout, "PGDP_01", "sdn_parameter_name", "Acceptable proportion of signal returns by moored acoustic doppler current profiler (ADCP) beam 1")
+    ncatt_put(ncout, "lon", "sdn_parameter_name", "Longitude east")
+    ncatt_put(ncout, "lat", "sdn_parameter_name", "Latitude north")
+
 
     #P06
     ncatt_put(ncout, "EWCT", "sdn_uom_urn", "SDN:P06::UVAA")
@@ -995,12 +1000,17 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, "ERRV", "sdn_uom_urn", "SDN:P06::UVAA")
     ncatt_put(ncout, "BEAM_01", "sdn_uom_urn", "SDN:P06::UCNT")
     ncatt_put(ncout, "PGDP_01", "sdn_uom_urn", "SDN:P06::UPCT")
+    ncatt_put(ncout, "lon", "sdn_uom_urn", "SDN:P06::DEGE")
+    ncatt_put(ncout, "lat", "sdn_uom_urn", "SDN:P06:DEGN")
+
     ncatt_put(ncout, "EWCT", "sdn_uom_name", "Metres per second")
     ncatt_put(ncout, "NSCT", "sdn_uom_name", "Metres per second")
     ncatt_put(ncout, "VCSP", "sdn_uom_name", "Metres per second")
     ncatt_put(ncout, "ERRV", "sdn_uom_name", "Metres per second")
     ncatt_put(ncout, "BEAM_01", "sdn_uom_name", "Counts")
     ncatt_put(ncout, "PGDP_01", "sdn_uom_name", "Percent")
+    ncatt_put(ncout, "lon", "sdn_uom_name", "Degrees east")
+    ncatt_put(ncout, "lat", "sdn_uom_name", "Degrees north")
 
     #CF standard names
     ncatt_put(ncout, "EWCT", "standard_name", "eastward_sea_water_velocity")
