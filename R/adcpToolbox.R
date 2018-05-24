@@ -30,7 +30,7 @@ read.adp.easy <- function(file, metadata){
   md <- as.list(mv)
   names(md) <- mn
 
-  adp <- read.adp(file, latitude = md[['latitude']], longitude =md[['longitude']] ) #insert lat and lon from mooring logs
+  adp <- read.adp(file, latitude = as.numeric(md[['latitude']]), longitude = as.numeric(md[['longitude']]) ) #insert lat and lon from mooring logs
 
   if (!missing(md)) {
     for (m in seq_along(md)) {
@@ -514,7 +514,7 @@ oceNc_create <- function(adp, name,  metadata){
   #create dimensions
   timedim <- ncdim_def("time", "seconds since 1970-01-01T00:00:00Z", as.double(time))    #time formatting FIX
   depthdim <- ncdim_def("depth", "m", as.double(dist))
-  stationdim <- ncdim_def("station", "number", adp[['mooring_number']])
+  stationdim <- ncdim_def("station", "number", as.numeric(adp[['mooring_number']]))
   #set fill value
   FillValue <- 1e35
 
@@ -574,7 +574,7 @@ oceNc_create <- function(adp, name,  metadata){
     r_def <- ncvar_def("ROLL", "degrees", list( stationdim, timedim ), FillValue, dlname, prec = "float")
 
     dlname <- "height of sea surface"
-    hght_def <- ncvar_def("hght", "m", list( stationdim, timedim ), FillValue, dlname, prec = "float")
+    hght_def <- ncvar_def("hght", "m", list( stationdim, depthdim ), FillValue, dlname, prec = "float")
 
     dlname <- "ADCP Transducer Temp."
     Tx_def <- ncvar_def("Tx", "degrees", list(stationdim, timedim), FillValue, dlname, prec = "float")
