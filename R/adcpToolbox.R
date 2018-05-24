@@ -514,7 +514,7 @@ oceNc_create <- function(adp, name,  metadata){
   #create dimensions
   timedim <- ncdim_def("time", "seconds since 1970-01-01T00:00:00Z", as.double(time))    #time formatting FIX
   depthdim <- ncdim_def("depth", "m", as.double(dist))
-  stationdim <- ncdim_def("station", "number", as.numeric(adp[['mooring_number']]))
+  stationdim <- ncdim_def("station", "", as.numeric(adp[['mooring_number']]))
   #set fill value
   FillValue <- 1e35
 
