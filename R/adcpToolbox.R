@@ -795,10 +795,10 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "geospatial_lon_min", adp[['longitude']])
     ncatt_put(ncout, 0, "geospatial_lon_max", adp[['longitude']])
     ncatt_put(ncout, 0, "geospatial_lon_units", "degrees_east")
-    ncatt_put(ncout, 0, "geospatial_vertical_min", min(adp[['depth']]))
-    ncatt_put(ncout, 0, "geospatial_vertical_max", max(adp[['depth']]))
+    ncatt_put(ncout, 0, "geospatial_vertical_min", max(adp[['distance']], na.rm = TRUE))
+    ncatt_put(ncout, 0, "geospatial_vertical_max", min(adp[['distance']], na.rm = TRUE))
     ncatt_put(ncout, 0, "geospatial_vertical_units", "metres")
-    ncatt_put(ncout, 0, "geospatial_vertical_positive", adp[['orientation']])     #eg up or down
+    ncatt_put(ncout, 0, "geospatial_vertical_positive", 'down')     #eg up or down
     ncatt_put(ncout, 0, "institution", adp[['institution']])
     ncatt_put(ncout, 0, "creator_name", adp[['creator_name']])
     ncatt_put(ncout, 0, "creator_url", adp[['creator_url']])
