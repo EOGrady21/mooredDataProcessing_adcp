@@ -795,10 +795,17 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "geospatial_lon_min", adp[['longitude']])
     ncatt_put(ncout, 0, "geospatial_lon_max", adp[['longitude']])
     ncatt_put(ncout, 0, "geospatial_lon_units", "degrees_east")
-    ncatt_put(ncout, 0, "geospatial_vertical_min", max(adp[['distance']], na.rm = TRUE))
-    ncatt_put(ncout, 0, "geospatial_vertical_max", min(adp[['distance']], na.rm = TRUE))
+
+    if (adp[['orientation']] == 'up'){
+      ncatt_put(ncout, 0, "geospatial_vertical_min", adp[['sensor_depth']] + max(adp[['distance']], na.rm = TRUE))
+      ncatt_put(ncout, 0, "geospatial_vertical_max", adp[['sensorDepth']] + min(adp[['distance']], na.rm = TRUE))
+    }
+    if (adp[['orientation']] == 'down'){
+      ncatt_put(ncout, 0, "geospatial_vertical_min", adp[['sensor_depth']] + min(adp[['distance']], na.rm = TRUE))
+      ncatt_put(ncout, 0, "geospatial_vertical_max", adp[['sensorDepth']] + max(adp[['distance']], na.rm = TRUE))
+    }
     ncatt_put(ncout, 0, "geospatial_vertical_units", "metres")
-    ncatt_put(ncout, 0, "geospatial_vertical_positive", 'down')     #eg up or down
+    ncatt_put(ncout, 0, "geospatial_vertical_positive", 'down')
     ncatt_put(ncout, 0, "institution", adp[['institution']])
     ncatt_put(ncout, 0, "creator_name", adp[['creator_name']])
     ncatt_put(ncout, 0, "creator_url", adp[['creator_url']])
@@ -985,8 +992,14 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "geospatial_lon_min", adp[['longitude']])
     ncatt_put(ncout, 0, "geospatial_lon_max", adp[['longitude']])
     ncatt_put(ncout, 0, "geospatial_lon_units", "degrees_east")
-    ncatt_put(ncout, 0, "geospatial_vertical_min", min(adp[['distance']]))
-    ncatt_put(ncout, 0, "geospatial_vertical_max", max(adp[['distance']]))
+    if (adp[['orientation']] == 'up'){
+      ncatt_put(ncout, 0, "geospatial_vertical_min", adp[['sensor_depth']] + max(adp[['distance']], na.rm = TRUE))
+      ncatt_put(ncout, 0, "geospatial_vertical_max", adp[['sensorDepth']] + min(adp[['distance']], na.rm = TRUE))
+    }
+    if (adp[['orientation']] == 'down'){
+      ncatt_put(ncout, 0, "geospatial_vertical_min", adp[['sensor_depth']] + min(adp[['distance']], na.rm = TRUE))
+      ncatt_put(ncout, 0, "geospatial_vertical_max", adp[['sensorDepth']] + max(adp[['distance']], na.rm = TRUE))
+    }
     ncatt_put(ncout, 0, "geospatial_vertical_units", "metres")
     ncatt_put(ncout, 0, "geospatial_vertical_positive", adp[['orientation']])     #eg up or down
     ncatt_put(ncout, 0, "institution", adp[['institution']])
