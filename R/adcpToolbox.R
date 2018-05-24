@@ -240,7 +240,7 @@ limit_depthbytime <- function(adp, tz = 'UTC'){
 #' ADCP Processing step 3.4
 #'
 #'
-#'@description Function limits time from before deployment and after recovery of ADCP
+#'@description Function limits variable (time, salinity, pressure, temperature, pitch, roll, heading) from before deployment and after recovery of ADCP
 #'
 #'@param x adp object from oce-class adp
 #'@param tz time zone, default is 'UTC'
@@ -265,6 +265,13 @@ limit_time <- function(x, tz = 'UTC', dt = x[['deployment_time']], rt = x[['reco
     t <- x[['time', "numeric"]]
     t <- as.POSIXct(t, tz = tz)
     x[['v']][t < t1] <- NA
+    x[['time']][t <t1] <- NA
+    x[['pressure']][t < t1] <- NA
+    x[['salinity']][t < t1] <- NA
+    x[['temperature']][t < t1] <- NA
+    x[['pitch']][t < t1] <- NA
+    x[['roll']][t < t1] <- NA
+    x[['heading']][t < t1] <- NA
   }
   else if(missing(dt)){
     if (!is.null(x@metadata$deployment_time)){
@@ -273,6 +280,13 @@ limit_time <- function(x, tz = 'UTC', dt = x[['deployment_time']], rt = x[['reco
       t <- x[['time', "numeric"]]
       t <- as.POSIXct(t, tz = tz)
       x[['v']][t < t1] <- NA
+      x[['time']][t <t1] <- NA
+      x[['pressure']][t < t1] <- NA
+      x[['salinity']][t < t1] <- NA
+      x[['temperature']][t < t1] <- NA
+      x[['pitch']][t < t1] <- NA
+      x[['roll']][t < t1] <- NA
+      x[['heading']][t < t1] <- NA
     }
     if (is.null(x@metadata$deployment_time)){
       warning('No deployment Time provided!')
@@ -280,13 +294,27 @@ limit_time <- function(x, tz = 'UTC', dt = x[['deployment_time']], rt = x[['reco
 
 
     if(!missing(rt)){
-      t2 <- as.POSIXct(rt)
+      t2 <- as.POSIXct(rt, tz = tz)
       x[['v']][t > t2] <- NA
+      x[['time']][t > t2] <- NA
+      x[['pressure']][t > t2] <- NA
+      x[['salinity']][t > t2] <- NA
+      x[['temperature']][t > t2] <- NA
+      x[['pitch']][t > t2] <- NA
+      x[['roll']][t > t2] <- NA
+      x[['heading']][t > t2] <- NA
     }
     else if (missing(rt))
       if (!is.null(x@metadata$recovery_time)){
-        t2 <- as.POSIXct(rt)
+        t2 <- as.POSIXct(rt, tz = tz)
         x[['v']][t > t2] <- NA
+        x[['time']][t > t2] <- NA
+        x[['pressure']][t > t2] <- NA
+        x[['salinity']][t > t2] <- NA
+        x[['temperature']][t > t2] <- NA
+        x[['pitch']][t > t2] <- NA
+        x[['roll']][t > t2] <- NA
+        x[['heading']][t > t2] <- NA
       }
     if (is.null(x@metadata$recovery_time)){
       warning('No recovery time provided!')
@@ -627,7 +655,7 @@ oceNc_create <- function(adp, name,  metadata){
     ncvar_put(ncout, pg4_def, adp[['g', 'numeric']][,,4])
     ncvar_put(ncout, p_def, adp[['pitch']])
     ncvar_put(ncout, r_def, adp[['roll']])
-    ncvar_put(ncout, hght_def, adp[['depth']])
+    ncvar_put(ncout, hght_def, (adp[['depthMean']]- adp[['distance']]))
     ncvar_put(ncout, Tx_def, adp[['temperature']])
     ncvar_put(ncout, D_def, adp[['depth']])
     ncvar_put(ncout, qc_u_def, adp@metadata$flags$v[,,1])
@@ -763,14 +791,14 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "time_coverage_end", adp[['recovery_time']])
     ncatt_put(ncout, 0, "geospatial_lat_min", adp[['latitude']])
     ncatt_put(ncout, 0, "geospatial_lat_max", adp[['latitude']])
-    ncatt_put(ncout, 0, "geosptial_lat_units", "degrees_north")
+    ncatt_put(ncout, 0, "geospatial_lat_units", "degrees_north")
     ncatt_put(ncout, 0, "geospatial_lon_min", adp[['longitude']])
-    ncatt_put(ncout, 0, "geosptial_lon_max", adp[['longitude']])
-    ncatt_put(ncout, 0, "geosptial_lon_units", "degrees_east")
+    ncatt_put(ncout, 0, "geospatial_lon_max", adp[['longitude']])
+    ncatt_put(ncout, 0, "geospatial_lon_units", "degrees_east")
     ncatt_put(ncout, 0, "geospatial_vertical_min", min(adp[['depth']]))
-    ncatt_put(ncout, 0, "geosptial_vertical_max", max(adp[['depth']]))
-    ncatt_put(ncout, 0, "geosptial_vertical_units", "metres")
-    ncatt_put(ncout, 0, "geosptial_vertical_positive", adp[['orientation']])     #eg up or down
+    ncatt_put(ncout, 0, "geospatial_vertical_max", max(adp[['depth']]))
+    ncatt_put(ncout, 0, "geospatial_vertical_units", "metres")
+    ncatt_put(ncout, 0, "geospatial_vertical_positive", adp[['orientation']])     #eg up or down
     ncatt_put(ncout, 0, "institution", adp[['institution']])
     ncatt_put(ncout, 0, "creator_name", adp[['creator_name']])
     ncatt_put(ncout, 0, "creator_url", adp[['creator_url']])
@@ -882,7 +910,7 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, "lat", "standard_name", "latitude")
     ncatt_put(ncout, "lon", "standard_name", "longitude")
     ncatt_put(ncout, "D", "standard_name", "depth")
-    ncatt_put(ncout, "depth", "poitive", "down")     #direction of depth axis
+    ncatt_put(ncout, "depth", "positive", "down")     #direction of depth axis
     ncatt_put(ncout, "depth", "axis", "y")
     ncatt_put(ncout, "time", "axis", "x")
   }
@@ -953,14 +981,14 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "time_coverage_end", adp[['recovery_time']])
     ncatt_put(ncout, 0, "geospatial_lat_min", adp[['latitude']])
     ncatt_put(ncout, 0, "geospatial_lat_max", adp[['latitude']])
-    ncatt_put(ncout, 0, "geosptial_lat_units", "degrees_north")
+    ncatt_put(ncout, 0, "geospatial_lat_units", "degrees_north")
     ncatt_put(ncout, 0, "geospatial_lon_min", adp[['longitude']])
-    ncatt_put(ncout, 0, "geosptial_lon_max", adp[['longitude']])
-    ncatt_put(ncout, 0, "geosptial_lon_units", "degrees_east")
+    ncatt_put(ncout, 0, "geospatial_lon_max", adp[['longitude']])
+    ncatt_put(ncout, 0, "geospatial_lon_units", "degrees_east")
     ncatt_put(ncout, 0, "geospatial_vertical_min", min(adp[['distance']]))
-    ncatt_put(ncout, 0, "geosptial_vertical_max", max(adp[['distance']]))
-    ncatt_put(ncout, 0, "geosptial_vertical_units", "metres")
-    ncatt_put(ncout, 0, "geosptial_vertical_positive", adp[['orientation']])     #eg up or down
+    ncatt_put(ncout, 0, "geospatial_vertical_max", max(adp[['distance']]))
+    ncatt_put(ncout, 0, "geospatial_vertical_units", "metres")
+    ncatt_put(ncout, 0, "geospatial_vertical_positive", adp[['orientation']])     #eg up or down
     ncatt_put(ncout, 0, "institution", adp[['institution']])
     ncatt_put(ncout, 0, "creator_name", adp[['creator_name']])
     ncatt_put(ncout, 0, "creator_url", adp[['creator_url']])
