@@ -227,7 +227,7 @@ limit_depthbytime <- function(adp, tz = 'UTC'){
 
   mdt <- round(mean(depth, na.rm = TRUE), digits = 2)
   adp@metadata$sensorDepth <- mdt
-  adp@metadata$depthMean <- mdt
+
   adp@data$depth <- depth
   adp@processingLog <- processingLogAppend(adp@processingLog, paste0('depth limited by deployment (', adp[['deployment_time']], ') and recovery  (', adp[['recovery_time']], ')  times'))
   adp@processingLog <- processingLogAppend(adp@processingLog, paste0('Sensor depth and mean depth set to  ', mdt , '  based on trimmed depth values'))
@@ -655,7 +655,7 @@ oceNc_create <- function(adp, name,  metadata){
     ncvar_put(ncout, pg4_def, adp[['g', 'numeric']][,,4])
     ncvar_put(ncout, p_def, adp[['pitch']])
     ncvar_put(ncout, r_def, adp[['roll']])
-    ncvar_put(ncout, hght_def, (adp[['depthMean']]- adp[['distance']]))
+    ncvar_put(ncout, hght_def, (adp[['sensorDepth']]- adp[['distance']]))
     ncvar_put(ncout, Tx_def, adp[['temperature']])
     ncvar_put(ncout, D_def, adp[['depth']])
     ncvar_put(ncout, qc_u_def, adp@metadata$flags$v[,,1])
@@ -729,7 +729,7 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, "BEAM_03", "sensor_depth", adp[['sensorDepth']])
     ncatt_put(ncout, "BEAM_03", "serial_number", adp[['serialNumber']])
     ncatt_put(ncout, "BEAM_04", "sensor_type", adp[['instrumentType']])
-    ncatt_put(ncout, "BEAM_04", "sensor_depth", adp[['depthMean']])
+    ncatt_put(ncout, "BEAM_04", "sensor_depth", adp[['sensorDepth']])
     ncatt_put(ncout, "BEAM_04", "serial_number", adp[['serialNumber']])
     ncatt_put(ncout, "PGDP_01", "sensor_type", adp[['instrumentType']])
     ncatt_put(ncout, "PGDP_01", "sensor_depth", adp[['sensorDepth']])
@@ -757,15 +757,15 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, "PGDP_04", "generic_name", "PGd")
     ncatt_put(ncout, "hght", "generic_name", "height")
     ncatt_put(ncout, "hght", "sensor_type", adp[['instrumentType']])
-    ncatt_put(ncout, "hght", "sensor_depth", adp[['depthMean']])
+    ncatt_put(ncout, "hght", "sensor_depth", adp[['sensorDepth']])
     ncatt_put(ncout, "hght", "serial_number", adp[['serialNumber']])
     ncatt_put(ncout, "D", "generic_name", "depth")
     ncatt_put(ncout, "D", "sensor_type", adp[['instrumentType']])
-    ncatt_put(ncout, "D", "sensor_depth", adp[['depthMean']])
+    ncatt_put(ncout, "D", "sensor_depth", adp[['sensorDepth']])
     ncatt_put(ncout, "D", "serial_number", adp[['serialNumber']])
     ncatt_put(ncout, "Tx", "generic_name", "temp")
     ncatt_put(ncout, "Tx", "sensor_type", adp[['instrumentType']])
-    ncatt_put(ncout, "Tx", "sensor_depth", adp[['depthMean']])
+    ncatt_put(ncout, "Tx", "sensor_depth", adp[['sensorDepth']])
     ncatt_put(ncout, "Tx", "serial_number", adp[['serialNumber']])
     ncatt_put(ncout, "QC_flag_u", "comment", "Quality flag resulting from quality control")
     ncatt_put(ncout, "QC_flag_u", "flag_meanings",adp[['flag_meaning']])
