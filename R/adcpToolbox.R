@@ -772,15 +772,15 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, "Tx", "serial_number", adp[['serialNumber']])
     ncatt_put(ncout, "QC_flag_u", "comment", "Quality flag resulting from quality control")
     ncatt_put(ncout, "QC_flag_u", "flag_meanings",adp[['flag_meaning']])
-    ncatt_put(ncout, "QC_flag_u", "flag_values", '0,1,2,3,4,5,6,7,8,9')
+    ncatt_put(ncout, "QC_flag_u", "flag_values",c(1:9))
     ncatt_put(ncout, "QC_flag_u", "References", adp[['flag_references']])
     ncatt_put(ncout, "QC_flag_v", "comment", "Quality flag resulting from quality control")
     ncatt_put(ncout, "QC_flag_v", "flag_meanings", adp[['flag_meaning']])
-    ncatt_put(ncout, "QC_flag_v", "flag_values", '0,1,2,3,4,5,6,7,8,9')
+    ncatt_put(ncout, "QC_flag_v", "flag_values",c(1:9))
     ncatt_put(ncout, "QC_flag_v", "References", adp[['flag_references']])
     ncatt_put(ncout, "QC_flag_w", "comment", "Quality flag resulting from quality control")
     ncatt_put(ncout, "QC_flag_w", "flag_meanings", adp[['flag_meaning']])
-    ncatt_put(ncout, "QC_flag_w", "flag_values", '0,1,2,3,4,5,6,7,8,9')
+    ncatt_put(ncout, "QC_flag_w", "flag_values",c(1:9))
     ncatt_put(ncout, "QC_flag_w", "References", adp[['flag_references']])
 
     #CF conventions
@@ -816,7 +816,7 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "project", adp[['project']])
     ncatt_put(ncout, 0, "processing_level", adp[['processing_level']])
     ncatt_put(ncout, 0 , "flag_meanings", adp[['flag_meaning']])
-    ncatt_put(ncout, 0 , "flag_values", '0,1,2,3,4,5,6,7,8,9')
+    ncatt_put(ncout, 0 , "flag_values", c(1:9))
     ncatt_put(ncout, 0, "source", "R code: adcpProcess, github:")
     ncatt_put(ncout, 0, "date_modified", date())
     ncatt_put(ncout,0, "_FillValue", "1e35")
@@ -920,9 +920,8 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, "lat", "standard_name", "latitude")
     ncatt_put(ncout, "lon", "standard_name", "longitude")
     ncatt_put(ncout, "D", "standard_name", "depth")
-    ncatt_put(ncout, "depth", "positive", "up")     #direction of depth axis
-    ncatt_put(ncout, "depth", "axis", "y")
-    ncatt_put(ncout, "time", "axis", "x")
+    ncatt_put(ncout, "depth", "positive", "down")     #direction of depth axis
+
   }
 
   if (adp@metadata$source == 'odf'){
@@ -1012,7 +1011,7 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "project", adp[['project']])
     ncatt_put(ncout, 0, "processing_level", adp[['processingLevel']])
     ncatt_put(ncout, 0 , "flag_meanings", adp[['flag_meaning']])
-    ncatt_put(ncout, 0 , "flag_values", '0,1,2,3,4,5,6,7,8,9')
+    ncatt_put(ncout, 0 , "flag_values", c(1:9))
     ncatt_put(ncout, 0, "source", "R code: adcpProcess, github:")
     ncatt_put(ncout, 0, "date_modified", date())
     ncatt_put(ncout,0, "_FillValue", "1e35")
