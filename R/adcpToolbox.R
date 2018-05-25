@@ -586,14 +586,16 @@ oceNc_create <- function(adp, name,  metadata){
     D_def <- ncvar_def("D", "m", list(timedim, stationdim), FillValue, dlname, prec = "float")
 
 
+    FillValue <- 0
+
     dlname <- "quality_flag u"
-    qc_u_def <- ncvar_def("QC_flag_u", "", list(stationdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    qc_u_def <- ncvar_def("QC_flag_u", "", list(stationdim, depthdim, timedim), FillValue, dlname, prec = "integer")
 
     dlname <- "quality_flag v"
-    qc_v_def <- ncvar_def("QC_flag_v", "", list(stationdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    qc_v_def <- ncvar_def("QC_flag_v", "", list(stationdim, depthdim, timedim), FillValue, dlname, prec = "integer")
 
     dlname <- "quality_flag w"
-    qc_w_def <- ncvar_def("QC_flag_w", "", list(stationdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    qc_w_def <- ncvar_def("QC_flag_w", "", list(stationdim, depthdim, timedim), FillValue, dlname, prec = "integer")
 
     ####writing net CDF####
     #write out definitions to new nc file
