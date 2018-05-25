@@ -265,7 +265,7 @@ limit_time <- function(x, tz = 'UTC', dt = x[['deployment_time']], rt = x[['reco
     t <- x[['time', "numeric"]]
     t <- as.POSIXct(t, tz = tz)
     x[['v']][t < t1] <- NA
-    x[['time']][t <t1] <- NA
+
     x[['pressure']][t < t1] <- NA
     x[['salinity']][t < t1] <- NA
     x[['temperature']][t < t1] <- NA
@@ -280,7 +280,7 @@ limit_time <- function(x, tz = 'UTC', dt = x[['deployment_time']], rt = x[['reco
       t <- x[['time', "numeric"]]
       t <- as.POSIXct(t, tz = tz)
       x[['v']][t < t1] <- NA
-      x[['time']][t <t1] <- NA
+
       x[['pressure']][t < t1] <- NA
       x[['salinity']][t < t1] <- NA
       x[['temperature']][t < t1] <- NA
@@ -296,7 +296,7 @@ limit_time <- function(x, tz = 'UTC', dt = x[['deployment_time']], rt = x[['reco
     if(!missing(rt)){
       t2 <- as.POSIXct(rt, tz = tz)
       x[['v']][t > t2] <- NA
-      x[['time']][t > t2] <- NA
+
       x[['pressure']][t > t2] <- NA
       x[['salinity']][t > t2] <- NA
       x[['temperature']][t > t2] <- NA
@@ -308,7 +308,7 @@ limit_time <- function(x, tz = 'UTC', dt = x[['deployment_time']], rt = x[['reco
       if (!is.null(x@metadata$recovery_time)){
         t2 <- as.POSIXct(rt, tz = tz)
         x[['v']][t > t2] <- NA
-        x[['time']][t > t2] <- NA
+
         x[['pressure']][t > t2] <- NA
         x[['salinity']][t > t2] <- NA
         x[['temperature']][t > t2] <- NA
