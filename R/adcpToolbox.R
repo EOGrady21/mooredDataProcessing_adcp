@@ -547,6 +547,7 @@ oceNc_create <- function(adp, name,  metadata){
     e_def <- ncvar_def("ERRV", "m/sec", list(stationdim, depthdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "ADCP_echo_intensity_beam_1"
+
     b1_def <- ncvar_def("BEAM_01", "counts", list(stationdim, depthdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "ADCP_echo_intensity_beam_2"
@@ -557,6 +558,7 @@ oceNc_create <- function(adp, name,  metadata){
 
     dlname <- "ADCP_echo_intensity_beam_4"
     b4_def <- ncvar_def("BEAM_04", "counts", list(stationdim, depthdim, timedim), FillValue, dlname, prec = "float")
+
 
     dlname <- "percent_good_beam_1"
     pg1_def <- ncvar_def("PGDP_01", "counts", list(stationdim, depthdim, timedim), FillValue, dlname, prec = "float")
@@ -627,7 +629,9 @@ oceNc_create <- function(adp, name,  metadata){
     e_def <- ncvar_def("ERRV", "m/sec", list(stationdim, depthdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "ADCP_echo_intensity_beam_1"
+
     b1_def <- ncvar_def("BEAM_01", "counts", list(stationdim, depthdim, timedim), FillValue, dlname, prec = "float")
+
 
     dlname <- "percent_good_beam_1"
     pg1_def <- ncvar_def("PGDP_01", "counts", list(stationdim, depthdim, timedim), FillValue, dlname, prec = "float")
