@@ -336,10 +336,13 @@ limit_time <- function(x, tz = 'UTC', dt = x[['deployment_time']], rt = x[['reco
 #'
 #'  Rmax = Dcosx
 #'    where Rmax is the maximum acceptable distance range from the ADCP, D is total depth and x is the beam angle of the ADCP.
+#'
+#' This function also flags data outside the deployment and recovery time bounds.
+#'
+#' Sets any data not flagged by this processing to 'good' flag value
+#'
 #' This function uses \code{\link[oce:initializeFlags]{initializeFlags}} to initialize blank flagging scheme for values to be inserted in
 #' Then \code{\link[oce: setFlags]{setFlags}} to set flag values based on desired scheme
-#'
-#' This function also flags data which are before the deployment_time and after the recovery_time
 #'
 #' @param adp, an adp object, oce-class
 #' @param flagScheme, scheme of flags that will be followed, BODC, MEDS, etc
@@ -391,7 +394,8 @@ adpFlag <- function(adp,  pg, er){
 
   #set adp flags where logical array = TRUE, flagged based on error, percent good or Rmax, value = 4 (see flag scheme, BODC)
   adp <- setFlags(adp, name = 'v', i= flag, value = 4)
-
+  good <- adp[['flags']][['v']] == 0
+  adp <- setFlags(adp, name = 'v', i = good, value = 1)
 
 
   adp@processingLog <- processingLogAppend(adp@processingLog, 'Quality control flags set based on flag scheme from BODC')
