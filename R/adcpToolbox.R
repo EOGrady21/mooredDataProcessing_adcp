@@ -264,8 +264,9 @@ limit_time <- function(x, tz = 'UTC', dt = x[['deployment_time']], rt = x[['reco
     t1 <- as.POSIXct(dt, tz = tz)
     t <- x[['time', "numeric"]]
     t <- as.POSIXct(t, tz = tz)
-    x[['v']][t < t1] <- NA
 
+
+    x[['v']][t < t1] <- NA
     x[['pressure']][t < t1] <- NA
     x[['salinity']][t < t1] <- NA
     x[['temperature']][t < t1] <- NA
@@ -280,7 +281,6 @@ limit_time <- function(x, tz = 'UTC', dt = x[['deployment_time']], rt = x[['reco
       t <- x[['time', "numeric"]]
       t <- as.POSIXct(t, tz = tz)
       x[['v']][t < t1] <- NA
-
       x[['pressure']][t < t1] <- NA
       x[['salinity']][t < t1] <- NA
       x[['temperature']][t < t1] <- NA
@@ -296,7 +296,6 @@ limit_time <- function(x, tz = 'UTC', dt = x[['deployment_time']], rt = x[['reco
     if(!missing(rt)){
       t2 <- as.POSIXct(rt, tz = tz)
       x[['v']][t > t2] <- NA
-
       x[['pressure']][t > t2] <- NA
       x[['salinity']][t > t2] <- NA
       x[['temperature']][t > t2] <- NA
@@ -308,7 +307,6 @@ limit_time <- function(x, tz = 'UTC', dt = x[['deployment_time']], rt = x[['reco
       if (!is.null(x@metadata$recovery_time)){
         t2 <- as.POSIXct(rt, tz = tz)
         x[['v']][t > t2] <- NA
-
         x[['pressure']][t > t2] <- NA
         x[['salinity']][t > t2] <- NA
         x[['temperature']][t > t2] <- NA
@@ -340,6 +338,8 @@ limit_time <- function(x, tz = 'UTC', dt = x[['deployment_time']], rt = x[['reco
 #'    where Rmax is the maximum acceptable distance range from the ADCP, D is total depth and x is the beam angle of the ADCP.
 #' This function uses \code{\link[oce:initializeFlags]{initializeFlags}} to initialize blank flagging scheme for values to be inserted in
 #' Then \code{\link[oce: setFlags]{setFlags}} to set flag values based on desired scheme
+#'
+#' This function also flags data which are before the deployment_time and after the recovery_time
 #'
 #' @param adp, an adp object, oce-class
 #' @param flagScheme, scheme of flags that will be followed, BODC, MEDS, etc
@@ -383,14 +383,15 @@ adpFlag <- function(adp,  pg, er){
   dim = dim(adp[['v']])
   flag <- array(FALSE, dim= dim)
   for (i in 1:3)
-    flag[,,i] <- (lowpg< pg) | (abs(ERRV) > er) | r < d
+    flag[,,i] <- (lowpg< pg) | (abs(ERRV) > er) | r < d | adp[['time']] < adp[['deployment_time']] | adp[['time']] > adp[['recovery_time']]
 
   #initialize and set flag scheme
   adp <- initializeFlags(adp, name = 'v', value = 0)
 
 
-  #set adp flags where logical array = TRUE, flag value = 4 (see flag scheme, BODC)
+  #set adp flags where logical array = TRUE, flagged based on error, percent good or Rmax, value = 4 (see flag scheme, BODC)
   adp <- setFlags(adp, name = 'v', i= flag, value = 4)
+
 
 
   adp@processingLog <- processingLogAppend(adp@processingLog, 'Quality control flags set based on flag scheme from BODC')
