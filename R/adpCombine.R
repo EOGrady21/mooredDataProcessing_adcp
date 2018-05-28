@@ -630,7 +630,7 @@ adpNC <- function(adp){
   ncatt_put(ncout, "SVEL", "data_min", min(adp[['soundSpeed']]))
   ncatt_put(ncout, "SVEL", "data_max", max(adp[['soundSpeed']]))
 
-
+  nc_close(ncout)
 
 
 
