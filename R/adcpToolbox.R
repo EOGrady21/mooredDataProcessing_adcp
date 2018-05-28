@@ -811,11 +811,11 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "geospatial_lon_max", adp[['longitude']])
     ncatt_put(ncout, 0, "geospatial_lon_units", "degrees_east")
 
-    if (adp[['orientation']] == 'up'){
+    if (adp[['orientation']] == 'up' | 'UP'){
       ncatt_put(ncout, 0, "geospatial_vertical_min", adp[['sensor_depth']] + max(adp[['distance']], na.rm = TRUE))
       ncatt_put(ncout, 0, "geospatial_vertical_max", adp[['sensor_depth']] + min(adp[['distance']], na.rm = TRUE))
     }
-    if (adp[['orientation']] == 'down'){
+    if (adp[['orientation']] == 'down' | 'DOWN'){
       ncatt_put(ncout, 0, "geospatial_vertical_min", adp[['sensor_depth']] + min(adp[['distance']], na.rm = TRUE))
       ncatt_put(ncout, 0, "geospatial_vertical_max", adp[['sensor_depth']] + max(adp[['distance']], na.rm = TRUE))
     }
