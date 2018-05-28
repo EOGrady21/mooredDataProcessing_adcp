@@ -2,7 +2,7 @@
 #from ODF : processed data (u, v, w, werr, beam01, pgdp01, time)
 #from archivede netCDF : metadata
 #from RAW file: beam2-4, pgdp2-4, ptch, roll, hght, tx, d, heading, pressure, soundspeed
-  #instrument metadata
+#instrument metadata
 
 
 #combine all file sources into single adp object
@@ -13,7 +13,7 @@
 #added metadata to meet standards
 
 
-adpCombine <- function(adp, raw, ncin, ){
+adpCombine <- function(adp, raw, ncin ){
 
 
 
@@ -35,12 +35,41 @@ adpCombine <- function(adp, raw, ncin, ){
   SVEL <- a[['soundSpeed']]
 
   #insert into adp
-  adp <- oceSetData(adp, a[,,2], BEAM_02)
-  adp <- oceSetData(adp, a[,,3], BEAM_03)
-  adp <- oceSetData(adp, a[,,4], BEAM_04)
-  adp <- oceSetData(adp, g[,,2], PGDP_02)
-  adp <- oceSetData(adp, g[,,3], PGDP_03)
-  adp <- oceSetData(adp, g[,,4], PGDP_04)
+
+  #create a array
+  x <- nrow(adp[['a']])
+  y <- ncol(adp[['a']])
+  z <- 4
+  aa <- array(dim = c(x, y, z))
+
+  #combine beams into a single array using dimensions of odf data
+  aa[,,1] <- adp[['a', 'numeric']]
+  dim <- dim(adp[['a']])
+  aa[,,2] <- BEAM_02[dim]
+  aa[,,3] <- BEAM_03[dim]
+  aa[,,4] <- BEAM_04[dim]
+
+  #put array into adp object
+  adp <- oceSetData(adp, 'a', aa)
+
+  #create a array
+  l <- nrow(adp[['q']])
+  m <- ncol(adp[['q']])
+  n <- 4
+  qq <- array(dim = c(l, m, n))
+
+  #combine beams into a single array using dimensions of odf data
+  qq[,,1] <- adp[['q', 'numeric']]
+  dim <- dim(adp[['q']])
+  qq[,,2] <- PGDP_02[dim]
+  qq[,,3] <- PGDP_03[dim]
+  qq[,,4] <- PGDP_04[dim]
+
+  #put array into adp object
+  adp <- oceSetData(adp, 'q', qq)
+
+
+
   adp <- oceSetData(adp, 'pitch', PTCH)
   adp <- oceSetData(adp, 'roll', ROLL)
   adp <- oceSetData(adp, 'hght', HGHT)
@@ -128,41 +157,41 @@ adpCombine <- function(adp, raw, ncin, ){
 
   nc_close(ni)
 
-  adp <- oceSetMetadata(adp, 'creation_date', creation_date)
-  adp <- oceSetMetadata(adp, 'mooring', mooring)
-  adp <- oceSetMetadata(adp, 'deployment_date', deployment_date)
-  adp <- oceSetMetadata(adp, 'recovery_date', recovery_date)
-  adp <- oceSetMetadata(adp, 'inst_type', inst_type)
-  adp <- oceSetMetadata(adp, 'history', history)
-  adp <- oceSetMetadata(adp, 'starting_water_layer', starting_water_layer)
-  adp <- oceSetMetadata(adp, 'ending_water_layer', ending_water_layer)
-  adp <- oceSetMetadata(adp, 'depth_note', depth_note)
-  adp <- oceSetMetadata(adp, 'transform', transform)
-  adp <- oceSetMetadata(adp, 'data_type', data_type)
-  adp <- oceSetMetadata(adp, 'data_subtype', data_subtype)
-  adp <- oceSetMetadata(adp, 'data_origin', data_origin)
-  adp <- oceSetMetadata(adp, 'coord_system', coord_system)
-  adp <- oceSetMetadata(adp, 'water_mass', water_mass)
-  adp <- oceSetMetadata(adp, 'pos_const', pos_const)
-  adp <- oceSetMetadata(adp, 'depth_const', depth_const)
-  adp <- oceSetMetadata(adp, 'drifter', drifter)
-  adp <- oceSetMetadata(adp, 'FillValue', FillValue)
-  adp <- oceSetMetadata(adp, 'experiment', experiment)
-  adp <- oceSetMetadata(adp, 'project', project)
-  adp <- oceSetMetadata(adp, 'description', description)
-  adp <- oceSetMetadata(adp, 'longitude', longitude)
-  adp <- oceSetMetadata(adp, 'latitude', latitude)
-  adp <- oceSetMetadata(adp, 'data_comment', data_comment)
-  adp <- oceSetMetadata(adp, 'fill_flag', fill_flag)
-  adp <- oceSetMetadata(adp, 'composite', composite)
-  adp <- oceSetMetadata(adp, 'magnetic_variation', magnetic_variation)
-  adp <- oceSetMetadata(adp, 'platform', platform)
-  adp <- oceSetMetadata(adp, 'sounding', sounding)
-  adp <- oceSetMetadata(adp, 'chief_scientist', chief_scientist)
-  adp <- oceSetMetadata(adp, 'delta_t_sec', delta_t_sec)
+  adp <- oceSetMetadata(adp, 'creation_date', creation_date$value)
+  adp <- oceSetMetadata(adp, 'mooring', mooring$value)
+  adp <- oceSetMetadata(adp, 'deployment_date', deployment_date$value)
+  adp <- oceSetMetadata(adp, 'recovery_date', recovery_date$value)
+  adp <- oceSetMetadata(adp, 'inst_type', inst_type$value)
+  adp <- oceSetMetadata(adp, 'history', history$value)
+  adp <- oceSetMetadata(adp, 'starting_water_layer', starting_water_layer$value)
+  adp <- oceSetMetadata(adp, 'ending_water_layer', ending_water_layer$value)
+  adp <- oceSetMetadata(adp, 'depth_note', depth_note$value)
+  adp <- oceSetMetadata(adp, 'transform', transform$value)
+  adp <- oceSetMetadata(adp, 'data_type', data_type$value)
+  adp <- oceSetMetadata(adp, 'data_subtype', data_subtype$value)
+  adp <- oceSetMetadata(adp, 'data_origin', data_origin$value)
+  adp <- oceSetMetadata(adp, 'coord_system', coord_system$value)
+  adp <- oceSetMetadata(adp, 'water_mass', water_mass$value)
+  adp <- oceSetMetadata(adp, 'pos_const', pos_const$value)
+  adp <- oceSetMetadata(adp, 'depth_const', depth_const$value)
+  adp <- oceSetMetadata(adp, 'drifter', drifter$value)
+  adp <- oceSetMetadata(adp, 'FillValue', FillValue$value)
+  adp <- oceSetMetadata(adp, 'experiment', experiment$value)
+  adp <- oceSetMetadata(adp, 'project', project$value)
+  adp <- oceSetMetadata(adp, 'description', description$value)
+  adp <- oceSetMetadata(adp, 'longitude', longitude$value)
+  adp <- oceSetMetadata(adp, 'latitude', latitude$value)
+  adp <- oceSetMetadata(adp, 'data_comment', data_comment$value)
+  adp <- oceSetMetadata(adp, 'fill_flag', fill_flag$value)
+  adp <- oceSetMetadata(adp, 'composite', composite$value)
+  adp <- oceSetMetadata(adp, 'magnetic_variation', magnetic_variation$value)
+  adp <- oceSetMetadata(adp, 'platform', platform$value)
+  adp <- oceSetMetadata(adp, 'sounding', sounding$value)
+  adp <- oceSetMetadata(adp, 'chief_scientist', chief_scientist$value)
+  adp <- oceSetMetadata(adp, 'delta_t_sec', delta_t_sec$value)
 
-  adp <- oceSetMetadata(adp, 'xducer_offset_from_bottom', xducer_offset_from_bottom)
-  adp <- oceSetMetadata(adp, 'bin_size', bin_size)
+  adp <- oceSetMetadata(adp, 'xducer_offset_from_bottom', xducer_offset_from_bottom$value)
+  adp <- oceSetMetadata(adp, 'bin_size', bin_size$value)
   adp <- oceSetMetadata(adp, 'sensor_depth', mean(adp[['depth']]))
   return(adp)
 
@@ -178,7 +207,7 @@ adpNC <- function(adp){
   }
   name <- paste('MADCP', adp[['experiment']], adp[['mooring']], adp[['ADCP_serial_number']], adp[['delta_t_sec']], sep = '_')
 
-   #file name and path
+  #file name and path
   ncpath <- "./"
   ncname <- paste('MADCP', adp[['experiment']], adp[['mooring_number']], adp[['ADCP_serial_number']], adp[['delta_t_sec']], sep = '_')
   ncfname <- paste(ncpath, ncname, ".nc", sep = "")
@@ -635,7 +664,7 @@ adpNC <- function(adp){
 
 
 
-    }
+}
 
 
 
