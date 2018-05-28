@@ -89,12 +89,12 @@ adpCombine <- function(adp, raw, ncin ){
   beam_angle <- a[['beamAngle']]
   janus <- a[['numberOfBeams']]
   pings_per_ensemble <- a[['pingsPerEnsemble']]
-  pred_accuracy <- a[['velocityResolution']]
+  pred_accuracy <- (a[['velocityResolution']]*1000)
   valid_correlation_range <- a[['lowCorrThresh']]
   minmax_percent_good <- a[['percentGdMinimum']]
   error_velocity_threshold <- a[['errorVelocityMaximum']]
   #time_between_ping_groups <- a[['']]
-  transmit_pulse_length_cm <- a[['xmitPulseLength']]
+  transmit_pulse_length_cm <-( a[['xmitPulseLength']]*100)
   false_target_reject_values <- a[['falseTargetThresh']]
   ADCP_serial_number <- a[['serialNumber']]
 
@@ -121,10 +121,10 @@ adpCombine <- function(adp, raw, ncin ){
 
   creation_date <- ncatt_get(ni, 0, 'CREATION_DATE')
   mooring <- ncatt_get(ni, 0, 'MOORING')
-  deployment_date <- ncatt_get(ni, 0,   'Dployment_date')
-  recovery_date <- ncatt_get(ni, 0,  'Recovery_date')
+  deployment_date <- ncatt_get(ni, 0,   'start_time')
+  recovery_date <- ncatt_get(ni, 0,  'stop_time')
   inst_type <- ncatt_get(ni, 0, 'INST_TYPE')
-  history <- ncatt_get(ni, 0,  'history')
+  historyadp <- ncatt_get(ni, 0,  'history')
   starting_water_layer <- ncatt_get(ni,  0, 'starting_water_layer')
   ending_water_layer <- ncatt_get(ni, 0,  'ending_water_layer')
   depth_note <- ncatt_get(ni, 0,  'depth_note')
@@ -162,7 +162,7 @@ adpCombine <- function(adp, raw, ncin ){
   adp <- oceSetMetadata(adp, 'deployment_date', deployment_date$value)
   adp <- oceSetMetadata(adp, 'recovery_date', recovery_date$value)
   adp <- oceSetMetadata(adp, 'inst_type', inst_type$value)
-  adp <- oceSetMetadata(adp, 'history', history$value)
+  adp <- oceSetMetadata(adp, 'history', historyadp$value)
   adp <- oceSetMetadata(adp, 'starting_water_layer', starting_water_layer$value)
   adp <- oceSetMetadata(adp, 'ending_water_layer', ending_water_layer$value)
   adp <- oceSetMetadata(adp, 'depth_note', depth_note$value)
@@ -364,6 +364,17 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 0, "water_depth", adp[['sounding']])
   ncatt_put(ncout, 0, "delta_t_sec",adp[['delta_t_sec']])
   ncatt_put(ncout, 0, "pred_accuracy", adp[['pred_accuracy']])
+  ncatt_put(ncout, 0, "history", adp[['history']])
+  ncatt_put(ncout, 0, "starting_water_layer", adp[['starting_water_layer']])
+  ncatt_put(ncout, 0, "ending_water_layer", adp[['ending_water_layer']])
+  ncatt_put(ncout, 0, "pos_const", adp[['pos_const']])
+  ncatt_put(ncout, 0, "depth_const", adp[['depth_const']])
+  ncatt_put(ncout, 0, "drifter", adp[['drifter']])
+  ncatt_put(ncout, 0, "experiment", adp[['experiment']])
+
+
+
+
 
   ncatt_put(ncout, "depth", "xducer_offset_from_bottom", adp[['xducer_offset_from_bottom']])
   ncatt_put(ncout, "depth", "bin_size", adp[['bin_size']])
