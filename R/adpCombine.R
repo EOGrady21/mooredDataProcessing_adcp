@@ -9,14 +9,13 @@
 #adp: from ODF list (odf2adp)
 #raw file
 #archive netCDF
-#mn :: mooring number
+
 #added metadata to meet standards
 
 
-adpCombine <- function(adp, raw, ncin, mn){
+adpCombine <- function(adp, raw, ncin, ){
 
-  #set mooring number
-  adp <- oceSetMetadata(adp, 'mooring_number', mn)
+
 
   #pull data from raw file
   a <- read.adp(raw)
@@ -177,7 +176,7 @@ adpNC <- function(adp){
   if (!inherits(adp, "adp")){
     stop("method is only for objects of class '", "adp", "'")
   }
-  name <- paste('MADCP', adp[['experiment']], adp[['mooring_number']], adp[['ADCP_serial_number']], adp[['delta_t_sec']], sep = '_')
+  name <- paste('MADCP', adp[['experiment']], adp[['mooring']], adp[['ADCP_serial_number']], adp[['delta_t_sec']], sep = '_')
 
    #file name and path
   ncpath <- "./"
