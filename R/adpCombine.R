@@ -585,12 +585,11 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, "lat", "standard_name", "latitude")
   ncatt_put(ncout, "lon", "standard_name", "longitude")
   ncatt_put(ncout, "D", "standard_name", "depth")
-  ncatt_put(ncout, "D", "positive", "down")     #direction of depth axis
-  ncatt_put(ncout, "Tx", "standard_name", "sea_water_temperature")
+  #ncatt_put(ncout, "Tx", "standard_name", "")
   ncatt_put(ncout, "PTCH", "standard_name", "platform_pitch_angle")
   ncatt_put(ncout, "ROLL", "standard_name", "platform_roll_angle")
   ncatt_put(ncout, "PRES", "standard_name", "sea_water_pressure")
-  ncatt_put(ncout, "SVEL", "standard_name", "speed_of_sound_in_sea_Water")
+  ncatt_put(ncout, "SVEL", "standard_name", "speed_of_sound_in_sea_water")
 
   ncatt_put(ncout, "EWCT", "data_max", max(adp[['v']][,,1], na.rm = TRUE))
   ncatt_put(ncout, "EWCT", "data_min", min(adp[['v']][,,1], na.rm = TRUE))
