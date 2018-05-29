@@ -718,7 +718,7 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "chief_scientist", adp[['chief_scientist']])
     ncatt_put(ncout, 0, "data_origin", adp[['institution']])
     ncatt_put(ncout, 0, "water_depth", adp[['water_depth']])
-    ncatt_put(ncout, 0, "delta_t_sec",adp[['time_offset']])
+    ncatt_put(ncout, 0, "delta_t_sec",adp[['samplingInterval']])
     ncatt_put(ncout, 0, "pred_accuracy", adp[['velocityResolution']])
     ncatt_put(ncout, "depth", "xducer_offset_from_bottom", adp[['depth_off_bottom']])
     ncatt_put(ncout, "depth", "bin_size", adp[['cellSize']])
