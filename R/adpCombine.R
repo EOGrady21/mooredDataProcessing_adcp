@@ -78,7 +78,7 @@ adpCombine <- function(adp, raw, ncin ){
   z <- 4
   aa <- array(dim = c(x, y, z))
 
-
+#not working
   #combine beams into a single array using dimensions of odf data
   aa[,,1] <- adp[['a', 'numeric']]
   aa[,,2] <- na.omit(BEAM_02[, 1:length(adp[['distance']])])
