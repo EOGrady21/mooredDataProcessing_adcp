@@ -303,8 +303,13 @@ adpNC <- function(adp, name){
   dlname <- "speed of sound"
   svel_def <- ncvar_def("SVEL", "m/s", list(timedim, stationdim), FillValue, dlname, prec = "float")
 
+
+  dlname <- "time_string"
+  ts_def <- ncvar_def("DTUT8601", "ISO8601", list(timedim, stationdim), FillValue, dlname, prec = "float")
+
+
   #write out definitions to new nc file
-  ncout <- nc_create(ncfname, list(u_def, v_def, w_def, e_def, t_def, b1_def, b2_def, b3_def, b4_def, pg1_def, pg2_def, pg3_def, pg4_def, p_def, r_def, hght_def, Tx_def, D_def, lon_def, lat_def, head_def, pres_def, svel_def), force_v4 = TRUE)
+  ncout <- nc_create(ncfname, list(u_def, v_def, w_def, e_def, t_def, b1_def, b2_def, b3_def, b4_def, pg1_def, pg2_def, pg3_def, pg4_def, p_def, r_def, hght_def, Tx_def, D_def, lon_def, lat_def, head_def, pres_def, svel_def, ts_def), force_v4 = TRUE)
   ncvar_put(ncout, u_def, adp[['v']][,,1])
   ncvar_put(ncout, v_def, adp[['v']][,,2])
   ncvar_put(ncout, w_def, adp[['v']][,,3])
@@ -328,13 +333,14 @@ adpNC <- function(adp, name){
   ncvar_put(ncout, head_def, adp[['heading']])
   ncvar_put(ncout, pres_def, adp[['pressure']])
   ncvar_put(ncout, svel_def, adp[['soundSpeed']])
-
+  ncvar_put(ncout, ts_def, adp[['time']])
 
 
   ncatt_put(ncout, 'station', attname = 'cf_role',attval =  'timeseries_id')
   ncatt_put(ncout, 'time', attname = 'cf_role', attval = 'profile_id')
   ncatt_put(ncout, 'station', 'standard_name', 'platform_name')
   ncatt_put(ncout, 'time' , 'calendar', 'gregorian')
+  ncatt_put(ncout, 'time_string', 'note', 'time values as ISO8601 string')
   ncatt_put(ncout, 0, "mooring_number", adp[['mooring']])
   ncatt_put(ncout, 0, "deployment_date", adp[['deployment_date']])
   ncatt_put(ncout, 0, "recovery_date", adp[['recovery_date']])
@@ -515,6 +521,7 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, "HEAD", "sdn_parameter_urn", "SDN:P01::HEADCM01")
   ncatt_put(ncout, "PRES", "sdn_parameter_urn", "SDN:P01::PRESPR01")
   ncatt_put(ncout, "SVEL", "sdn_parameter_urn", "SDN:P01::SVELCV01")
+  ncatt_put(ncout, "time_string", "sdn_parameter_urn", "SDN:P01::DTUT8601")
 
 
   ncatt_put(ncout, "EWCT", "sdn_parameter_name", "Eastward current velocity (Eulerian) in the water body by moored acoustic doppler current profiler (ADCP)")
@@ -539,6 +546,7 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, "PRES", "sdn_parameter_name", "Pressure (spatial co-ordinate) exerted by the water body by profiling pressure sensor and corrected to read zero at sea level")
   ncatt_put(ncout, "SVEL", "sdn_parameter_name", "Sound velocity in the water body by computation from temperature and salinity by unspecified algorithm")
   ncatt_put(ncout, 'time_02', "sdn_parameter_name", "Elapsed time (since 1970-01-01T00:00:00Z)")
+  ncatt_put(ncout, 'time_string', "sdn_parameter_name", "String corresponding to format 'YYYY-MM-DDThh:mm:ss.sssZ' or other valid ISO8601 string")
 
 
   ncatt_put(ncout, "EWCT", "sdn_uom_urn", "SDN:P06::UVAA")
@@ -564,7 +572,7 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, "PRES", "sdn_uom_urn", "SDN:P06:UPDB")
   ncatt_put(ncout, "SVEL", "sdn_uom_urn", "SDN:P06:UVAA")
   ncatt_put(ncout, "time_02", "sdn_uom_urn", "SDN:P06::UTBB")
-
+  ncatt_put(ncout, "time_string", "sdn_uom_urn", "SDN:P06::TISO")
 
   ncatt_put(ncout, "EWCT", "sdn_uom_name", "Metres per second")
   ncatt_put(ncout, "NSCT", "sdn_uom_name", "Metres per second")
@@ -589,13 +597,14 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, "PRES", "sdn_uom_name", "Decibars")
   ncatt_put(ncout, "SVEL", "sdn_uom_name", "Metres per second")
   ncatt_put(ncout, "time_02", "sdn_uom_name", "Seconds")
+  ncatt_put(ncout, "time_string", "sdn_uom_name", "ISO8601")
+
 
   #CF standard names
   ncatt_put(ncout, "EWCT", "standard_name", "eastward_sea_water_velocity")
   ncatt_put(ncout, "NSCT", "standard_name", "northward_sea_water_velocity")
   ncatt_put(ncout, "VCSP", "standard_name", "upward_sea_water_velocity")
-
-
+  ncatt_put(ncout, "time_02", "standard_name", "time")
   ncatt_put(ncout, "lat", "standard_name", "latitude")
   ncatt_put(ncout, "lon", "standard_name", "longitude")
   ncatt_put(ncout, "D", "standard_name", "depth")
