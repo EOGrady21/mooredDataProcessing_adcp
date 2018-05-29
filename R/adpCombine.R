@@ -306,7 +306,7 @@ adpNC <- function(adp, name){
 
 
   dlname <- "time_string"
-  ts_def <- ncvar_def("DTUT8601", units = "ISO8601",dim =  list(dimnchar, timedim), missval = NULL, name =  dlname, prec = "char")
+  ts_def <- ncvar_def("DTUT8601", units = "",dim =  list(dimnchar, timedim), missval = NULL, name =  dlname, prec = "char")
 
 
   #write out definitions to new nc file
