@@ -248,7 +248,7 @@ adpNC <- function(adp, name){
   w_def <- ncvar_def("VCSP", "m/sec", list(timedim, depthdim, stationdim), FillValue, dlname, prec = "float")
 
   dlname <- "time_02"
-  t_def <- ncvar_def("SYTM", "seconds since 1970-01-01T00:00:00Z", list( stationdim, timedim), FillValue, dlname, prec = "float")
+  t_def <- ncvar_def("ELTMEP01", "seconds since 1970-01-01T00:00:00Z", list( stationdim, timedim), FillValue, dlname, prec = "float")
 
   dlname <- "error_velocity_in_sea_water"
   e_def <- ncvar_def("ERRV", "m/sec", list(timedim, depthdim, stationdim), FillValue, dlname, prec = "float")
@@ -488,7 +488,7 @@ adpNC <- function(adp, name){
   # ncatt_put(ncout, 0, "creator_name", adp[['creator_name']])
   # ncatt_put(ncout, 0, "creator_url", adp[['creator_url']])
   # ncatt_put(ncout, 0, "creator_email", adp[['creator_email']])
-  # ncatt_put(ncout, 0, "processing_level", adp[['processing_level']])
+  ncatt_put(ncout, 0, "processing_level", adp[['processing_level']])
   # ncatt_put(ncout, 0, "source", "R code: adcpProcess, github:")
 
   #BODC P01 names
@@ -507,7 +507,7 @@ adpNC <- function(adp, name){
   #ncatt_put(ncout, "hght", "sdn_parameter_urn", "SDN:P01::")
   ncatt_put(ncout, "D", "sdn_parameter_urn", "SDN:P01::ADEPZZ01")
   ncatt_put(ncout, "Tx", "sdn_parameter_urn", "SDN:P01::TEMPPR01")
-  #ncatt_put(ncout, "time_02", "sdn_parameter_urn", "SDN:P01::")
+  ncatt_put(ncout, "time_02", "sdn_parameter_urn", "SDN:P01::ELTMEP01")
   ncatt_put(ncout, "PTCH", "sdn_parameter_urn", "SDN:P01::PTCHEI01")
   ncatt_put(ncout, "ROLL", "sdn_parameter_urn", "SDN:P01::ROLLFEI01")
   ncatt_put(ncout, "lon", "sdn_parameter_urn", "SDN:P01::ALONZZ01")
@@ -538,6 +538,8 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, "HEAD", "sdn_parameter_name", "Orientation (horizontal relative to true north) of measurement device {heading}")
   ncatt_put(ncout, "PRES", "sdn_parameter_name", "Pressure (spatial co-ordinate) exerted by the water body by profiling pressure sensor and corrected to read zero at sea level")
   ncatt_put(ncout, "SVEL", "sdn_parameter_name", "Sound velocity in the water body by computation from temperature and salinity by unspecified algorithm")
+  ncatt_put(ncout, 'time_02', "sdn_parameter_name", "Elapsed time (since 1970-01-01T00:00:00Z)")
+
 
   ncatt_put(ncout, "EWCT", "sdn_uom_urn", "SDN:P06::UVAA")
   ncatt_put(ncout, "NSCT", "sdn_uom_urn", "SDN:P06::UVAA")
@@ -561,6 +563,7 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, "HEAD", "sdn_uom_urn", "SDN:P06:UAAA")
   ncatt_put(ncout, "PRES", "sdn_uom_urn", "SDN:P06:UPDB")
   ncatt_put(ncout, "SVEL", "sdn_uom_urn", "SDN:P06:UVAA")
+  ncatt_put(ncout, "time_02", "sdn_uom_urn", "SDN:P06::UTBB")
 
 
   ncatt_put(ncout, "EWCT", "sdn_uom_name", "Metres per second")
@@ -585,7 +588,7 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, "HEAD", "sdn_uom_name", "Degrees")
   ncatt_put(ncout, "PRES", "sdn_uom_name", "Decibars")
   ncatt_put(ncout, "SVEL", "sdn_uom_name", "Metres per second")
-
+  ncatt_put(ncout, "time_02", "sdn_uom_name", "Seconds")
 
   #CF standard names
   ncatt_put(ncout, "EWCT", "standard_name", "eastward_sea_water_velocity")
