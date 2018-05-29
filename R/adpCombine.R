@@ -12,12 +12,12 @@
 
 #added metadata to meet standards
 
-
+####adpCombine####
 adpCombine <- function(adp, raw, ncin ){
 
 
 
-  #pull data from raw file
+  #####pull data from raw file#####
   a <- read.adp(raw)
   BEAM_02 <- a[['a', 'numeric']][,,2]
   BEAM_03 <- a[['a', 'numeric']][,,3]
@@ -35,7 +35,7 @@ adpCombine <- function(adp, raw, ncin ){
   SVEL <- a[['soundSpeed']]
 
 
-  #limit dimensions to match odf files
+  #####limit dimensions to match odf files####
 
 
   #limit by time
@@ -70,7 +70,7 @@ adpCombine <- function(adp, raw, ncin ){
 
 
 
-  #insert into adp
+  #####insert into adp####
 
   #create an array
   x <- nrow(adp[['a']])
@@ -117,7 +117,7 @@ adpCombine <- function(adp, raw, ncin ){
   adp <- oceSetData(adp, 'soundSpeed', na.omit(SVEL))
 
 
-  #pull metadata from RAW
+  #####pull metadata from RAW####
 
   firmware_version <- a[['firmwareVersion']]
   frequency <- a[['frequency']]
@@ -152,7 +152,7 @@ adpCombine <- function(adp, raw, ncin ){
   adp <- oceSetMetadata(adp, 'ADCP_serial_number', ADCP_serial_number)
 
 
-  #pull metadata from archive NC
+  #####pull metadata from archive NC####
   ni <- nc_open(ncin)
   #pull log sheet metadata from incoming netCDF
 
@@ -273,7 +273,7 @@ adpNC <- function(adp, name){
 
   #set fill value
   FillValue <- 1e35
-  #define variables
+  #####define variables####
 
   dlname <- 'lon'
   lon_def <- ncvar_def(longname= "longitude", units = 'degrees_east', dim = stationdim, name = dlname, prec = 'double')
@@ -350,7 +350,7 @@ adpNC <- function(adp, name){
   ts_def <- ncvar_def("DTUT8601", units = "",dim =  list(dimnchar, timedim), missval = NULL, name =  dlname, prec = "char")
 
 
-  #write out definitions to new nc file
+  #####write out definitions to new nc file####
   ncout <- nc_create(ncfname, list(u_def, v_def, w_def, e_def, t_def, b1_def, b2_def, b3_def, b4_def, pg1_def, pg2_def, pg3_def, pg4_def, p_def, r_def, hght_def, Tx_def, D_def, lon_def, lat_def, head_def, pres_def, svel_def, ts_def), force_v4 = TRUE)
   ncvar_put(ncout, u_def, adp[['v']][,,1])
   ncvar_put(ncout, v_def, adp[['v']][,,2])
@@ -377,7 +377,8 @@ adpNC <- function(adp, name){
   ncvar_put(ncout, svel_def, adp[['soundSpeed']])
   ncvar_put(ncout, ts_def, adp[['time']])
 
-
+  ####metadata####
+  ####dimensions####
   ncatt_put(ncout, 'station', attname = 'cf_role',attval =  'timeseries_id')
   ncatt_put(ncout, 'station', 'longitude', adp[['longitude']])
   ncatt_put(ncout, 'station', 'latitiude', adp[['latitude']])
@@ -386,6 +387,7 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 'time' , 'calendar', 'gregorian')
   ncatt_put(ncout, 'time_string', 'note', 'time values as ISO8601 string')
   ncatt_put(ncout, 'time_string', 'time_zone', 'UTC')
+  ####global####
   ncatt_put(ncout, 0, "mooring_number", adp[['mooring']])
   ncatt_put(ncout, 0, "deployment_date", adp[['deployment_date']])
   ncatt_put(ncout, 0, "recovery_date", adp[['recovery_date']])
@@ -425,7 +427,7 @@ adpNC <- function(adp, name){
 
 
 
-
+  ####variables####
 
   ncatt_put(ncout, "depth", "xducer_offset_from_bottom", adp[['xducer_offset_from_bottom']])
   ncatt_put(ncout, "depth", "bin_size", adp[['bin_size']])
@@ -503,7 +505,7 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, "SVEL", "sensor_depth", adp[['sensor_depth']])
   ncatt_put(ncout, "SVEL", "serial_number", adp[['ADCP_serial_number']])
 
-
+  ####CF conventions & BODC standards####
   ncatt_put(ncout, 0, 'Conventions', 'CF-1.7')
   ncatt_put(ncout, 0, "creator_type", "person")
   ncatt_put(ncout, 0, "creator_institution", adp[['data_origin']])
@@ -542,7 +544,7 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 0, "processing_level", adp[['processing_level']])
   # ncatt_put(ncout, 0, "source", "R code: adcpProcess, github:")
 
-  #BODC P01 names
+  ####BODC P01 names####
   ncatt_put(ncout, "EWCT", "sdn_parameter_urn", "SDN:P01::LCEWAP01")
   ncatt_put(ncout, "NSCT", "sdn_parameter_urn", "SDN:P01::LCNSAP01")
   ncatt_put(ncout, "VCSP", "sdn_parameter_urn", "SDN:P01::LRZAAP01")
@@ -645,7 +647,7 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, "time_string", "sdn_uom_name", "ISO8601")
 
 
-  #CF standard names
+  #####CF standard names####
   ncatt_put(ncout, "EWCT", "standard_name", "eastward_sea_water_velocity")
   ncatt_put(ncout, "NSCT", "standard_name", "northward_sea_water_velocity")
   ncatt_put(ncout, "VCSP", "standard_name", "upward_sea_water_velocity")
@@ -659,6 +661,8 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, "PRES", "standard_name", "sea_water_pressure")
   ncatt_put(ncout, "SVEL", "standard_name", "speed_of_sound_in_sea_water")
 
+
+  ####data max and min####
   ncatt_put(ncout, "EWCT", "data_max", max(adp[['v']][,,1], na.rm = TRUE))
   ncatt_put(ncout, "EWCT", "data_min", min(adp[['v']][,,1], na.rm = TRUE))
   ncatt_put(ncout, "EWCT", "valid_max", 1000)
@@ -727,6 +731,8 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, "SVEL", "data_min", min(adp[['soundSpeed']]))
   ncatt_put(ncout, "SVEL", "data_max", max(adp[['soundSpeed']]))
 
+
+  ####nc close####
   nc_close(ncout)
 
 
