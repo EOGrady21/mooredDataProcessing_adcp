@@ -338,6 +338,8 @@ adpNC <- function(adp, name){
 
 
   ncatt_put(ncout, 'station', attname = 'cf_role',attval =  'timeseries_id')
+  ncatt_put(ncout, 'station', 'longitude', adp[['longitude']])
+  ncatt_put(ncout, 'station', 'latitiude', adp[['latitude']])
   ncatt_put(ncout, 'time', attname = 'cf_role', attval = 'profile_id')
   ncatt_put(ncout, 'station', 'standard_name', 'platform_name')
   ncatt_put(ncout, 'time' , 'calendar', 'gregorian')
