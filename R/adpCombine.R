@@ -37,21 +37,12 @@ adpCombine <- function(adp, raw, ncin ){
 
   #limit dimensions to match odf files
 
-  #limit by depth bins thrown out
-  dim <- (length(adp[['distance']]): length(a[['distance']]))
-  BEAM_02[,dim] <- NA
-  BEAM_03[,dim] <- NA
-  BEAM_04[,dim] <- NA
-  PGDP_02[,dim] <- NA
-  PGDP_03[,dim] <- NA
-  PGDP_04[,dim] <- NA
-  HGHT[dim] <- NA
-
-
 
   #limit by time
   limitmat <- matrix(0, nrow = length(a[['time']]), ncol = length(a[['distance']]))
   limitvec <- matrix(0, ncol = length(a[['time']]))
+
+
 
   #create 'flag mask' where 4 = bad vlaue (outside bounds)
   limitmat[as.POSIXct(a[['time']], tz = 'UTC') < as.POSIXct(adp[['time']][[1]], tz = 'UTC') | as.POSIXct(a[['time']], tz = 'UTC') > as.POSIXct(adp[['time']][[length(adp[['time']])]], tz = 'UTC')] <- 4
@@ -90,9 +81,9 @@ adpCombine <- function(adp, raw, ncin ){
 
   #combine beams into a single array using dimensions of odf data
   aa[,,1] <- adp[['a', 'numeric']]
-  aa[,,2] <- na.omit(BEAM_02)
-  aa[,,3] <- na.omit(BEAM_03)
-  aa[,,4] <- na.omit(BEAM_04)
+  aa[,,2] <- na.omit(BEAM_02[, 1:length(adp[['distance']])])
+  aa[,,3] <- na.omit(BEAM_03[, 1:length(adp[['distance']])])
+  aa[,,4] <- na.omit(BEAM_04[, 1:length(adp[['distance']])])
 
   #put array into adp object
   adp <- oceSetData(adp, 'a', aa)
@@ -105,9 +96,9 @@ adpCombine <- function(adp, raw, ncin ){
 
   #combine beams into a single array using dimensions of odf data
   qq[,,1] <- adp[['q', 'numeric']]
-  qq[,,2] <- na.omit(PGDP_02)
-  qq[,,3] <- na.omit(PGDP_03)
-  qq[,,4] <- na.omit(PGDP_04)
+  qq[,,2] <- na.omit(PGDP_02[, 1:length(adp[['distance']])])
+  qq[,,3] <- na.omit(PGDP_03[, 1:length(adp[['distance']])])
+  qq[,,4] <- na.omit(PGDP_04[, 1:length(adp[['distance']])])
 
   #put array into adp object
   adp <- oceSetData(adp, 'q', qq)
@@ -118,7 +109,7 @@ adpCombine <- function(adp, raw, ncin ){
 
 
   adp <- oceSetData(adp, 'roll', na.omit(ROLL))
-  adp <- oceSetData(adp, 'hght', na.omit(HGHT))
+  adp <- oceSetData(adp, 'hght', (HGHT[, 1:length(adp[['distance']])]))
   adp <- oceSetData(adp, 'temperature', na.omit(Tx))
   adp <- oceSetData(adp, 'depth', na.omit(D))
   adp <- oceSetData(adp, 'heading', na.omit(HEAD))
