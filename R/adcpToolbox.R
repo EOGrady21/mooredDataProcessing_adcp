@@ -522,6 +522,8 @@ oceNc_create <- function(adp, name,  metadata){
   stationdim <- ncdim_def("station", "", as.numeric(adp[['mooring_number']]))
   londim <- ncdim_def("lon", "degrees_east" , as.double(lon))
   latdim <- ncdim_def("lat", "degrees_north", as.double(lat))
+  dimnchar <- ncdim_def('nchar', '', 1:23, create_dimvar = FALSE)
+
 
   #set fill value
   FillValue <- 1e35
@@ -546,7 +548,7 @@ oceNc_create <- function(adp, name,  metadata){
     w_def <- ncvar_def("VCSP", "m/sec", list(stationdim, depthdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "time_02"
-    t_def <- ncvar_def("SYTM", "seconds since 1970-01-01T00:00:00Z", list( stationdim, timedim), FillValue, dlname, prec = "float")
+    t_def <- ncvar_def("ELTMEP01", "seconds since 1970-01-01T00:00:00Z", list( stationdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "error_velocity_in_sea_water"
     e_def <- ncvar_def("ERRV", "m/sec", list(stationdim, depthdim, timedim), FillValue, dlname, prec = "float")
@@ -592,6 +594,18 @@ oceNc_create <- function(adp, name,  metadata){
     dlname <- "instrument depth"
     D_def <- ncvar_def("D", "m", list(timedim, stationdim), FillValue, dlname, prec = "float")
 
+    dlname <- "heading"
+    head_def <- ncvar_def("HEAD", "degrees", list(timedim, stationdim), FillValue, dlname, prec = "float")
+
+    dlname <- "pressure"
+    pres_def <- ncvar_def("PRES", "decibars", list(timedim, stationdim), FillValue, dlname, prec = "float")
+
+    dlname <- "speed of sound"
+    svel_def <- ncvar_def("SVEL", "m/s", list(timedim, stationdim), FillValue, dlname, prec = "float")
+
+    dlname <- "time_string"
+    ts_def <- ncvar_def("DTUT8601", units = "",dim =  list(dimnchar, timedim), missval = NULL, name =  dlname, prec = "char")
+
 
     FillValue <- 0
 
@@ -606,7 +620,7 @@ oceNc_create <- function(adp, name,  metadata){
 
     ####writing net CDF####
     #write out definitions to new nc file
-    ncout <- nc_create(ncfname, list(u_def, v_def, w_def, e_def, t_def, b1_def, b2_def, b3_def, b4_def, pg1_def, pg2_def, pg3_def, pg4_def, p_def, r_def, hght_def, Tx_def, D_def, qc_u_def, qc_v_def, qc_w_def, lon_def, lat_def), force_v4 = TRUE)
+    ncout <- nc_create(ncfname, list(u_def, v_def, w_def, e_def, t_def, b1_def, b2_def, b3_def, b4_def, pg1_def, pg2_def, pg3_def, pg4_def, p_def, r_def, hght_def, Tx_def, D_def, qc_u_def, qc_v_def, qc_w_def, lon_def, lat_def, head_def, pres_def, svel_def, ts_def), force_v4 = TRUE)
   }
 
   if (adp@metadata$source == 'odf'){
@@ -628,7 +642,7 @@ oceNc_create <- function(adp, name,  metadata){
     w_def <- ncvar_def("VCSP", "m/sec", list(stationdim, depthdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "time_02"
-    t_def <- ncvar_def("SYTM", "seconds since 1970-01-01T00:00:00Z", list( stationdim, timedim), FillValue, dlname, prec = "float")
+    t_def <- ncvar_def("ELTMEP01", "seconds since 1970-01-01T00:00:00Z", list( stationdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "error_velocity_in_sea_water"
     e_def <- ncvar_def("ERRV", "m/sec", list(stationdim, depthdim, timedim), FillValue, dlname, prec = "float")
@@ -675,6 +689,10 @@ oceNc_create <- function(adp, name,  metadata){
     ncvar_put(ncout, qc_u_def, adp@metadata$flags$v[,,1])
     ncvar_put(ncout, qc_v_def, adp@metadata$flags$v[,,2])
     ncvar_put(ncout, qc_w_def, adp@metadata$flags$v[,,3])
+    ncvar_put(ncout, head_def, adp[['heading']])
+    ncvar_put(ncout, pres_def, adp[['pressure']])
+    ncvar_put(ncout, svel_def, adp[['soundSpeed']])
+    ncvar_put(ncout, ts_def, adp[['time']])
   }
   if (adp@metadata$source == 'odf'){
     ncvar_put(ncout, b1_def, adp[['a', 'numeric']])
@@ -688,6 +706,9 @@ oceNc_create <- function(adp, name,  metadata){
   ncatt_put(ncout, 'time', attname = 'cf_role', attval = 'profile_id')
   ncatt_put(ncout, 'station', 'standard_name', 'platform_name')
   ncatt_put(ncout, 'time' , 'calendar', 'gregorian')
+  ncatt_put(ncout, 'time_string', 'note', 'time values as ISO8601 string')
+  ncatt_put(ncout, 'time_string', 'time_zone', 'UTC')
+
 
   if (adp@metadata$source == 'raw'){
     ####pulled from adp object####
@@ -856,6 +877,10 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, "ROLL", "sdn_parameter_urn", "SDN:P01::ROLLFEI01")
     ncatt_put(ncout, "lon", "sdn_parameter_urn", "SDN:P01::ALONZZ01")
     ncatt_put(ncout, "lat", "sdn_parameter_urn", "SDN:P01::ALATZZ01")
+    ncatt_put(ncout, "HEAD", "sdn_parameter_urn", "SDN:P01::HEADCM01")
+    ncatt_put(ncout, "PRES", "sdn_parameter_urn", "SDN:P01::PRESPR01")
+    ncatt_put(ncout, "SVEL", "sdn_parameter_urn", "SDN:P01::SVELCV01")
+    ncatt_put(ncout, "time_string", "sdn_parameter_urn", "SDN:P01::DTUT8601")
 
 
 
@@ -877,6 +902,11 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, "ROLL", "sdn_parameter_name", "Orientation (roll angle) of measurement platform by inclinometer (second sensor)")
     ncatt_put(ncout, "lon", "sdn_parameter_name", "Longitude east")
     ncatt_put(ncout, "lat", "sdn_parameter_name", "Latitude north")
+    ncatt_put(ncout, "HEAD", "sdn_parameter_name", "Orientation (horizontal relative to true north) of measurement device {heading}")
+    ncatt_put(ncout, "PRES", "sdn_parameter_name", "Pressure (spatial co-ordinate) exerted by the water body by profiling pressure sensor and corrected to read zero at sea level")
+    ncatt_put(ncout, "SVEL", "sdn_parameter_name", "Sound velocity in the water body by computation from temperature and salinity by unspecified algorithm")
+    ncatt_put(ncout, 'ELTMEP01', "sdn_parameter_name", "Elapsed time (since 1970-01-01T00:00:00Z)")
+    ncatt_put(ncout, 'time_string', "sdn_parameter_name", "String corresponding to format 'YYYY-MM-DDThh:mm:ss.sssZ' or other valid ISO8601 string")
 
 
 
@@ -900,6 +930,11 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, "ROLL", "sdn_uom_urn", "SDN:P06:UAAA")
     ncatt_put(ncout, "lon", "sdn_uom_urn", "SDN:P06::DEGE")
     ncatt_put(ncout, "lat", "sdn_uom_urn", "SDN:P06:DEGN")
+    ncatt_put(ncout, "HEAD", "sdn_uom_urn", "SDN:P06:UAAA")
+    ncatt_put(ncout, "PRES", "sdn_uom_urn", "SDN:P06:UPDB")
+    ncatt_put(ncout, "SVEL", "sdn_uom_urn", "SDN:P06:UVAA")
+    ncatt_put(ncout, "ELTMEP01", "sdn_uom_urn", "SDN:P06::UTBB")
+    ncatt_put(ncout, "time_string", "sdn_uom_urn", "SDN:P06::TISO")
 
 
     ncatt_put(ncout, "EWCT", "sdn_uom_name", "Metres per second")
@@ -921,18 +956,25 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, "ROLL", "sdn_uom_name", "Degrees")
     ncatt_put(ncout, "lon", "sdn_uom_name", "Degrees east")
     ncatt_put(ncout, "lat", "sdn_uom_name", "Degrees north")
+    ncatt_put(ncout, "HEAD", "sdn_uom_name", "Degrees")
+    ncatt_put(ncout, "PRES", "sdn_uom_name", "Decibars")
+    ncatt_put(ncout, "SVEL", "sdn_uom_name", "Metres per second")
+    ncatt_put(ncout, "ELTMEP01", "sdn_uom_name", "Seconds")
+    ncatt_put(ncout, "time_string", "sdn_uom_name", "ISO8601")
 
 
     #CF standard names
     ncatt_put(ncout, "EWCT", "standard_name", "eastward_sea_water_velocity")
     ncatt_put(ncout, "NSCT", "standard_name", "northward_sea_water_velocity")
     ncatt_put(ncout, "VCSP", "standard_name", "upward_sea_water_velocity")
-
-
+    ncatt_put(ncout, "ELTMEP01", "standard_name", "time")
     ncatt_put(ncout, "lat", "standard_name", "latitude")
     ncatt_put(ncout, "lon", "standard_name", "longitude")
     ncatt_put(ncout, "D", "standard_name", "depth")
-    ncatt_put(ncout, "depth", "positive", "down")     #direction of depth axis
+    ncatt_put(ncout, "PTCH", "standard_name", "platform_pitch_angle")
+    ncatt_put(ncout, "ROLL", "standard_name", "platform_roll_angle")
+    ncatt_put(ncout, "PRES", "standard_name", "sea_water_pressure")
+    ncatt_put(ncout, "SVEL", "standard_name", "speed_of_sound_in_sea_water")
 
   }
 
@@ -1124,6 +1166,17 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, "D", "data_max", max(adp[['depth']]))
     ncatt_put(ncout, "Tx", "data_min", min(adp[['temperature']]))
     ncatt_put(ncout, "Tx", "data_max", max(adp[['temperature']]))
+    ncatt_put(ncout, "PTCH", "data_min", min(adp[['pitch']]))
+    ncatt_put(ncout, "PTCH", "data_max", max(adp[['pitch']]))
+    ncatt_put(ncout, "ROLL", "data_min", min(adp[['roll']]))
+    ncatt_put(ncout, "ROLL", "data_max", max(adp[['roll']]))
+    ncatt_put(ncout, "HEAD", "data_min", min(adp[['heading']]))
+    ncatt_put(ncout, "HEAD", "data_max", max(adp[['heading']]))
+    ncatt_put(ncout, "PRES", "data_min", min(adp[['pressure']]))
+    ncatt_put(ncout, "PRES", "data_max", max(adp[['pressure']]))
+    ncatt_put(ncout, "SVEL", "data_min", min(adp[['soundSpeed']]))
+    ncatt_put(ncout, "SVEL", "data_max", max(adp[['soundSpeed']]))
+
   }
   if( adp@metadata$source == 'odf'){
     ncatt_put(ncout, "BEAM_01", "data_min", min(adp[['a', 'numeric']], na.rm= TRUE))
