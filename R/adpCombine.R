@@ -78,7 +78,7 @@ adpCombine <- function(adp, raw, ncin ){
   z <- 4
   aa <- array(dim = c(x, y, z))
 
-#not working
+
   #combine beams into a single array using dimensions of odf data
   aa[,,1] <- adp[['a', 'numeric']]
   aa[,,2] <- na.omit(BEAM_02[, 1:length(adp[['distance']])])
@@ -229,6 +229,12 @@ adpCombine <- function(adp, raw, ncin ){
   adp <- oceSetMetadata(adp, 'xducer_offset_from_bottom', xducer_offset_from_bottom$value)
   adp <- oceSetMetadata(adp, 'bin_size', bin_size$value)
   adp <- oceSetMetadata(adp, 'sensor_depth', mean(adp[['depth']]))
+
+
+  #set metadata source
+
+  adp <- oceSetMetadata(adp, 'source', 'netCDF, Raw, ODF combined')
+
   return(adp)
 
 }
