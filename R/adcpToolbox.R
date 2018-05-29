@@ -417,7 +417,7 @@ adpFlag <- function(adp,  pg, er){
 #'
 name.file <- function(adp){
 
-  name <- paste('MADCP', adp[['cruiseNumber']], adp[['mooring_number']], adp[['serialNumber']], adp[['samplingInterval']], sep = '_')
+  name <- paste('MADCP', adp[['cruiseNumber']], adp[['mooring_number']], adp[['serialNumber']], adp[['sampling_interval']], sep = '_')
 
   name
 }
@@ -724,7 +724,7 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "minmax_percent_good", adp[['percentGdMinimum']])
     ncatt_put(ncout, 0,"minmax_percent_good", "100")
     ncatt_put(ncout, 0, "error_velocity_threshold", adp[['errorVelocityMaximum']])
-    ncatt_put(ncout, 0, "transmit_pulse_length_cm", adp[['xmitPulseLength']])
+    ncatt_put(ncout, 0, "transmit_pulse_length_cm", adp[['xmitPulseLength']]*100)
     ncatt_put(ncout, 0, "false_target_reject_values", adp[['falseTargetThresh']])
     ncatt_put(ncout, 0, "serial_number", adp[['serialNumber']])
     ncatt_put(ncout, 0, "transform", adp[['oceCoordinate']])
@@ -739,8 +739,8 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "chief_scientist", adp[['chief_scientist']])
     ncatt_put(ncout, 0, "data_origin", adp[['institution']])
     ncatt_put(ncout, 0, "water_depth", adp[['water_depth']])
-    ncatt_put(ncout, 0, "delta_t_sec",adp[['samplingInterval']])
-    ncatt_put(ncout, 0, "pred_accuracy", adp[['velocityResolution']])
+    ncatt_put(ncout, 0, "delta_t_sec",adp[['sampling_interval']])
+    ncatt_put(ncout, 0, "pred_accuracy", adp[['velocityResolution']]*1000)
     ncatt_put(ncout, "depth", "xducer_offset_from_bottom", adp[['depth_off_bottom']])
     ncatt_put(ncout, "depth", "bin_size", adp[['cellSize']])
     ncatt_put(ncout, "EWCT", "sensor_type", adp[['instrumentType']])
@@ -1006,7 +1006,7 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "chief_scientist", adp[['chief_scientist']])
     ncatt_put(ncout, 0, "data_origin", adp[['institution']])
     ncatt_put(ncout, 0, "water_depth", adp[['water_depth']])
-    ncatt_put(ncout, 0, "delta_t_sec",adp[['time_offset']])
+    ncatt_put(ncout, 0, "delta_t_sec",adp[['sampling_interval']])
     ncatt_put(ncout, 0, "pred_accuracy", adp[['velocityResolution']])
     ncatt_put(ncout, "depth", "xducer_offset_from_bottom", adp[['depth_off_bottom']])
     ncatt_put(ncout, "depth", "bin_size", adp[['cellSize']])
