@@ -34,20 +34,65 @@ adpCombine <- function(adp, raw, ncin ){
   PRES <- a[['pressure']]
   SVEL <- a[['soundSpeed']]
 
+
+  #limit dimensions to match odf files
+
+  #limit by depth bins thrown out
+  dim <- (length(adp[['distance']]): length(a[['distance']]))
+  BEAM_02[,dim] <- NA
+  BEAM_03[,dim] <- NA
+  BEAM_04[,dim] <- NA
+  PGDP_02[,dim] <- NA
+  PGDP_03[,dim] <- NA
+  PGDP_04[,dim] <- NA
+  HGHT[dim] <- NA
+
+
+
+  #limit by time
+  limitmat <- matrix(0, nrow = length(a[['time']]), ncol = length(a[['distance']]))
+  limitvec <- matrix(0, ncol = length(a[['time']]))
+
+  #create 'flag mask' where 4 = bad vlaue (outside bounds)
+  limitmat[as.POSIXct(a[['time']], tz = 'UTC') < as.POSIXct(adp[['time']][[1]], tz = 'UTC') | as.POSIXct(a[['time']], tz = 'UTC') > as.POSIXct(adp[['time']][[length(adp[['time']])]], tz = 'UTC')] <- 4
+  limitvec[as.POSIXct(a[['time']], tz = 'UTC') < as.POSIXct(adp[['time']][[1]], tz = 'UTC') | as.POSIXct(a[['time']], tz = 'UTC') > as.POSIXct(adp[['time']][[length(adp[['time']])]], tz = 'UTC')] <- 4
+
+
+  #limit time variable
+  a[['time']][limitvec == 4] <- NA
+
+  #limit other transferable data
+  PTCH[limitvec == 4] <- NA
+  ROLL[limitvec == 4] <- NA
+  Tx[limitvec == 4] <- NA
+  D[limitvec == 4] <- NA
+  HEAD[limitvec == 4] <- NA
+  PRES[limitvec == 4] <- NA
+  SVEL[limitvec == 4] <- NA
+
+  BEAM_02[limitmat == 4] <- NA
+  BEAM_03[limitmat == 4] <- NA
+  BEAM_04[limitmat == 4] <- NA
+  PGDP_02[limitmat == 4] <- NA
+  PGDP_03[limitmat == 4] <- NA
+  PGDP_04[limitmat == 4] <- NA
+
+
+
   #insert into adp
 
-  #create a array
+  #create an array
   x <- nrow(adp[['a']])
   y <- ncol(adp[['a']])
   z <- 4
   aa <- array(dim = c(x, y, z))
 
+
   #combine beams into a single array using dimensions of odf data
   aa[,,1] <- adp[['a', 'numeric']]
-  dim <- dim(adp[['a']])
-  aa[,,2] <- BEAM_02[dim]
-  aa[,,3] <- BEAM_03[dim]
-  aa[,,4] <- BEAM_04[dim]
+  aa[,,2] <- na.omit(BEAM_02)
+  aa[,,3] <- na.omit(BEAM_03)
+  aa[,,4] <- na.omit(BEAM_04)
 
   #put array into adp object
   adp <- oceSetData(adp, 'a', aa)
@@ -60,24 +105,25 @@ adpCombine <- function(adp, raw, ncin ){
 
   #combine beams into a single array using dimensions of odf data
   qq[,,1] <- adp[['q', 'numeric']]
-  dim <- dim(adp[['q']])
-  qq[,,2] <- PGDP_02[dim]
-  qq[,,3] <- PGDP_03[dim]
-  qq[,,4] <- PGDP_04[dim]
+  qq[,,2] <- na.omit(PGDP_02)
+  qq[,,3] <- na.omit(PGDP_03)
+  qq[,,4] <- na.omit(PGDP_04)
 
   #put array into adp object
   adp <- oceSetData(adp, 'q', qq)
 
 
-  dim <- length(adp[['time']])
-  adp <- oceSetData(adp, 'pitch', PTCH[1:length(adp[['time']])])
-  adp <- oceSetData(adp, 'roll', ROLL[1:length(adp[['time']])])
-  adp <- oceSetData(adp, 'hght', HGHT[1:length(adp[['time']])])
-  adp <- oceSetData(adp, 'temperature', Tx[1:length(adp[['time']])])
-  adp <- oceSetData(adp, 'depth', D[1:length(adp[['time']])])
-  adp <- oceSetData(adp, 'heading', HEAD[1:length(adp[['time']])])
-  adp <- oceSetData(adp, 'pressure', PRES[1:length(adp[['time']])])
-  adp <- oceSetData(adp, 'soundSpeed', SVEL[1:length(adp[['time']])])
+  tz <- 'UTC'
+  adp <- oceSetData(adp, 'pitch', na.omit(PTCH))
+
+
+  adp <- oceSetData(adp, 'roll', na.omit(ROLL))
+  adp <- oceSetData(adp, 'hght', na.omit(HGHT))
+  adp <- oceSetData(adp, 'temperature', na.omit(Tx))
+  adp <- oceSetData(adp, 'depth', na.omit(D))
+  adp <- oceSetData(adp, 'heading', na.omit(HEAD))
+  adp <- oceSetData(adp, 'pressure', na.omit(PRES))
+  adp <- oceSetData(adp, 'soundSpeed', na.omit(SVEL))
 
 
   #pull metadata from RAW
@@ -189,7 +235,6 @@ adpCombine <- function(adp, raw, ncin ){
   adp <- oceSetMetadata(adp, 'sounding', sounding$value)
   adp <- oceSetMetadata(adp, 'chief_scientist', chief_scientist$value)
   adp <- oceSetMetadata(adp, 'delta_t_sec', delta_t_sec$value)
-
   adp <- oceSetMetadata(adp, 'xducer_offset_from_bottom', xducer_offset_from_bottom$value)
   adp <- oceSetMetadata(adp, 'bin_size', bin_size$value)
   adp <- oceSetMetadata(adp, 'sensor_depth', mean(adp[['depth']]))
@@ -303,7 +348,6 @@ adpNC <- function(adp, name){
 
   dlname <- "speed of sound"
   svel_def <- ncvar_def("SVEL", "m/s", list(timedim, stationdim), FillValue, dlname, prec = "float")
-
 
   dlname <- "time_string"
   ts_def <- ncvar_def("DTUT8601", units = "",dim =  list(dimnchar, timedim), missval = NULL, name =  dlname, prec = "char")
