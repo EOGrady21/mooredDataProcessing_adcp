@@ -1277,7 +1277,7 @@ oceNc_create <- function(adp, name,  metadata){
 #' lowCorrThresh (valid_correlation_range), percentGdMinimum
 #' (minmax_percent_good), errorVelocityMeaximum (error_velocity_threshold),
 #' xmitPulseLength (transmit_pulse_length), falseTargetThresh
-#' (false_target_reject_values), serialNumber
+#' (false_target_reject_values), serialNumber, instrumentType(data_type)
 #'
 #'
 #' b)	Archived netCDF
@@ -1289,12 +1289,11 @@ oceNc_create <- function(adp, name,  metadata){
 #' ***note this DATA is also in the RAW file if NC file is corrupted or missing
 #'
 #'
-#' Metadata: creation_date, mooring, start_time, stop_time, inst_type, history,
-#' starting_water_layer, ending_water_layer, depth_note, transform, data_type,
-#' data_subtype, data_origin, coord_system, water_mass, pos_const, depth_const,
-#' drifter, var_fill, experiment, project, descript, longitude, latitude,
-#' data_cmnt, fill_flag, composite, magnetic_variation, platform, sounding,
-#' chief_scientist, delta_t_sec, time_between_ping_groups, depth:
+#' Metadata: creation_date,  start_time, stop_time, inst_type, history,
+#' starting_water_layer, ending_water_layer, depth_note, transform,
+#' data_subtype, coord_system, water_mass, pos_const, depth_const, drifter,
+#' var_fill, experiment, project, descript, data_cmnt, fill_flag, composite,
+#' magnetic_variation, , delta_t_sec, time_between_ping_groups, depth:
 #' xducer_offset_from_bottom, depth: bin_size
 #'
 #'
@@ -1307,9 +1306,10 @@ oceNc_create <- function(adp, name,  metadata){
 #'
 #'
 #'      Metadata: units (v, distance), cellSize, numberOfBeams, orientation,
-#'      model, type, eventNumber, serialNumber, ship, scientist, institute,
-#'      cruise, station, countryInstituteCode, cruiseNumber, startTime,
-#'      latitude, longitude, waterDepth, sounding
+#'      model, type, eventNumber, serialNumber, ship (platform), scientist
+#'      (chief_scientist), institute (data_origin), cruise, station (mooring),
+#'      countryInstituteCode, cruiseNumber, startTime, latitude, longitude,
+#'      waterDepth, sounding
 
 #'
 #'@param adp an adp object sourced from ODF files using
