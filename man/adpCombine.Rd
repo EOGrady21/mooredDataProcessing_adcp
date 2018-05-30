@@ -67,3 +67,11 @@ Contains:
      cruise, station, countryInstituteCode, cruiseNumber, startTime,
      latitude, longitude, waterDepth, sounding
 }
+\seealso{
+Other odf: \code{\link{odf2adp}}
+
+Other NC: \code{\link{adpNC}}, \code{\link{oceNc_create}}
+
+Other processing: \code{\link{limit_depthbytime}},
+  \code{\link{limit_time}}, \code{\link{oceNc_create}}
+}

@@ -21,3 +21,7 @@ Creates standardized netCDF file from adp object (produced from
   product will meet CF compliance, ERDDAP standards, BODC/SDN, and DFO/MEDS
   standards
 }
+\seealso{
+Other NC: \code{\link{adpCombine}},
+  \code{\link{oceNc_create}}
+}

@@ -12,5 +12,5 @@ read.meta(file, obj)
 \item{obj}{adp oce object to assign metadata to}
 }
 \description{
-Read in all metadata from csv template to adp object, sourced from log sheets
+ADCP process step 2.1
 }

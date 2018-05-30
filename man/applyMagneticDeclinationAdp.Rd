@@ -30,7 +30,5 @@ adp object with magnetic declination applied given coordinates
   If type == interpolated, the rate of declination is used over time series
 }
 \description{
-apply magnetic declination to ADCP data uses
-\code{\link[oce:magneticField]{magneticField}} to calculate declination and
-\code{\link[oce:enuToOther]{enuToOTher}} to apply variation to data set
+ADCP Processing step 3.2
 }

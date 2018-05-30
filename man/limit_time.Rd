@@ -24,3 +24,8 @@ adp object with velocities limited to active ADCP measurement times
 Function limits variable (time, salinity, pressure, temperature,
  pitch, roll, heading) from before deployment and after recovery of ADCP
 }
+\seealso{
+Other processing: \code{\link{adpCombine}},
+  \code{\link{limit_depthbytime}},
+  \code{\link{oceNc_create}}
+}

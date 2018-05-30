@@ -8,6 +8,7 @@ require(ncdf4)
 
 #'ADCP PRocessing step 2.0
 #'
+#'@family processing
 #'Load adp data into R with list that includes all metadata from mooring sheets
 #'#' returns an object of class adp (from oce package) uses
 #'\code{\link[oce:read.adp]{read.adp}}
@@ -52,7 +53,7 @@ read.adp.easy <- function(file, metadata){
 
 #' ADCP process step 2.1
 #'
-#'
+#'@family processing
 #' Read in all metadata from csv template to adp object, sourced from log sheets
 #'
 #' @param file csv file name
@@ -81,6 +82,8 @@ read.meta <- function(file, obj){
 ###applyMAgneticDeclination
 
 #' ADCP Processing step 3.2
+#'
+#'@family processing
 #'
 #' apply magnetic declination to ADCP data uses
 #' \code{\link[oce:magneticField]{magneticField}} to calculate declination and
@@ -155,6 +158,8 @@ applyMagneticDeclinationAdp <- function(x, lat = x[['latitude']], lon = x[['long
 
 #'ADCP Processing step 3.3 Limit depth by rmax
 #'
+#'@family processing
+#'
 #'Use maximum acceptable range values to determine acceptable depth values Uses
 #'Teledyne RDI equation, Rmax = Dcos(x)
 #'
@@ -207,6 +212,8 @@ limit_depthbyrmax <- function(x, lat = x[['latitude']]){
 
 #'@title limit depth by time
 #'
+#'@family processing
+#'
 #'@description Uses deployment and recovery times to limit depth within times
 #'  that insturment was actively and properly sampliing
 #'
@@ -239,6 +246,7 @@ limit_depthbytime <- function(adp, tz = 'UTC'){
 #'
 #'ADCP Processing step 3.4
 #'
+#'@family processing
 #'
 #'@description Function limits variable (time, salinity, pressure, temperature,
 #'  pitch, roll, heading) from before deployment and after recovery of ADCP
@@ -329,7 +337,7 @@ limit_time <- function(x, tz = 'UTC', dt = x[['deployment_time']], rt = x[['reco
 
 #' ADCP processing Step 3.5
 #'
-#'
+#'@family processing
 #'
 #' adpFlag function flag an adp object based on a series of parameters including
 #' percent good, and error velocity.
@@ -415,6 +423,8 @@ adpFlag <- function(adp,  pg, er){
 
 #' @title File naming format
 #'
+#'@family general
+#'
 #' @description pulls metadata from an adp oce object and creates a file name in
 #'   standard BIO format
 #'
@@ -433,6 +443,8 @@ name.file <- function(adp){
 }
 
 #' ADCP Processing ODF to NetCDF
+#'
+#'@family odf
 #'
 #' @description Converting individual odf bins to Net cdf standard format
 #'
@@ -494,6 +506,10 @@ odf2adp <- function(files, metadata) {
 }
 
 #'ADCP Processing step 4.1
+#'
+#'@family processing
+#'@family NC
+#'
 #'
 #'@description Exports an adp object to a net cdf using variables and metadata
 #'  within adp combined with optional additional metatdata see details in
@@ -1238,6 +1254,10 @@ oceNc_create <- function(adp, name,  metadata){
 #'
 #'ADCP Combine
 #'
+#'@family odf
+#'@family NC
+#'@family processing
+#'
 #'@description Combines archived data and metadata from raw, odf and netCDF
 #'  sources into adp object which can be exported as netCDF or saved
 #'
@@ -1535,6 +1555,8 @@ adpCombine <- function(adp, raw, ncin ){
 
 ####create netCDF file from combined adp source####
 #' NetCDF creation from adp object
+#'
+#'@family NC
 #'
 #' @description Creates standardized netCDF file from adp object (produced from
 #'   \code{\link[ADCP:adpCombine]{adpCombine}})

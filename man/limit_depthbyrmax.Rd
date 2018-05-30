@@ -12,6 +12,5 @@ limit_depthbyrmax(x, lat = x[["latitude"]])
 \item{lat}{latitude of instrument during sampling}
 }
 \description{
-Use maximum acceptable range values to determine acceptable depth values Uses
-Teledyne RDI equation, Rmax = Dcos(x)
+ADCP Processing step 3.3 Limit depth by rmax
 }

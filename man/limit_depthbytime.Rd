@@ -16,3 +16,7 @@ limit_depthbytime(adp, tz = "UTC")
 Uses deployment and recovery times to limit depth within times
  that insturment was actively and properly sampliing
 }
+\seealso{
+Other processing: \code{\link{adpCombine}},
+  \code{\link{limit_time}}, \code{\link{oceNc_create}}
+}

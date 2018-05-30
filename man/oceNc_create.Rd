@@ -19,3 +19,9 @@ Exports an adp object to a net cdf using variables and metadata
  within adp combined with optional additional metatdata see details in
  \code{\link[ncdf4:ncdf4]{ncdf4}} package
 }
+\seealso{
+Other processing: \code{\link{adpCombine}},
+  \code{\link{limit_depthbytime}}, \code{\link{limit_time}}
+
+Other NC: \code{\link{adpCombine}}, \code{\link{adpNC}}
+}

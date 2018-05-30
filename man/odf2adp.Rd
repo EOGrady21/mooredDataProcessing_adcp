@@ -14,3 +14,6 @@ odf2adp(files, metadata)
 \description{
 Converting individual odf bins to Net cdf standard format
 }
+\seealso{
+Other odf: \code{\link{adpCombine}}
+}

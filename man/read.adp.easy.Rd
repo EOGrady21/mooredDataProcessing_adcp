@@ -12,7 +12,5 @@ read.adp.easy(file, metadata)
 \item{metadata}{csv metadata file from template}
 }
 \description{
-Load adp data into R with list that includes all metadata from mooring sheets
-#' returns an object of class adp (from oce package) uses
-\code{\link[oce:read.adp]{read.adp}}
+ADCP PRocessing step 2.0
 }
