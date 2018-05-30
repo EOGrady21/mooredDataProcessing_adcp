@@ -6,9 +6,11 @@ require(ncdf4)
 
 ##read.adp.easy
 
-#'ADCP PRocessing step 2.0
+#'ADCP Processing step 2.0
 #'
 #'@family processing
+#'
+#'
 #'Load adp data into R with list that includes all metadata from mooring sheets
 #'#' returns an object of class adp (from oce package) uses
 #'\code{\link[oce:read.adp]{read.adp}}

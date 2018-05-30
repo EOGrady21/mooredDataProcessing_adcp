@@ -2,7 +2,7 @@
 % Please edit documentation in R/adcpToolbox.R
 \name{read.adp.easy}
 \alias{read.adp.easy}
-\title{ADCP PRocessing step 2.0}
+\title{ADCP Processing step 2.0}
 \usage{
 read.adp.easy(file, metadata)
 }
@@ -12,5 +12,5 @@ read.adp.easy(file, metadata)
 \item{metadata}{csv metadata file from template}
 }
 \description{
-ADCP PRocessing step 2.0
+ADCP Processing step 2.0
 }
