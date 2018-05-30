@@ -15,5 +15,5 @@ oceNc_create(adp, name, metadata)
 }
 \description{
 Exports an adp object to a net cdf using variables and metadata within adp combined with optional additional metatdata
-see details in \code{\link[ncdf4:ncdf4]{ncd4}} package
+see details in \code{\link[ncdf4:ncdf4]{ncdf4}} package
 }

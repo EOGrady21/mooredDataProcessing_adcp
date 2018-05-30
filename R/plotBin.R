@@ -1,5 +1,8 @@
 ####bin by bin plot###
 #'
+#'Bin by bin plot
+#'
+#'
 #'use to plot each "bin" of any chosen variable (u, v, error, echo intensity)
 #'
 #'

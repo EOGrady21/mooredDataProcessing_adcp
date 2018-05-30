@@ -424,7 +424,7 @@ name.file <- function(adp){
 
 #' ADCP Processing ODF to NetCDF
 #'
-#' Converting individuasl odf bins to Net cdf standard format
+#' @description Converting individual odf bins to Net cdf standard format
 #'
 #' @param files list of odf files
 #' @param metadata any extra metadata to be added to net cdf as list form
@@ -485,8 +485,7 @@ odf2adp <- function(files, metadata) {
 
 #'   ADCP Processing step 4.1
 #'
-#'
-#' Exports an adp object to a net cdf using variables and metadata within adp combined with optional additional metatdata
+#'@description Exports an adp object to a net cdf using variables and metadata within adp combined with optional additional metatdata
 #'see details in \code{\link[ncdf4:ncdf4]{ncdf4}} package
 #'
 #' @param obj an adp object from the oce class
@@ -1227,21 +1226,42 @@ oceNc_create <- function(adp, name,  metadata){
 #'
 #'ADCP Combine
 #'
-#'Combines archived data and metadata from raw, odf and netCDF sources into
+#'@description Combines archived data and metadata from raw, odf and netCDF sources into
 #'adp object which can be exported as netCDF or saved
+#'
+#'@details
 #'a)	Raw file (.000)
+#'
 #' Contains:
+#'
+#'
 #'   Data: heading, pressure, sound speed data, BEAM_02-_04, PGDP_02-_04, PTCH, ROLL, HGHT, Tx, D
+#'
+#'
 #' Metadata: firmwareVersion, frequency, beamPattern, orientation, beamAngle, numberOfBeams (janus), pingsPerEnsemble, velocityResolution (pred_accuracy), lowCorrThresh (valid_correlation_range), percentGdMinimum (minmax_percent_good), errorVelocityMeaximum (error_velocity_threshold), xmitPulseLength (transmit_pulse_length), falseTargetThresh (false_target_reject_values), serialNumber
+#'
+#'
 #' b)	Archived netCDF
+#'
 #' Contains:
-#'   Data: BEAM_02-_04, PGDP_02-_04, PTCH, ROLL, HGHT, Tx, D
+#'
+#'
+#'       Data: BEAM_02-_04, PGDP_02-_04, PTCH, ROLL, HGHT, Tx, D
 #' ***note this DATA is also in the RAW file if NC file is corrupted or missing
+#'
+#'
 #' Metadata: creation_date, mooring, start_time, stop_time, inst_type, history, starting_water_layer, ending_water_layer, depth_note, transform, data_type, data_subtype, data_origin, coord_system, water_mass, pos_const, depth_const, drifter, var_fill, experiment, project, descript, longitude, latitude, data_cmnt, fill_flag, composite, magnetic_variation, platform, sounding, chief_scientist, delta_t_sec, time_between_ping_groups, depth: xducer_offset_from_bottom, depth: bin_size
 #'
+#'
+#'
 #' c)	Archived ODFs (series for each mooring)
-#' Data: PROCESSED EWCT, NSCT, VCSP, ERRV, BEAM_01, PGDP_01, time, distance
-#' Metadata: units (v, distance), cellSize, numberOfBeams, orientation, model, type, eventNumber, serialNumber, ship, scientist, institute, cruise, station, countryInstituteCode, cruiseNumber, startTime, latitude, longitude, waterDepth, sounding
+#'
+#' Contains:
+#'
+#'      Data: PROCESSED EWCT, NSCT, VCSP, ERRV, BEAM_01, PGDP_01, time, distance
+#'
+#'
+#'      Metadata: units (v, distance), cellSize, numberOfBeams, orientation, model, type, eventNumber, serialNumber, ship, scientist, institute, cruise, station, countryInstituteCode, cruiseNumber, startTime, latitude, longitude, waterDepth, sounding
 
 #'
 #'@param adp an adp object sourced from ODF files using  \code{\link[ADCP:odf2adp]{odf2adp}}
@@ -1489,7 +1509,7 @@ adpCombine <- function(adp, raw, ncin ){
 ####create netCDF file from combined adp source####
 #' NetCDF creation from adp object
 #'
-#' Creates standardized netCDF file from adp object (produced from \code{\link[ADCP:adpCombine]{adpCombine}})
+#' @description Creates standardized netCDF file from adp object (produced from \code{\link[ADCP:adpCombine]{adpCombine}})
 #'
 #' Standardized name of file can be created with:
 #' (\code{\link[ADCP:name.file]{name.file}})

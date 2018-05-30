@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotBin.R
 \name{plotBin}
 \alias{plotBin}
-\title{use to plot each "bin" of any chosen variable (u, v, error, echo intensity)}
+\title{Bin by bin plot}
 \usage{
 plotBin(v)
 }

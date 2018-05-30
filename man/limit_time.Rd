@@ -4,8 +4,8 @@
 \alias{limit_time}
 \title{ADCP Processing step 3.4}
 \usage{
-limit_time(x, tz = "UTC", dt = x[["deploymentTime"]],
-  rt = x[["recoveryTime"]])
+limit_time(x, tz = "UTC", dt = x[["deployment_time"]],
+  rt = x[["recovery_time"]])
 }
 \arguments{
 \item{x}{adp object from oce-class adp}
@@ -20,5 +20,5 @@ limit_time(x, tz = "UTC", dt = x[["deploymentTime"]],
 adp object with velocities limited to active ADCP measurement times (after deployment and before recovery)
 }
 \description{
-Function limits time from before deployment and after recovery of ADCP
+Function limits variable (time, salinity, pressure, temperature, pitch, roll, heading) from before deployment and after recovery of ADCP
 }

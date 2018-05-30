@@ -23,6 +23,11 @@ This function also defaults to flagging depth values based on the Teledyne RDI s
 
 Rmax = Dcosx
    where Rmax is the maximum acceptable distance range from the ADCP, D is total depth and x is the beam angle of the ADCP.
+
+This function also flags data outside the deployment and recovery time bounds.
+
+Sets any data not flagged by this processing to 'good' flag value
+
 This function uses \code{\link[oce:initializeFlags]{initializeFlags}} to initialize blank flagging scheme for values to be inserted in
 Then \code{\link[oce: setFlags]{setFlags}} to set flag values based on desired scheme
 }

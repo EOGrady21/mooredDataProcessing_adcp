@@ -5,8 +5,8 @@
 \title{ADCP Processing step 3.2}
 \usage{
 applyMagneticDeclinationAdp(x, lat = x[["latitude"]],
-  lon = x[["longitude"]], st = x[["deploymentTime"]],
-  et = x[["recoveryTime"]], tz = "UTC", type = "average")
+  lon = x[["longitude"]], st = x[["deployment_time"]],
+  et = x[["recovery_time"]], tz = "UTC", type = "average")
 }
 \arguments{
 \item{x}{adp object from oce-class}
