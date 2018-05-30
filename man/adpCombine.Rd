@@ -19,16 +19,16 @@ Combines archived data and metadata from raw, odf and netCDF
  sources into adp object which can be exported as netCDF or saved
 }
 \details{
-a)	Raw file (.000)
+\bold{a)	Raw file (.000)}
 
 Contains:
 
 
-Data: heading, pressure, sound speed data, BEAM_02-_04, PGDP_02-_04, PTCH,
+\bold{Data:} heading, pressure, sound speed data, BEAM_02-_04, PGDP_02-_04, PTCH,
 ROLL, HGHT, Tx, D
 
 
-Metadata: firmwareVersion, frequency, beamPattern, orientation, beamAngle,
+\bold{ Metadata: } firmwareVersion, frequency, beamPattern, orientation, beamAngle,
 numberOfBeams (janus), pingsPerEnsemble, velocityResolution (pred_accuracy),
 lowCorrThresh (valid_correlation_range), percentGdMinimum
 (minmax_percent_good), errorVelocityMeaximum (error_velocity_threshold),
@@ -36,16 +36,16 @@ xmitPulseLength (transmit_pulse_length), falseTargetThresh
 (false_target_reject_values), serialNumber, instrumentType(data_type)
 
 
-b)	Archived netCDF
+b)	\bold{Archived netCDF}
 
 Contains:
 
 
-      Data: BEAM_02-_04, PGDP_02-_04, PTCH, ROLL, HGHT, Tx, D
+     \bold{ Data:} BEAM_02-_04, PGDP_02-_04, PTCH, ROLL, HGHT, Tx, D
 ***note this DATA is pulled from the RAW file in case NC file is corrupted or missing
 
 
-Metadata: creation_date,  start_time, stop_time, inst_type, history,
+\bold{Metadata: }creation_date,  start_time, stop_time, inst_type, history,
 starting_water_layer, ending_water_layer, depth_note, transform,
 data_subtype, coord_system, water_mass, pos_const, depth_const, drifter,
 var_fill, experiment, project, descript, data_cmnt, fill_flag, composite,
@@ -54,14 +54,14 @@ xducer_offset_from_bottom, depth: bin_size
 
 
 
-c)	Archived ODFs (series for each mooring)
+\bold{c)	Archived ODFs (series for each mooring)}
 
 Contains:
 
-     Data: PROCESSED EWCT, NSCT, VCSP, ERRV, BEAM_01, PGDP_01, time, distance
+     \bold{Data:} PROCESSED EWCT, NSCT, VCSP, ERRV, BEAM_01, PGDP_01, time, distance
 
 
-     Metadata: units (v, distance), cellSize, numberOfBeams, orientation,
+    \bold{ Metadata:}  units (v, distance), cellSize, numberOfBeams, orientation,
      model, type, eventNumber, serialNumber, ship (platform), scientist
      (chief_scientist), institute (data_origin), cruise, station (mooring),
      countryInstituteCode, cruiseNumber, startTime, latitude, longitude,
