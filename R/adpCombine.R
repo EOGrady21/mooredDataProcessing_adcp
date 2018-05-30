@@ -15,108 +15,7 @@
 ####adpCombine####
 adpCombine <- function(adp, raw, ncin ){
 
-
-
-  #####pull data from raw file#####
   a <- read.adp(raw)
-  BEAM_02 <- a[['a', 'numeric']][,,2]
-  BEAM_03 <- a[['a', 'numeric']][,,3]
-  BEAM_04 <- a[['a', 'numeric']][,,4]
-  PGDP_02 <- a[['g', 'numeric']][,,2]
-  PGDP_03 <- a[['g', 'numeric']][,,3]
-  PGDP_04 <- a[['g', 'numeric']][,,4]
-  PTCH <- a[['pitch']]
-  ROLL <- a[['roll']]
-  HGHT <- a[['distance']]
-  Tx <- a[['temperature']]
-  D <- a[['depth']]
-  HEAD <- a[['heading']]
-  PRES <- a[['pressure']]
-  SVEL <- a[['soundSpeed']]
-
-
-  #####limit dimensions to match odf files####
-
-
-  #limit by time
-  limitmat <- matrix(0, nrow = length(a[['time']]), ncol = length(a[['distance']]))
-  limitvec <- matrix(0, ncol = length(a[['time']]))
-
-
-
-  #create 'flag mask' where 4 = bad vlaue (outside bounds)
-  limitmat[as.POSIXct(a[['time']], tz = 'UTC') < as.POSIXct(adp[['time']][[1]], tz = 'UTC') | as.POSIXct(a[['time']], tz = 'UTC') > as.POSIXct(adp[['time']][[length(adp[['time']])]], tz = 'UTC')] <- 4
-  limitvec[as.POSIXct(a[['time']], tz = 'UTC') < as.POSIXct(adp[['time']][[1]], tz = 'UTC') | as.POSIXct(a[['time']], tz = 'UTC') > as.POSIXct(adp[['time']][[length(adp[['time']])]], tz = 'UTC')] <- 4
-
-
-  #limit time variable
-  a[['time']][limitvec == 4] <- NA
-
-  #limit other transferable data
-  PTCH[limitvec == 4] <- NA
-  ROLL[limitvec == 4] <- NA
-  Tx[limitvec == 4] <- NA
-  D[limitvec == 4] <- NA
-  HEAD[limitvec == 4] <- NA
-  PRES[limitvec == 4] <- NA
-  SVEL[limitvec == 4] <- NA
-
-  BEAM_02[limitmat == 4] <- NA
-  BEAM_03[limitmat == 4] <- NA
-  BEAM_04[limitmat == 4] <- NA
-  PGDP_02[limitmat == 4] <- NA
-  PGDP_03[limitmat == 4] <- NA
-  PGDP_04[limitmat == 4] <- NA
-
-
-
-  #####insert into adp####
-
-  #create an array
-  x <- nrow(adp[['a']])
-  y <- ncol(adp[['a']])
-  z <- 4
-  aa <- array(dim = c(x, y, z))
-
-
-  #combine beams into a single array using dimensions of odf data
-  aa[,,1] <- adp[['a', 'numeric']]
-  aa[,,2] <- na.omit(BEAM_02[, 1:length(adp[['distance']])])
-  aa[,,3] <- na.omit(BEAM_03[, 1:length(adp[['distance']])])
-  aa[,,4] <- na.omit(BEAM_04[, 1:length(adp[['distance']])])
-
-  #put array into adp object
-  adp <- oceSetData(adp, 'a', aa)
-
-  #create a array
-  l <- nrow(adp[['q']])
-  m <- ncol(adp[['q']])
-  n <- 4
-  qq <- array(dim = c(l, m, n))
-
-  #combine beams into a single array using dimensions of odf data
-  qq[,,1] <- adp[['q', 'numeric']]
-  qq[,,2] <- na.omit(PGDP_02[, 1:length(adp[['distance']])])
-  qq[,,3] <- na.omit(PGDP_03[, 1:length(adp[['distance']])])
-  qq[,,4] <- na.omit(PGDP_04[, 1:length(adp[['distance']])])
-
-  #put array into adp object
-  adp <- oceSetData(adp, 'q', qq)
-
-
-  tz <- 'UTC'
-  adp <- oceSetData(adp, 'pitch', na.omit(PTCH))
-
-
-  adp <- oceSetData(adp, 'roll', na.omit(ROLL))
-  adp <- oceSetData(adp, 'hght', (HGHT[, 1:length(adp[['distance']])]))
-  adp <- oceSetData(adp, 'temperature', na.omit(Tx))
-  adp <- oceSetData(adp, 'depth', na.omit(D))
-  adp <- oceSetData(adp, 'heading', na.omit(HEAD))
-  adp <- oceSetData(adp, 'pressure', na.omit(PRES))
-  adp <- oceSetData(adp, 'soundSpeed', na.omit(SVEL))
-
-
   #####pull metadata from RAW####
 
   firmware_version <- a[['firmwareVersion']]
@@ -188,6 +87,7 @@ adpCombine <- function(adp, raw, ncin ){
   sounding<- ncatt_get(ni, 0,  'Sounding')
   chief_scientist <- ncatt_get(ni, 0,  'Chief_Scientist')
   delta_t_sec <- ncatt_get(ni, 0, 'DELTA_T_sec')
+  ping_interval <- ncatt_get(ni, 0, 'time_between_ping_groups')
 
   xducer_offset_from_bottom <- ncatt_get(ni, 'depth', 'xducer_offset_from_bottom')
   bin_size <- ncatt_get(ni, 'depth', 'bin_size')
@@ -228,13 +128,123 @@ adpCombine <- function(adp, raw, ncin ){
   adp <- oceSetMetadata(adp, 'delta_t_sec', delta_t_sec$value)
   adp <- oceSetMetadata(adp, 'xducer_offset_from_bottom', xducer_offset_from_bottom$value)
   adp <- oceSetMetadata(adp, 'bin_size', bin_size$value)
-  adp <- oceSetMetadata(adp, 'sensor_depth', mean(adp[['depth']]))
+  adp <- oceSetMetadata(adp, 'ping_interval', ping_interval$value)
+  adp <- oceSetMetadata(adp, 'sample_interval', pings_per_ensemble * ping_interval$value)
+
 
 
   #set metadata source
 
   adp <- oceSetMetadata(adp, 'source', 'netCDF, Raw, ODF combined')
 
+
+  #####pull data from raw file#####
+  a <- read.adp(raw)
+  BEAM_02 <- a[['a', 'numeric']][,,2]
+  BEAM_03 <- a[['a', 'numeric']][,,3]
+  BEAM_04 <- a[['a', 'numeric']][,,4]
+  PGDP_02 <- a[['g', 'numeric']][,,2]
+  PGDP_03 <- a[['g', 'numeric']][,,3]
+  PGDP_04 <- a[['g', 'numeric']][,,4]
+  PTCH <- a[['pitch']]
+  ROLL <- a[['roll']]
+  HGHT <- a[['distance']]
+  Tx <- a[['temperature']]
+  D <- a[['depth']]
+  HEAD <- a[['heading']]
+  PRES <- a[['pressure']]
+  SVEL <- a[['soundSpeed']]
+
+
+  #####limit dimensions to match odf files####
+
+  ####apply time offset####
+
+
+  t <-  ( a[['time']] + (adp[['sample_interval']]/2))
+  a <- oceSetData(a, 'time', t)
+
+  #limit by time
+  limitmat <- matrix(0, nrow = length(a[['time']]), ncol = length(a[['distance']]))
+  limitvec <- matrix(0, ncol = length(a[['time']]))
+
+
+
+  #create 'flag mask' where 4 = bad vlaue (outside bounds)
+  limitmat[as.POSIXct(a[['time']], tz = 'UTC') < as.POSIXct(adp[['time']][[1]], tz = 'UTC') | as.POSIXct(a[['time']], tz = 'UTC') > as.POSIXct(adp[['time']][[length(adp[['time']])]], tz = 'UTC')] <- 4
+  limitvec[as.POSIXct(a[['time']], tz = 'UTC') < as.POSIXct(adp[['time']][[1]], tz = 'UTC') | as.POSIXct(a[['time']], tz = 'UTC') > as.POSIXct(adp[['time']][[length(adp[['time']])]], tz = 'UTC')] <- 4
+
+
+  #limit time variable
+  a[['time']][limitvec == 4] <- NA
+
+  #limit other transferable data
+  PTCH[limitvec == 4] <- NA
+  ROLL[limitvec == 4] <- NA
+  Tx[limitvec == 4] <- NA
+  D[limitvec == 4] <- NA
+  HEAD[limitvec == 4] <- NA
+  PRES[limitvec == 4] <- NA
+  SVEL[limitvec == 4] <- NA
+
+  BEAM_02[limitmat == 4] <- NA
+  BEAM_03[limitmat == 4] <- NA
+  BEAM_04[limitmat == 4] <- NA
+  PGDP_02[limitmat == 4] <- NA
+  PGDP_03[limitmat == 4] <- NA
+  PGDP_04[limitmat == 4] <- NA
+
+
+
+  #####insert into adp####
+
+  #create an array
+  x <- nrow(adp[['a']])
+  y <- ncol(adp[['a']])
+  z <- 4
+  aa <- array(dim = c(x, y, z))
+
+
+  #combine beams into a single array using dimensions of odf data
+  aa[,,1] <- adp[['a', 'numeric']]
+  aa[,,2] <- na.omit(BEAM_02[, 1:length(adp[['distance']])])
+  aa[,,3] <- na.omit(BEAM_03[, 1:length(adp[['distance']])])
+  aa[,,4] <- na.omit(BEAM_04[, 1:length(adp[['distance']])])
+
+  #put array into adp object
+  adp <- oceSetData(adp, 'a', aa)
+
+  #create a array
+  l <- nrow(adp[['q']])
+  m <- ncol(adp[['q']])
+  n <- 4
+  qq <- array(dim = c(l, m, n))
+
+  #combine beams into a single array using dimensions of odf data
+  qq[,,1] <- adp[['q', 'numeric']]
+  qq[,,2] <- na.omit(PGDP_02[, 1:length(adp[['distance']])])
+  qq[,,3] <- na.omit(PGDP_03[, 1:length(adp[['distance']])])
+  qq[,,4] <- na.omit(PGDP_04[, 1:length(adp[['distance']])])
+
+  #put array into adp object
+  adp <- oceSetData(adp, 'q', qq)
+
+  #insert other data
+
+  adp <- oceSetData(adp, 'pitch', na.omit(PTCH))
+  adp <- oceSetData(adp, 'roll', na.omit(ROLL))
+  adp <- oceSetData(adp, 'hght', (HGHT[ 1:length(adp[['distance']])]))
+  adp <- oceSetData(adp, 'temperature', na.omit(Tx))
+  adp <- oceSetData(adp, 'depth', na.omit(D))
+  adp <- oceSetData(adp, 'heading', na.omit(HEAD))
+  adp <- oceSetData(adp, 'pressure', na.omit(PRES))
+  adp <- oceSetData(adp, 'soundSpeed', na.omit(SVEL))
+
+  ####set sensor_depth
+  adp <- oceSetMetadata(adp, 'sensor_depth', mean(adp[['depth']]))
+
+  ###fix event qualifier pulled from odf
+  adp <- oceSetMetadata(adp, 'eventQualifier', adp[['serialNumber']])
   return(adp)
 
 }
