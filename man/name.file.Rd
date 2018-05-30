@@ -9,8 +9,10 @@ name.file(adp)
 \arguments{
 \item{adp}{an oce class - adp object
 
-required metadata : cruise number, mooring number, serial number, sampling interval!! Make sure all metadata is present when experiencing problems}
+  required metadata : cruise number, mooring number, serial number, sampling
+  interval!! Make sure all metadata is present when experiencing problems}
 }
 \description{
-pulls metadata from an adp oce object and creates a file name in standard BIO format
+pulls metadata from an adp oce object and creates a file name in
+  standard BIO format
 }

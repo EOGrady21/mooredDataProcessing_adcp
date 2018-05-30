@@ -13,6 +13,6 @@ read.adp.easy(file, metadata)
 }
 \description{
 Load adp data into R with list that includes all metadata from mooring sheets
-#' returns an object of class adp (from oce package)
-uses \code{\link[oce:read.adp]{read.adp}}
+#' returns an object of class adp (from oce package) uses
+\code{\link[oce:read.adp]{read.adp}}
 }

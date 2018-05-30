@@ -24,12 +24,13 @@ applyMagneticDeclinationAdp(x, lat = x[["latitude"]],
 \value{
 adp object with magnetic declination applied given coordinates
 
-If type == average, an average is taken from start and end time declinations and applied uniformly
+  If type == average, an average is taken from start and end time
+  declinations and applied uniformly
 
-If type == interpolated, the rate of declination is used over time series
+  If type == interpolated, the rate of declination is used over time series
 }
 \description{
-apply magnetic declination to ADCP data
-uses \code{\link[oce:magneticField]{magneticField}} to calculate declination and
+apply magnetic declination to ADCP data uses
+\code{\link[oce:magneticField]{magneticField}} to calculate declination and
 \code{\link[oce:enuToOther]{enuToOTher}} to apply variation to data set
 }

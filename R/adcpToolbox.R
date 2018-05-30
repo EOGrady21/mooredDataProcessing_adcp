@@ -6,14 +6,14 @@ require(ncdf4)
 
 ##read.adp.easy
 
-#'  ADCP PRocessing step 2.0
+#'ADCP PRocessing step 2.0
 #'
-#'  Load adp data into R with list that includes all metadata from mooring sheets
-#'#' returns an object of class adp (from oce package)
-#' uses \code{\link[oce:read.adp]{read.adp}}
+#'Load adp data into R with list that includes all metadata from mooring sheets
+#'#' returns an object of class adp (from oce package) uses
+#'\code{\link[oce:read.adp]{read.adp}}
 #'
-#' @param file raw ADCP file (.000 format)
-#' @param metadata csv metadata file from template
+#'@param file raw ADCP file (.000 format)
+#'@param metadata csv metadata file from template
 #'
 
 
@@ -50,10 +50,10 @@ read.adp.easy <- function(file, metadata){
 
 ##read metadata
 
-#'  ADCP process step 2.1
+#' ADCP process step 2.1
 #'
 #'
-#'  Read in all metadata from csv template to adp object, sourced from log sheets
+#' Read in all metadata from csv template to adp object, sourced from log sheets
 #'
 #' @param file csv file name
 #' @param obj adp oce object to assign metadata to
@@ -80,10 +80,10 @@ read.meta <- function(file, obj){
 
 ###applyMAgneticDeclination
 
-#'  ADCP Processing step 3.2
+#' ADCP Processing step 3.2
 #'
-#'  apply magnetic declination to ADCP data
-#' uses \code{\link[oce:magneticField]{magneticField}} to calculate declination and
+#' apply magnetic declination to ADCP data uses
+#' \code{\link[oce:magneticField]{magneticField}} to calculate declination and
 #' \code{\link[oce:enuToOther]{enuToOTher}} to apply variation to data set
 #'
 #' @param x adp object from oce-class
@@ -97,9 +97,10 @@ read.meta <- function(file, obj){
 #'
 #' @return adp object with magnetic declination applied given coordinates
 #'
-#' If type == average, an average is taken from start and end time declinations and applied uniformly
+#'   If type == average, an average is taken from start and end time
+#'   declinations and applied uniformly
 #'
-#' If type == interpolated, the rate of declination is used over time series
+#'   If type == interpolated, the rate of declination is used over time series
 #'
 #'
 
@@ -152,11 +153,10 @@ applyMagneticDeclinationAdp <- function(x, lat = x[['latitude']], lon = x[['long
 
 
 
-#' ADCP Processing step 3.3
-#'Limit depth by rmax
+#'ADCP Processing step 3.3 Limit depth by rmax
 #'
-#'Use maximum acceptable range values to determine acceptable depth values
-#'Uses Teledyne RDI equation, Rmax = Dcos(x)
+#'Use maximum acceptable range values to determine acceptable depth values Uses
+#'Teledyne RDI equation, Rmax = Dcos(x)
 #'
 #'@param x oce object of class adp to be limited
 #'@param lat latitude of instrument during sampling
@@ -207,13 +207,13 @@ limit_depthbyrmax <- function(x, lat = x[['latitude']]){
 
 #'@title limit depth by time
 #'
-#'@description Uses deployment and recovery times to limit depth within times that
-#'insturment was actively and properly sampliing
+#'@description Uses deployment and recovery times to limit depth within times
+#'  that insturment was actively and properly sampliing
 #'
 #'@param adp oce object of class adp to be limited
 #'
-#'requires certain meta data features to compute
-#'including pressure, latitude, time, deployment_time, recovery_time
+#'  requires certain meta data features to compute including pressure, latitude,
+#'  time, deployment_time, recovery_time
 #'
 
 
@@ -237,17 +237,19 @@ limit_depthbytime <- function(adp, tz = 'UTC'){
 
 #time cut off
 #'
-#' ADCP Processing step 3.4
+#'ADCP Processing step 3.4
 #'
 #'
-#'@description Function limits variable (time, salinity, pressure, temperature, pitch, roll, heading) from before deployment and after recovery of ADCP
+#'@description Function limits variable (time, salinity, pressure, temperature,
+#'  pitch, roll, heading) from before deployment and after recovery of ADCP
 #'
 #'@param x adp object from oce-class adp
 #'@param tz time zone, default is 'UTC'
 #'@param dt deployment time of ADCP, default pulls value from metadata
 #'@param rt recovery time of ADCP, default pulls value from metadata
 #'
-#'@return adp object with velocities limited to active ADCP measurement times (after deployment and before recovery)
+#'@return adp object with velocities limited to active ADCP measurement times
+#'  (after deployment and before recovery)
 #'
 #'
 #'
@@ -329,25 +331,31 @@ limit_time <- function(x, tz = 'UTC', dt = x[['deployment_time']], rt = x[['reco
 #'
 #'
 #'
-#' adpFlag function
-#' flag an adp object based on a series of parameters including percent good, and error velocity.
+#' adpFlag function flag an adp object based on a series of parameters including
+#' percent good, and error velocity.
 #'
-#' This function also defaults to flagging depth values based on the Teledyne RDI standard
+#' This function also defaults to flagging depth values based on the Teledyne
+#' RDI standard
 #'
-#'  Rmax = Dcosx
-#'    where Rmax is the maximum acceptable distance range from the ADCP, D is total depth and x is the beam angle of the ADCP.
+#' Rmax = Dcosx where Rmax is the maximum acceptable distance range from the
+#' ADCP, D is total depth and x is the beam angle of the ADCP.
 #'
-#' This function also flags data outside the deployment and recovery time bounds.
+#' This function also flags data outside the deployment and recovery time
+#' bounds.
 #'
 #' Sets any data not flagged by this processing to 'good' flag value
 #'
-#' This function uses \code{\link[oce:initializeFlags]{initializeFlags}} to initialize blank flagging scheme for values to be inserted in
-#' Then \code{\link[oce: setFlags]{setFlags}} to set flag values based on desired scheme
+#' This function uses \code{\link[oce:initializeFlags]{initializeFlags}} to
+#' initialize blank flagging scheme for values to be inserted in Then
+#' \code{\link[oce: setFlags]{setFlags}} to set flag values based on desired
+#' scheme
 #'
 #' @param adp, an adp object, oce-class
 #' @param flagScheme, scheme of flags that will be followed, BODC, MEDS, etc
-#' @param pg, The minimum percent good for evaluating beams one + four of the adcp (BIO standard is 25)
-#' @param er, Maximum error velocity for evaluating adcp data (BIO standard is 0.46)
+#' @param pg, The minimum percent good for evaluating beams one + four of the
+#'   adcp (BIO standard is 25)
+#' @param er, Maximum error velocity for evaluating adcp data (BIO standard is
+#'   0.46)
 #'
 
 #
@@ -407,11 +415,13 @@ adpFlag <- function(adp,  pg, er){
 
 #' @title File naming format
 #'
-#' @description pulls metadata from an adp oce object and creates a file name in standard BIO format
+#' @description pulls metadata from an adp oce object and creates a file name in
+#'   standard BIO format
 #'
 #' @param adp an oce class - adp object
 #'
-#' required metadata : cruise number, mooring number, serial number, sampling interval!! Make sure all metadata is present when experiencing problems
+#'   required metadata : cruise number, mooring number, serial number, sampling
+#'   interval!! Make sure all metadata is present when experiencing problems
 #'
 #'
 #'
@@ -483,14 +493,16 @@ odf2adp <- function(files, metadata) {
   return(adp)
 }
 
-#'   ADCP Processing step 4.1
+#'ADCP Processing step 4.1
 #'
-#'@description Exports an adp object to a net cdf using variables and metadata within adp combined with optional additional metatdata
-#'see details in \code{\link[ncdf4:ncdf4]{ncdf4}} package
+#'@description Exports an adp object to a net cdf using variables and metadata
+#'  within adp combined with optional additional metatdata see details in
+#'  \code{\link[ncdf4:ncdf4]{ncdf4}} package
 #'
-#' @param obj an adp object from the oce class
-#' @param name name of the NetCDF file to be produced
-#' @param metadata csv file listing metadata names and values to be inserted into global attributes of net CDF
+#'@param obj an adp object from the oce class
+#'@param name name of the NetCDF file to be produced
+#'@param metadata csv file listing metadata names and values to be inserted into
+#'  global attributes of net CDF
 
 
 
@@ -1226,19 +1238,24 @@ oceNc_create <- function(adp, name,  metadata){
 #'
 #'ADCP Combine
 #'
-#'@description Combines archived data and metadata from raw, odf and netCDF sources into
-#'adp object which can be exported as netCDF or saved
+#'@description Combines archived data and metadata from raw, odf and netCDF
+#'  sources into adp object which can be exported as netCDF or saved
 #'
-#'@details
-#'a)	Raw file (.000)
+#'@details a)	Raw file (.000)
 #'
-#' Contains:
-#'
-#'
-#'   Data: heading, pressure, sound speed data, BEAM_02-_04, PGDP_02-_04, PTCH, ROLL, HGHT, Tx, D
+#'Contains:
 #'
 #'
-#' Metadata: firmwareVersion, frequency, beamPattern, orientation, beamAngle, numberOfBeams (janus), pingsPerEnsemble, velocityResolution (pred_accuracy), lowCorrThresh (valid_correlation_range), percentGdMinimum (minmax_percent_good), errorVelocityMeaximum (error_velocity_threshold), xmitPulseLength (transmit_pulse_length), falseTargetThresh (false_target_reject_values), serialNumber
+#' Data: heading, pressure, sound speed data, BEAM_02-_04, PGDP_02-_04, PTCH,
+#' ROLL, HGHT, Tx, D
+#'
+#'
+#' Metadata: firmwareVersion, frequency, beamPattern, orientation, beamAngle,
+#' numberOfBeams (janus), pingsPerEnsemble, velocityResolution (pred_accuracy),
+#' lowCorrThresh (valid_correlation_range), percentGdMinimum
+#' (minmax_percent_good), errorVelocityMeaximum (error_velocity_threshold),
+#' xmitPulseLength (transmit_pulse_length), falseTargetThresh
+#' (false_target_reject_values), serialNumber
 #'
 #'
 #' b)	Archived netCDF
@@ -1250,7 +1267,13 @@ oceNc_create <- function(adp, name,  metadata){
 #' ***note this DATA is also in the RAW file if NC file is corrupted or missing
 #'
 #'
-#' Metadata: creation_date, mooring, start_time, stop_time, inst_type, history, starting_water_layer, ending_water_layer, depth_note, transform, data_type, data_subtype, data_origin, coord_system, water_mass, pos_const, depth_const, drifter, var_fill, experiment, project, descript, longitude, latitude, data_cmnt, fill_flag, composite, magnetic_variation, platform, sounding, chief_scientist, delta_t_sec, time_between_ping_groups, depth: xducer_offset_from_bottom, depth: bin_size
+#' Metadata: creation_date, mooring, start_time, stop_time, inst_type, history,
+#' starting_water_layer, ending_water_layer, depth_note, transform, data_type,
+#' data_subtype, data_origin, coord_system, water_mass, pos_const, depth_const,
+#' drifter, var_fill, experiment, project, descript, longitude, latitude,
+#' data_cmnt, fill_flag, composite, magnetic_variation, platform, sounding,
+#' chief_scientist, delta_t_sec, time_between_ping_groups, depth:
+#' xducer_offset_from_bottom, depth: bin_size
 #'
 #'
 #'
@@ -1261,10 +1284,14 @@ oceNc_create <- function(adp, name,  metadata){
 #'      Data: PROCESSED EWCT, NSCT, VCSP, ERRV, BEAM_01, PGDP_01, time, distance
 #'
 #'
-#'      Metadata: units (v, distance), cellSize, numberOfBeams, orientation, model, type, eventNumber, serialNumber, ship, scientist, institute, cruise, station, countryInstituteCode, cruiseNumber, startTime, latitude, longitude, waterDepth, sounding
+#'      Metadata: units (v, distance), cellSize, numberOfBeams, orientation,
+#'      model, type, eventNumber, serialNumber, ship, scientist, institute,
+#'      cruise, station, countryInstituteCode, cruiseNumber, startTime,
+#'      latitude, longitude, waterDepth, sounding
 
 #'
-#'@param adp an adp object sourced from ODF files using  \code{\link[ADCP:odf2adp]{odf2adp}}
+#'@param adp an adp object sourced from ODF files using
+#'  \code{\link[ADCP:odf2adp]{odf2adp}}
 #'@param raw a raw ADCP file (.000)
 #'@param ncin an archived netCDF file (.nc)
 #'
@@ -1509,12 +1536,14 @@ adpCombine <- function(adp, raw, ncin ){
 ####create netCDF file from combined adp source####
 #' NetCDF creation from adp object
 #'
-#' @description Creates standardized netCDF file from adp object (produced from \code{\link[ADCP:adpCombine]{adpCombine}})
+#' @description Creates standardized netCDF file from adp object (produced from
+#'   \code{\link[ADCP:adpCombine]{adpCombine}})
 #'
-#' Standardized name of file can be created with:
-#' (\code{\link[ADCP:name.file]{name.file}})
+#'   Standardized name of file can be created with:
+#'   (\code{\link[ADCP:name.file]{name.file}})
 #'
-#' product will meet CF compliance, ERDDAP standards, BODC/SDN, and DFO/MEDS standards
+#'   product will meet CF compliance, ERDDAP standards, BODC/SDN, and DFO/MEDS
+#'   standards
 #'
 #' @param adp an adp object
 #' @param name text string which will name netCDF file

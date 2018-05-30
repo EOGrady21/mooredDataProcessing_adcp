@@ -2,8 +2,7 @@
 % Please edit documentation in R/adcpToolbox.R
 \name{limit_depthbyrmax}
 \alias{limit_depthbyrmax}
-\title{ADCP Processing step 3.3
-Limit depth by rmax}
+\title{ADCP Processing step 3.3 Limit depth by rmax}
 \usage{
 limit_depthbyrmax(x, lat = x[["latitude"]])
 }
@@ -13,6 +12,6 @@ limit_depthbyrmax(x, lat = x[["latitude"]])
 \item{lat}{latitude of instrument during sampling}
 }
 \description{
-Use maximum acceptable range values to determine acceptable depth values
-Uses Teledyne RDI equation, Rmax = Dcos(x)
+Use maximum acceptable range values to determine acceptable depth values Uses
+Teledyne RDI equation, Rmax = Dcos(x)
 }

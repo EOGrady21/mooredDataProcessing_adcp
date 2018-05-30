@@ -17,8 +17,10 @@ limit_time(x, tz = "UTC", dt = x[["deployment_time"]],
 \item{rt}{recovery time of ADCP, default pulls value from metadata}
 }
 \value{
-adp object with velocities limited to active ADCP measurement times (after deployment and before recovery)
+adp object with velocities limited to active ADCP measurement times
+ (after deployment and before recovery)
 }
 \description{
-Function limits variable (time, salinity, pressure, temperature, pitch, roll, heading) from before deployment and after recovery of ADCP
+Function limits variable (time, salinity, pressure, temperature,
+ pitch, roll, heading) from before deployment and after recovery of ADCP
 }

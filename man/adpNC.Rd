@@ -12,10 +12,12 @@ adpNC(adp, name)
 \item{name}{text string which will name netCDF file}
 }
 \description{
-Creates standardized netCDF file from adp object (produced from \code{\link[ADCP:adpCombine]{adpCombine}})
+Creates standardized netCDF file from adp object (produced from
+  \code{\link[ADCP:adpCombine]{adpCombine}})
 
-Standardized name of file can be created with:
-(\code{\link[ADCP:name.file]{name.file}})
+  Standardized name of file can be created with:
+  (\code{\link[ADCP:name.file]{name.file}})
 
-product will meet CF compliance, ERDDAP standards, BODC/SDN, and DFO/MEDS standards
+  product will meet CF compliance, ERDDAP standards, BODC/SDN, and DFO/MEDS
+  standards
 }

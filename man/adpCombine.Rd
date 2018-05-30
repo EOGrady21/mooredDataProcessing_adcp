@@ -7,15 +7,16 @@
 adpCombine(adp, raw, ncin)
 }
 \arguments{
-\item{adp}{an adp object sourced from ODF files using  \code{\link[ADCP:odf2adp]{odf2adp}}}
+\item{adp}{an adp object sourced from ODF files using
+\code{\link[ADCP:odf2adp]{odf2adp}}}
 
 \item{raw}{a raw ADCP file (.000)}
 
 \item{ncin}{an archived netCDF file (.nc)}
 }
 \description{
-Combines archived data and metadata from raw, odf and netCDF sources into
-adp object which can be exported as netCDF or saved
+Combines archived data and metadata from raw, odf and netCDF
+ sources into adp object which can be exported as netCDF or saved
 }
 \details{
 a)	Raw file (.000)
@@ -23,10 +24,16 @@ a)	Raw file (.000)
 Contains:
 
 
-  Data: heading, pressure, sound speed data, BEAM_02-_04, PGDP_02-_04, PTCH, ROLL, HGHT, Tx, D
+Data: heading, pressure, sound speed data, BEAM_02-_04, PGDP_02-_04, PTCH,
+ROLL, HGHT, Tx, D
 
 
-Metadata: firmwareVersion, frequency, beamPattern, orientation, beamAngle, numberOfBeams (janus), pingsPerEnsemble, velocityResolution (pred_accuracy), lowCorrThresh (valid_correlation_range), percentGdMinimum (minmax_percent_good), errorVelocityMeaximum (error_velocity_threshold), xmitPulseLength (transmit_pulse_length), falseTargetThresh (false_target_reject_values), serialNumber
+Metadata: firmwareVersion, frequency, beamPattern, orientation, beamAngle,
+numberOfBeams (janus), pingsPerEnsemble, velocityResolution (pred_accuracy),
+lowCorrThresh (valid_correlation_range), percentGdMinimum
+(minmax_percent_good), errorVelocityMeaximum (error_velocity_threshold),
+xmitPulseLength (transmit_pulse_length), falseTargetThresh
+(false_target_reject_values), serialNumber
 
 
 b)	Archived netCDF
@@ -38,7 +45,13 @@ Contains:
 ***note this DATA is also in the RAW file if NC file is corrupted or missing
 
 
-Metadata: creation_date, mooring, start_time, stop_time, inst_type, history, starting_water_layer, ending_water_layer, depth_note, transform, data_type, data_subtype, data_origin, coord_system, water_mass, pos_const, depth_const, drifter, var_fill, experiment, project, descript, longitude, latitude, data_cmnt, fill_flag, composite, magnetic_variation, platform, sounding, chief_scientist, delta_t_sec, time_between_ping_groups, depth: xducer_offset_from_bottom, depth: bin_size
+Metadata: creation_date, mooring, start_time, stop_time, inst_type, history,
+starting_water_layer, ending_water_layer, depth_note, transform, data_type,
+data_subtype, data_origin, coord_system, water_mass, pos_const, depth_const,
+drifter, var_fill, experiment, project, descript, longitude, latitude,
+data_cmnt, fill_flag, composite, magnetic_variation, platform, sounding,
+chief_scientist, delta_t_sec, time_between_ping_groups, depth:
+xducer_offset_from_bottom, depth: bin_size
 
 
 
@@ -49,5 +62,8 @@ Contains:
      Data: PROCESSED EWCT, NSCT, VCSP, ERRV, BEAM_01, PGDP_01, time, distance
 
 
-     Metadata: units (v, distance), cellSize, numberOfBeams, orientation, model, type, eventNumber, serialNumber, ship, scientist, institute, cruise, station, countryInstituteCode, cruiseNumber, startTime, latitude, longitude, waterDepth, sounding
+     Metadata: units (v, distance), cellSize, numberOfBeams, orientation,
+     model, type, eventNumber, serialNumber, ship, scientist, institute,
+     cruise, station, countryInstituteCode, cruiseNumber, startTime,
+     latitude, longitude, waterDepth, sounding
 }

@@ -9,25 +9,31 @@ adpFlag(adp, pg, er)
 \arguments{
 \item{adp, }{an adp object, oce-class}
 
-\item{pg, }{The minimum percent good for evaluating beams one + four of the adcp (BIO standard is 25)}
+\item{pg, }{The minimum percent good for evaluating beams one + four of the
+adcp (BIO standard is 25)}
 
-\item{er, }{Maximum error velocity for evaluating adcp data (BIO standard is 0.46)}
+\item{er, }{Maximum error velocity for evaluating adcp data (BIO standard is
+0.46)}
 
 \item{flagScheme, }{scheme of flags that will be followed, BODC, MEDS, etc}
 }
 \details{
-adpFlag function
-flag an adp object based on a series of parameters including percent good, and error velocity.
+adpFlag function flag an adp object based on a series of parameters including
+percent good, and error velocity.
 
-This function also defaults to flagging depth values based on the Teledyne RDI standard
+This function also defaults to flagging depth values based on the Teledyne
+RDI standard
 
-Rmax = Dcosx
-   where Rmax is the maximum acceptable distance range from the ADCP, D is total depth and x is the beam angle of the ADCP.
+Rmax = Dcosx where Rmax is the maximum acceptable distance range from the
+ADCP, D is total depth and x is the beam angle of the ADCP.
 
-This function also flags data outside the deployment and recovery time bounds.
+This function also flags data outside the deployment and recovery time
+bounds.
 
 Sets any data not flagged by this processing to 'good' flag value
 
-This function uses \code{\link[oce:initializeFlags]{initializeFlags}} to initialize blank flagging scheme for values to be inserted in
-Then \code{\link[oce: setFlags]{setFlags}} to set flag values based on desired scheme
+This function uses \code{\link[oce:initializeFlags]{initializeFlags}} to
+initialize blank flagging scheme for values to be inserted in Then
+\code{\link[oce: setFlags]{setFlags}} to set flag values based on desired
+scheme
 }

@@ -9,11 +9,13 @@ oceNc_create(adp, name, metadata)
 \arguments{
 \item{name}{name of the NetCDF file to be produced}
 
-\item{metadata}{csv file listing metadata names and values to be inserted into global attributes of net CDF}
+\item{metadata}{csv file listing metadata names and values to be inserted into
+global attributes of net CDF}
 
 \item{obj}{an adp object from the oce class}
 }
 \description{
-Exports an adp object to a net cdf using variables and metadata within adp combined with optional additional metatdata
-see details in \code{\link[ncdf4:ncdf4]{ncdf4}} package
+Exports an adp object to a net cdf using variables and metadata
+ within adp combined with optional additional metatdata see details in
+ \code{\link[ncdf4:ncdf4]{ncdf4}} package
 }
