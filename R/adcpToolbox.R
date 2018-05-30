@@ -485,16 +485,16 @@ odf2adp <- function(files, metadata) {
   }
 
   distance <- max(depth) - depth
-  adp <- as.adp(t, distance, v=abind(u, v, w, error, along=3), a=a, g=unknown)
+  adp <- as.adp(t, distance, v=abind(u, v, w, error, along=3), a=a, q=unknown)
   for (m in names(d@metadata)) {
     if (m != 'units' & m != 'flags' & m != 'dataNamesOriginal') {
       adp <- oceSetMetadata(adp, m, d[[m]])
     }
   }
 
-  ## depthMin
-  dmin <- read.odf(files[1])
-  adp <- oceSetMetadata(adp, 'depthMin', dmin[['depthMin']])
+  ## depthMinMax
+  adp <- oceSetMetadata(adp, 'depthMin', min(depth))
+  adp <- oceSetMetadata(adp, 'depthMax', max(depth))
 
   ## add in any extra supplied metadata items
   if (!missing(metadata)) {
@@ -725,7 +725,7 @@ oceNc_create <- function(adp, name,  metadata){
   }
   if (adp@metadata$source == 'odf'){
     ncvar_put(ncout, b1_def, adp[['a', 'numeric']])
-    ncvar_put(ncout, pg1_def, adp[['g', 'numeric']])
+    ncvar_put(ncout, pg1_def, adp[['q', 'numeric']])
 
   }
 
@@ -1521,13 +1521,13 @@ adpCombine <- function(adp, raw, ncin = ''){
   adp <- oceSetData(adp, 'a', aa)
 
   #create a array
-  l <- nrow(adp[['g']])
-  m <- ncol(adp[['g']])
+  l <- nrow(adp[['q']])
+  m <- ncol(adp[['q']])
   n <- 4
   gg <- array(dim = c(l, m, n))
 
   #combine beams into a single array using dimensions of odf data
-  gg[,,1] <- adp[['g', 'numeric']]
+  gg[,,1] <- adp[['q', 'numeric']]
   gg[,,2] <- na.omit(PGDP_02[, 1:length(adp[['distance']])])
   gg[,,3] <- na.omit(PGDP_03[, 1:length(adp[['distance']])])
   gg[,,4] <- na.omit(PGDP_04[, 1:length(adp[['distance']])])
