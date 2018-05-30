@@ -706,7 +706,7 @@ oceNc_create <- function(adp, name,  metadata){
   ncatt_put(ncout, 'time', attname = 'cf_role', attval = 'profile_id')
   ncatt_put(ncout, 'station', 'standard_name', 'platform_name')
   ncatt_put(ncout, 'time' , 'calendar', 'gregorian')
-  ncatt_put(ncout, 'time_string', 'note', 'time values as ISO8601 string')
+  ncatt_put(ncout, 'time_string', 'note', 'time values as ISO8601 string, YY-MM-DD hh:mm:ss')
   ncatt_put(ncout, 'time_string', 'time_zone', 'UTC')
 
 
@@ -1605,7 +1605,7 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 'time', attname = 'cf_role', attval = 'profile_id')
   ncatt_put(ncout, 'station', 'standard_name', 'platform_name')
   ncatt_put(ncout, 'time' , 'calendar', 'gregorian')
-  ncatt_put(ncout, 'time_string', 'note', 'time values as ISO8601 string')
+  ncatt_put(ncout, 'time_string', 'note', 'time values as ISO8601 string, YY-MM-DD hh:mm:ss')
   ncatt_put(ncout, 'time_string', 'time_zone', 'UTC')
   ####global####
   ncatt_put(ncout, 0, "mooring_number", adp[['mooring']])
