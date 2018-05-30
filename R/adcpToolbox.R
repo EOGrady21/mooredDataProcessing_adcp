@@ -1318,7 +1318,7 @@ oceNc_create <- function(adp, name,  metadata){
 #'@param ncin an archived netCDF file (.nc)
 #'
 ####adpCombine####
-adpCombine <- function(adp, raw, ncin ){
+adpCombine <- function(adp, raw, ncin = ''){
 
   a <- read.adp(raw)
   #####pull metadata from RAW####
@@ -1338,6 +1338,7 @@ adpCombine <- function(adp, raw, ncin ){
   transmit_pulse_length_cm <-( a[['xmitPulseLength']]*100)
   false_target_reject_values <- a[['falseTargetThresh']]
   ADCP_serial_number <- a[['serialNumber']]
+  data_type <- a[['instrumentType']]
 
   adp <- oceSetMetadata(adp, 'firmware_version', firmware_version)
   adp <- oceSetMetadata(adp, 'frequency', frequency)
@@ -1354,94 +1355,87 @@ adpCombine <- function(adp, raw, ncin ){
   adp <- oceSetMetadata(adp, 'transmit_pulse_length_cm', transmit_pulse_length_cm)
   adp <- oceSetMetadata(adp, 'false_target_reject_values', false_target_reject_values)
   adp <- oceSetMetadata(adp, 'ADCP_serial_number', ADCP_serial_number)
-
+  adp <- oceSetMetadata(adp, 'data_type', data_type)
 
   #####pull metadata from archive NC####
-  ni <- nc_open(ncin)
-  #pull log sheet metadata from incoming netCDF
 
-  creation_date <- ncatt_get(ni, 0, 'CREATION_DATE')
-  mooring <- ncatt_get(ni, 0, 'MOORING')
-  deployment_date <- ncatt_get(ni, 0,   'start_time')
-  recovery_date <- ncatt_get(ni, 0,  'stop_time')
-  inst_type <- ncatt_get(ni, 0, 'INST_TYPE')
-  historyadp <- ncatt_get(ni, 0,  'history')
-  starting_water_layer <- ncatt_get(ni,  0, 'starting_water_layer')
-  ending_water_layer <- ncatt_get(ni, 0,  'ending_water_layer')
-  depth_note <- ncatt_get(ni, 0,  'depth_note')
-  transform <- ncatt_get(ni, 0,  'transform')
-  data_type <- ncatt_get(ni, 0,  'DATA_TYPE')
-  data_subtype <- ncatt_get(ni, 0,  'DATA_SUBTYPE')
-  data_origin <- ncatt_get(ni,  0, 'DATA_ORIGIN')
-  coord_system <- ncatt_get(ni, 0,  'COORD_SYSTEM')
-  water_mass <- ncatt_get(ni, 0,  'WATER_MASS')
-  pos_const <- ncatt_get(ni, 0,  'POS_CONST')
-  depth_const <- ncatt_get(ni, 0,  'DEPTH_CONST')
-  drifter <- ncatt_get(ni, 0,  'DRIFTER')
-  FillValue <- ncatt_get(ni, 0,  'VAR_FILL')
-  experiment <- ncatt_get(ni, 0,  'EXPERIMENT')
-  project <- ncatt_get(ni, 0,  'PROJECT')
-  description <- ncatt_get(ni, 0,  'DESCRIPT')
-  longitude <- ncatt_get(ni, 0,  'longitude')
-  latitude <- ncatt_get(ni, 0,  'latitude')
-  data_comment <- ncatt_get(ni,  0, 'DATA_CMNT')
-  fill_flag <- ncatt_get(ni, 0,  'FILL_FLAG')
-  composite <- ncatt_get(ni, 0,  'COMPOSITE')
-  magnetic_variation <- ncatt_get(ni, 0,  'magnetic_variation')
-  platform <- ncatt_get(ni, 0,  'Platform')
-  sounding<- ncatt_get(ni, 0,  'Sounding')
-  chief_scientist <- ncatt_get(ni, 0,  'Chief_Scientist')
-  delta_t_sec <- ncatt_get(ni, 0, 'DELTA_T_sec')
-  ping_interval <- ncatt_get(ni, 0, 'time_between_ping_groups')
+  if(!missing(ncin)){
+    ni <- nc_open(ncin)
+    #pull log sheet metadata from incoming netCDF
 
-  xducer_offset_from_bottom <- ncatt_get(ni, 'depth', 'xducer_offset_from_bottom')
-  bin_size <- ncatt_get(ni, 'depth', 'bin_size')
+    creation_date <- ncatt_get(ni, 0, 'CREATION_DATE')
+    deployment_date <- ncatt_get(ni, 0,   'start_time')
+    recovery_date <- ncatt_get(ni, 0,  'stop_time')
+    inst_type <- ncatt_get(ni, 0, 'INST_TYPE')
+    historyadp <- ncatt_get(ni, 0,  'history')
+    starting_water_layer <- ncatt_get(ni,  0, 'starting_water_layer')
+    ending_water_layer <- ncatt_get(ni, 0,  'ending_water_layer')
+    depth_note <- ncatt_get(ni, 0,  'depth_note')
+    transform <- ncatt_get(ni, 0,  'transform')
+    data_subtype <- ncatt_get(ni, 0,  'DATA_SUBTYPE')
+    coord_system <- ncatt_get(ni, 0,  'COORD_SYSTEM')
+    water_mass <- ncatt_get(ni, 0,  'WATER_MASS')
+    pos_const <- ncatt_get(ni, 0,  'POS_CONST')
+    depth_const <- ncatt_get(ni, 0,  'DEPTH_CONST')
+    drifter <- ncatt_get(ni, 0,  'DRIFTER')
+    FillValue <- ncatt_get(ni, 0,  'VAR_FILL')
+    experiment <- ncatt_get(ni, 0,  'EXPERIMENT')
+    project <- ncatt_get(ni, 0,  'PROJECT')
+    description <- ncatt_get(ni, 0,  'DESCRIPT')
+    data_comment <- ncatt_get(ni,  0, 'DATA_CMNT')
+    fill_flag <- ncatt_get(ni, 0,  'FILL_FLAG')
+    composite <- ncatt_get(ni, 0,  'COMPOSITE')
+    magnetic_variation <- ncatt_get(ni, 0,  'magnetic_variation')
+    delta_t_sec <- ncatt_get(ni, 0, 'DELTA_T_sec')
+    ping_interval <- ncatt_get(ni, 0, 'time_between_ping_groups')
 
-  nc_close(ni)
+    xducer_offset_from_bottom <- ncatt_get(ni, 'depth', 'xducer_offset_from_bottom')
+    bin_size <- ncatt_get(ni, 'depth', 'bin_size')
 
-  adp <- oceSetMetadata(adp, 'creation_date', creation_date$value)
-  adp <- oceSetMetadata(adp, 'mooring', mooring$value)
-  adp <- oceSetMetadata(adp, 'deployment_date', deployment_date$value)
-  adp <- oceSetMetadata(adp, 'recovery_date', recovery_date$value)
-  adp <- oceSetMetadata(adp, 'inst_type', inst_type$value)
-  adp <- oceSetMetadata(adp, 'history', historyadp$value)
-  adp <- oceSetMetadata(adp, 'starting_water_layer', starting_water_layer$value)
-  adp <- oceSetMetadata(adp, 'ending_water_layer', ending_water_layer$value)
-  adp <- oceSetMetadata(adp, 'depth_note', depth_note$value)
-  adp <- oceSetMetadata(adp, 'transform', transform$value)
-  adp <- oceSetMetadata(adp, 'data_type', data_type$value)
-  adp <- oceSetMetadata(adp, 'data_subtype', data_subtype$value)
-  adp <- oceSetMetadata(adp, 'data_origin', data_origin$value)
-  adp <- oceSetMetadata(adp, 'coord_system', coord_system$value)
-  adp <- oceSetMetadata(adp, 'water_mass', water_mass$value)
-  adp <- oceSetMetadata(adp, 'pos_const', pos_const$value)
-  adp <- oceSetMetadata(adp, 'depth_const', depth_const$value)
-  adp <- oceSetMetadata(adp, 'drifter', drifter$value)
-  adp <- oceSetMetadata(adp, 'FillValue', FillValue$value)
-  adp <- oceSetMetadata(adp, 'experiment', experiment$value)
-  adp <- oceSetMetadata(adp, 'project', project$value)
-  adp <- oceSetMetadata(adp, 'description', description$value)
-  adp <- oceSetMetadata(adp, 'longitude', longitude$value)
-  adp <- oceSetMetadata(adp, 'latitude', latitude$value)
-  adp <- oceSetMetadata(adp, 'data_comment', data_comment$value)
-  adp <- oceSetMetadata(adp, 'fill_flag', fill_flag$value)
-  adp <- oceSetMetadata(adp, 'composite', composite$value)
-  adp <- oceSetMetadata(adp, 'magnetic_variation', magnetic_variation$value)
-  adp <- oceSetMetadata(adp, 'platform', platform$value)
-  adp <- oceSetMetadata(adp, 'sounding', sounding$value)
-  adp <- oceSetMetadata(adp, 'chief_scientist', chief_scientist$value)
-  adp <- oceSetMetadata(adp, 'delta_t_sec', delta_t_sec$value)
-  adp <- oceSetMetadata(adp, 'xducer_offset_from_bottom', xducer_offset_from_bottom$value)
-  adp <- oceSetMetadata(adp, 'bin_size', bin_size$value)
-  adp <- oceSetMetadata(adp, 'ping_interval', ping_interval$value)
-  adp <- oceSetMetadata(adp, 'sample_interval', pings_per_ensemble * ping_interval$value)
+    nc_close(ni)
+
+    adp <- oceSetMetadata(adp, 'creation_date', creation_date$value)
+    adp <- oceSetMetadata(adp, 'deployment_date', deployment_date$value)
+    adp <- oceSetMetadata(adp, 'recovery_date', recovery_date$value)
+    adp <- oceSetMetadata(adp, 'inst_type', inst_type$value)
+    adp <- oceSetMetadata(adp, 'history', historyadp$value)
+    adp <- oceSetMetadata(adp, 'starting_water_layer', starting_water_layer$value)
+    adp <- oceSetMetadata(adp, 'ending_water_layer', ending_water_layer$value)
+    adp <- oceSetMetadata(adp, 'depth_note', depth_note$value)
+    adp <- oceSetMetadata(adp, 'transform', transform$value)
+    adp <- oceSetMetadata(adp, 'data_subtype', data_subtype$value)
+    adp <- oceSetMetadata(adp, 'coord_system', coord_system$value)
+    adp <- oceSetMetadata(adp, 'water_mass', water_mass$value)
+    adp <- oceSetMetadata(adp, 'pos_const', pos_const$value)
+    adp <- oceSetMetadata(adp, 'depth_const', depth_const$value)
+    adp <- oceSetMetadata(adp, 'drifter', drifter$value)
+    adp <- oceSetMetadata(adp, 'FillValue', FillValue$value)
+    adp <- oceSetMetadata(adp, 'experiment', experiment$value)
+    adp <- oceSetMetadata(adp, 'project', project$value)
+    adp <- oceSetMetadata(adp, 'description', description$value)
+    adp <- oceSetMetadata(adp, 'data_comment', data_comment$value)
+    adp <- oceSetMetadata(adp, 'fill_flag', fill_flag$value)
+    adp <- oceSetMetadata(adp, 'composite', composite$value)
+    adp <- oceSetMetadata(adp, 'magnetic_variation', magnetic_variation$value)
+    adp <- oceSetMetadata(adp, 'delta_t_sec', delta_t_sec$value)
+    adp <- oceSetMetadata(adp, 'xducer_offset_from_bottom', xducer_offset_from_bottom$value)
+    adp <- oceSetMetadata(adp, 'bin_size', bin_size$value)
+    adp <- oceSetMetadata(adp, 'ping_interval', ping_interval$value)
+    adp <- oceSetMetadata(adp, 'sample_interval', pings_per_ensemble * ping_interval$value)
 
 
 
-  #set metadata source
+    #set metadata source
 
-  adp <- oceSetMetadata(adp, 'source', 'netCDF, Raw, ODF combined')
+    adp <- oceSetMetadata(adp, 'source', 'netCDF, Raw, ODF combined')
 
+  }
+
+  if(missing(ncin)){
+    warning('NC file not provided, object is missing metadata')
+
+    adp<- oceSetMetadata(adp, 'source', 'Raw, ODF combined')
+  }
 
   #####pull data from raw file#####
   a <- read.adp(raw)
@@ -1577,7 +1571,7 @@ adpNC <- function(adp, name){
     stop("method is only for objects of class '", "adp", "'")
   }
   if(missing(name)){
-    name <- paste('MADCP', adp[['experiment']], adp[['mooring']], adp[['ADCP_serial_number']], adp[['delta_t_sec']], sep = '_')
+    name <- paste('MADCP', adp[['experiment']], adp[['station']], adp[['ADCP_serial_number']], adp[['delta_t_sec']], sep = '_')
   }
   #file name and path
   ncpath <- "./"
@@ -1595,7 +1589,7 @@ adpNC <- function(adp, name){
   #create dimensions
   timedim <- ncdim_def("time", "seconds since 1970-01-01T00:00:00Z", as.double(time))    #time formatting FIX
   depthdim <- ncdim_def("depth", "metres", as.double(dist))
-  stationdim <- ncdim_def("station", "counts", as.numeric(adp[['mooring']]))
+  stationdim <- ncdim_def("station", "counts", as.numeric(adp[['station']]))
   londim <- ncdim_def("lon", "degrees_east" , as.double(lon))
   latdim <- ncdim_def("lat", "degrees_north", as.double(lat))
   dimnchar <- ncdim_def('nchar', '', 1:23, create_dimvar = FALSE)
@@ -1717,7 +1711,7 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 'time_string', 'note', 'time values as ISO8601 string, YY-MM-DD hh:mm:ss')
   ncatt_put(ncout, 'time_string', 'time_zone', 'UTC')
   ####global####
-  ncatt_put(ncout, 0, "mooring_number", adp[['mooring']])
+  ncatt_put(ncout, 0, "mooring_number", adp[['station']])
   ncatt_put(ncout, 0, "deployment_date", adp[['deployment_date']])
   ncatt_put(ncout, 0, "recovery_date", adp[['recovery_date']])
   ncatt_put(ncout, 0, "firmware_version", adp[['firmware_version']])
@@ -1739,10 +1733,10 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 0, "longitude", adp[['longitude']])
   ncatt_put(ncout, 0, "latitude", adp[['latitude']])
   ncatt_put(ncout, 0, "magnetic_variation", adp[['magnetic_variation']])
-  ncatt_put(ncout, 0, "platform", adp[['platform']])
+  ncatt_put(ncout, 0, "platform", adp[['ship']])
   ncatt_put(ncout, 0, "sounding", adp[['sounding']])
-  ncatt_put(ncout, 0, "chief_scientist", adp[['chief_scientist']])
-  ncatt_put(ncout, 0, "data_origin", adp[['data_origin']])
+  ncatt_put(ncout, 0, "chief_scientist", adp[['scientist']])
+  ncatt_put(ncout, 0, "data_origin", adp[['institute']])
   ncatt_put(ncout, 0, "water_depth", adp[['sounding']])
   ncatt_put(ncout, 0, "delta_t_sec",adp[['delta_t_sec']])
   ncatt_put(ncout, 0, "pred_accuracy", adp[['pred_accuracy']])
