@@ -1433,6 +1433,13 @@ adpCombine <- function(adp, raw, ncin = ''){
 
   if(missing(ncin)){
     warning('NC file not provided, object is missing metadata')
+    warning(
+      ' please provide creation_date,  start_time, stop_time, inst_type, history, starting_water_layer, ending_water_layer, depth_note, transform,
+      data_subtype, coord_system, water_mass, pos_const, depth_const, drifter,
+      var_fill, experiment, project, descript, data_cmnt, fill_flag, composite,
+      magnetic_variation, , delta_t_sec, time_between_ping_groups, depth:
+      xducer_offset_from_bottom, depth: bin_size'
+    )
 
     adp<- oceSetMetadata(adp, 'source', 'Raw, ODF combined')
   }
