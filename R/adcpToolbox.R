@@ -1286,7 +1286,7 @@ oceNc_create <- function(adp, name,  metadata){
 #'
 #'
 #'       Data: BEAM_02-_04, PGDP_02-_04, PTCH, ROLL, HGHT, Tx, D
-#' ***note this DATA is also in the RAW file if NC file is corrupted or missing
+#' ***note this DATA is pulled from the RAW file in case NC file is corrupted or missing
 #'
 #'
 #' Metadata: creation_date,  start_time, stop_time, inst_type, history,
