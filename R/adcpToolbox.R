@@ -770,7 +770,7 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "water_depth", adp[['sounding']])
     ncatt_put(ncout, 0, "delta_t_sec",adp[['sampling_interval']])
     ncatt_put(ncout, 0, "pred_accuracy", adp[['velocityResolution']]*1000)
-    ncatt_put(ncout, "depth", "xducer_offset_from_bottom", adp[['sounding']] - adp[['sensor_depth']])
+    ncatt_put(ncout, "depth", "xducer_offset_from_bottom", as.numeric(adp[['sounding']]) - adp[['sensor_depth']])
     ncatt_put(ncout, "depth", "bin_size", adp[['cellSize']])
     ncatt_put(ncout, "EWCT", "sensor_type", adp[['instrumentType']])
     ncatt_put(ncout, "EWCT", "sensor_depth", adp[['sensor_depth']])
@@ -861,11 +861,11 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "geospatial_lon_max", adp[['longitude']])
     ncatt_put(ncout, 0, "geospatial_lon_units", "degrees_east")
 
-    if (adp[['orientation']] == 'up' | 'UP'){
+    if (adp[['orientation']] == 'up'){
       ncatt_put(ncout, 0, "geospatial_vertical_min", adp[['sensor_depth']] + max(adp[['distance']], na.rm = TRUE))
       ncatt_put(ncout, 0, "geospatial_vertical_max", adp[['sensor_depth']] + min(adp[['distance']], na.rm = TRUE))
     }
-    if (adp[['orientation']] == 'down' | 'DOWN'){
+    if (adp[['orientation']] == 'down'){
       ncatt_put(ncout, 0, "geospatial_vertical_min", adp[['sensor_depth']] + min(adp[['distance']], na.rm = TRUE))
       ncatt_put(ncout, 0, "geospatial_vertical_max", adp[['sensor_depth']] + max(adp[['distance']], na.rm = TRUE))
     }
