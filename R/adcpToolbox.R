@@ -1701,10 +1701,10 @@ adpNC <- function(adp, name){
   ncvar_put(ncout, b2_def, adp[['a', 'numeric']][,,2])
   ncvar_put(ncout, b3_def, adp[['a', 'numeric']][,,3])
   ncvar_put(ncout, b4_def, adp[['a', 'numeric']][,,4])
-  ncvar_put(ncout, pg1_def, adp[['q', 'numeric']][,,1])
-  ncvar_put(ncout, pg2_def, adp[['q', 'numeric']][,,2])
-  ncvar_put(ncout, pg3_def, adp[['q', 'numeric']][,,3])
-  ncvar_put(ncout, pg4_def, adp[['q', 'numeric']][,,4])
+  ncvar_put(ncout, pg1_def, adp[['g', 'numeric']][,,1])
+  ncvar_put(ncout, pg2_def, adp[['g', 'numeric']][,,2])
+  ncvar_put(ncout, pg3_def, adp[['g', 'numeric']][,,3])
+  ncvar_put(ncout, pg4_def, adp[['g', 'numeric']][,,4])
   ncvar_put(ncout, p_def, adp[['pitch']])
   ncvar_put(ncout, r_def, adp[['roll']])
   ncvar_put(ncout, hght_def, (adp[['sensor_depth']]- adp[['distance']]))
@@ -2038,17 +2038,17 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, "BEAM_04", "data_min", min(adp[['a', 'numeric']][,,4], na.rm= TRUE))
   ncatt_put(ncout, "BEAM_04", "data_max", max(adp[['a', 'numeric']][,,4], na.rm= TRUE))
 
-  ncatt_put(ncout, "PGDP_01", "data_min", min(adp[['q', 'numeric']][,,1], na.rm= TRUE))
-  ncatt_put(ncout, "PGDP_01", "data_max", max(adp[['q', 'numeric']][,,1], na.rm= TRUE))# eg min 25 % good
+  ncatt_put(ncout, "PGDP_01", "data_min", min(adp[['g', 'numeric']][,,1], na.rm= TRUE))
+  ncatt_put(ncout, "PGDP_01", "data_max", max(adp[['g', 'numeric']][,,1], na.rm= TRUE))# eg min 25 % good
 
-  ncatt_put(ncout, "PGDP_02", "data_min", min(adp[['q', 'numeric']][,,2], na.rm= TRUE))
-  ncatt_put(ncout, "PGDP_02", "data_max", max(adp[['q' ,'numeric']][,,2], na.rm= TRUE))
+  ncatt_put(ncout, "PGDP_02", "data_min", min(adp[['g', 'numeric']][,,2], na.rm= TRUE))
+  ncatt_put(ncout, "PGDP_02", "data_max", max(adp[['g' ,'numeric']][,,2], na.rm= TRUE))
 
-  ncatt_put(ncout, "PGDP_03", "data_min", min(adp[['q' ,'numeric']][,,3], na.rm= TRUE))
-  ncatt_put(ncout, "PGDP_03", "data_max", max(adp[['q', 'numeric']][,,3], na.rm= TRUE))
+  ncatt_put(ncout, "PGDP_03", "data_min", min(adp[['g' ,'numeric']][,,3], na.rm= TRUE))
+  ncatt_put(ncout, "PGDP_03", "data_max", max(adp[['g', 'numeric']][,,3], na.rm= TRUE))
 
-  ncatt_put(ncout, "PGDP_04", "data_min", min(adp[['q', 'numeric']][,,4], na.rm= TRUE))
-  ncatt_put(ncout, "PGDP_04", "data_max", max(adp[['q', 'numeric']][,,4], na.rm= TRUE))
+  ncatt_put(ncout, "PGDP_04", "data_min", min(adp[['g', 'numeric']][,,4], na.rm= TRUE))
+  ncatt_put(ncout, "PGDP_04", "data_max", max(adp[['g', 'numeric']][,,4], na.rm= TRUE))
 
   ncatt_put(ncout, "hght", "data_min", min(adp[['depth', 'numeric']]))
   ncatt_put(ncout, "hght", "data_max", max(adp[['depth', 'numeric']]))
