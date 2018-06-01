@@ -110,7 +110,7 @@ read.meta <- function(file, obj){
 #'
 
 
-applyMagneticDeclinationAdp <- function(x, lat = x[['latitude']], lon = x[['longitude']], st = x[['deployment_time']], et = x[['recovery_time']],tz = 'UTC', type = 'average'){
+applyMagneticDeclinationAdp <- function(x, lat = x[['latitude']], lon = x[['longitude']], st = x[['time_coverage_start']], et = x[['time_coverage_end']],tz = 'UTC', type = 'average'){
   if (!inherits(x, "adp")){
     stop("method is only for objects of class '", "adp", "'")
   }
@@ -222,7 +222,7 @@ limit_depthbyrmax <- function(x, lat = x[['latitude']]){
 #'@param adp oce object of class adp to be limited
 #'
 #'  requires certain meta data features to compute including pressure, latitude,
-#'  time, deployment_time, recovery_time
+#'  time, time_coverage_start, time_coverage_end
 #'
 
 
@@ -232,13 +232,13 @@ limit_depthbytime <- function(adp, tz = 'UTC'){
   }
   adp[['depth']] <- swDepth(adp[['pressure']], latitude = adp[['latitude']], eos = getOption("oceEOS", default = "gsw"))
   depth <- adp[['depth']]
-  depth[as.POSIXct(adp[['time']], tz) <= as.POSIXct(adp[['deployment_time']], tz) | as.POSIXct(adp[['time']], tz) >= as.POSIXct(adp[['recovery_time']], tz)] <- NA
+  depth[as.POSIXct(adp[['time']], tz) <= as.POSIXct(adp[['time_coverage_start']], tz) | as.POSIXct(adp[['time']], tz) >= as.POSIXct(adp[['time_coverage_end']], tz)] <- NA
 
   mdt <- round(mean(depth, na.rm = TRUE), digits = 2)
   adp@metadata$sensor_depth <- mdt
 
   adp@data$depth <- depth
-  adp@processingLog <- processingLogAppend(adp@processingLog, paste0('depth limited by deployment (', adp[['deployment_time']], ') and recovery  (', adp[['recovery_time']], ')  times'))
+  adp@processingLog <- processingLogAppend(adp@processingLog, paste0('depth limited by deployment (', adp[['time_coverage_start']], ') and recovery  (', adp[['time_coverage_end']], ')  times'))
   adp@processingLog <- processingLogAppend(adp@processingLog, paste0('Sensor depth and mean depth set to  ', mdt , '  based on trimmed depth values'))
 
   return(adp)
@@ -255,8 +255,8 @@ limit_depthbytime <- function(adp, tz = 'UTC'){
 #'
 #'@param x adp object from oce-class adp
 #'@param tz time zone, default is 'UTC'
-#'@param dt deployment time of ADCP, default pulls value from metadata
-#'@param rt recovery time of ADCP, default pulls value from metadata
+#'@param dt deployment time of ADCP, default pulls value from metadata (time_coverage_start)
+#'@param rt recovery time of ADCP, default pulls value from metadata (time_coverage_end)
 #'
 #'@return adp object with velocities limited to active ADCP measurement times
 #'  (after deployment and before recovery)
@@ -265,7 +265,7 @@ limit_depthbytime <- function(adp, tz = 'UTC'){
 #'
 
 
-limit_time <- function(x, tz = 'UTC', dt = x[['deployment_time']], rt = x[['recovery_time']]){
+limit_time <- function(x, tz = 'UTC', dt = x[['time_coverage_start']], rt = x[['time_coverage_end']]){
 
   if (!inherits(x, "adp")){
     stop("method is only for objects of class '", "adp", "'")
@@ -287,8 +287,8 @@ limit_time <- function(x, tz = 'UTC', dt = x[['deployment_time']], rt = x[['reco
     x[['heading']][t < t1] <- NA
   }
   else if(missing(dt)){
-    if (!is.null(x@metadata$deployment_time)){
-      dt <- x@metadata$deployment_time
+    if (!is.null(x@metadata$time_coverage_start)){
+      dt <- x@metadata$time_coverage_start
       t1 <- as.POSIXct(dt, tz = tz)
       t <- x[['time', "numeric"]]
       t <- as.POSIXct(t, tz = tz)
@@ -300,7 +300,7 @@ limit_time <- function(x, tz = 'UTC', dt = x[['deployment_time']], rt = x[['reco
       x[['roll']][t < t1] <- NA
       x[['heading']][t < t1] <- NA
     }
-    if (is.null(x@metadata$deployment_time)){
+    if (is.null(x@metadata$time_coverage_start)){
       warning('No deployment Time provided!')
     }
 
@@ -316,7 +316,7 @@ limit_time <- function(x, tz = 'UTC', dt = x[['deployment_time']], rt = x[['reco
       x[['heading']][t > t2] <- NA
     }
     else if (missing(rt))
-      if (!is.null(x@metadata$recovery_time)){
+      if (!is.null(x@metadata$time_coverage_end)){
         t2 <- as.POSIXct(rt, tz = tz)
         x[['v']][t > t2] <- NA
         x[['pressure']][t > t2] <- NA
@@ -326,7 +326,7 @@ limit_time <- function(x, tz = 'UTC', dt = x[['deployment_time']], rt = x[['reco
         x[['roll']][t > t2] <- NA
         x[['heading']][t > t2] <- NA
       }
-    if (is.null(x@metadata$recovery_time)){
+    if (is.null(x@metadata$time_coverage_end)){
       warning('No recovery time provided!')
     }
 
@@ -404,7 +404,7 @@ adpFlag <- function(adp,  pg, er){
   dim = dim(adp[['v']])
   flag <- array(FALSE, dim= dim)
   for (i in 1:3)
-    flag[,,i] <- (lowpg< pg) | (abs(ERRV) > er) | r < d | adp[['time']] < adp[['deployment_time']] | adp[['time']] > adp[['recovery_time']]
+    flag[,,i] <- (lowpg< pg) | (abs(ERRV) > er) | r < d | adp[['time']] < adp[['time_coverage_start']] | adp[['time']] > adp[['time_coverage_end']]
 
   #initialize and set flag scheme
   adp <- initializeFlags(adp, name = 'v', value = 0)
@@ -439,7 +439,7 @@ adpFlag <- function(adp,  pg, er){
 #'
 name.file <- function(adp){
 
-  name <- paste('MADCP', adp[['cruiseNumber']], adp[['mooring_number']], adp[['serialNumber']], adp[['sampling_interval']], sep = '_')
+  name <- paste('MADCP', adp[['experiment']], adp[['mooring_number']], adp[['serialNumber']], adp[['sampling_interval']], sep = '_')
 
   name
 }
@@ -568,45 +568,45 @@ oceNc_create <- function(adp, name,  metadata){
     lat_def <- ncvar_def( longname = 'latitude', units = 'degrees_north', dim =  stationdim, name = dlname, prec = 'double')
 
     dlname <- "eastward_sea_water_velocity"
-    u_def <- ncvar_def("EWCT", "m/sec", list(stationdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    u_def <- ncvar_def("EWCT", "m/sec", list(timedim, depthdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "northward_sea_water_velocity"
-    v_def <- ncvar_def("NSCT", "m/sec", list(stationdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    v_def <- ncvar_def("NSCT", "m/sec", list(timedim, depthdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "upward_sea_water_velocity"
-    w_def <- ncvar_def("VCSP", "m/sec", list(stationdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    w_def <- ncvar_def("VCSP", "m/sec", list(timedim, depthdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "time_02"
     t_def <- ncvar_def("ELTMEP01", "seconds since 1970-01-01T00:00:00Z", list( stationdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "error_velocity_in_sea_water"
-    e_def <- ncvar_def("ERRV", "m/sec", list(stationdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    e_def <- ncvar_def("ERRV", "m/sec", list(timedim, depthdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "ADCP_echo_intensity_beam_1"
 
-    b1_def <- ncvar_def("BEAM_01", "counts", list(stationdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    b1_def <- ncvar_def("BEAM_01", "counts", list(timedim, depthdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "ADCP_echo_intensity_beam_2"
-    b2_def <- ncvar_def("BEAM_02", "counts", list(stationdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    b2_def <- ncvar_def("BEAM_02", "counts", list(timedim, depthdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "ADCP_echo_intensity_beam_3"
-    b3_def <- ncvar_def("BEAM_03", "counts", list(stationdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    b3_def <- ncvar_def("BEAM_03", "counts", list(timedim, depthdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "ADCP_echo_intensity_beam_4"
-    b4_def <- ncvar_def("BEAM_04", "counts", list(stationdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    b4_def <- ncvar_def("BEAM_04", "counts", list(timedim, depthdim, stationdim), FillValue, dlname, prec = "float")
 
 
     dlname <- "percent_good_beam_1"
-    pg1_def <- ncvar_def("PGDP_01", "counts", list(stationdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    pg1_def <- ncvar_def("PGDP_01", "counts", list(timedim, depthdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "percent_good_beam_2"
-    pg2_def <- ncvar_def("PGDP_02", "counts", list(stationdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    pg2_def <- ncvar_def("PGDP_02", "counts", list(timedim, depthdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "percent_good_beam_3"
-    pg3_def <- ncvar_def("PGDP_03", "counts", list(stationdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    pg3_def <- ncvar_def("PGDP_03", "counts", list(timedim, depthdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "percent_good_beam_4"
-    pg4_def <- ncvar_def("PGDP_04", "counts", list(stationdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    pg4_def <- ncvar_def("PGDP_04", "counts", list(timedim, depthdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "pitch"
     p_def <- ncvar_def("PTCH", "degrees", list( stationdim, timedim), FillValue, dlname, prec = "float")
@@ -639,13 +639,13 @@ oceNc_create <- function(adp, name,  metadata){
     FillValue <- 0
 
     dlname <- "quality_flag u"
-    qc_u_def <- ncvar_def("QC_flag_u", "", list(stationdim, depthdim, timedim), FillValue, dlname, prec = "integer")
+    qc_u_def <- ncvar_def("QC_flag_u", "", list(timedim, depthdim, stationdim), FillValue, dlname, prec = "integer")
 
     dlname <- "quality_flag v"
-    qc_v_def <- ncvar_def("QC_flag_v", "", list(stationdim, depthdim, timedim), FillValue, dlname, prec = "integer")
+    qc_v_def <- ncvar_def("QC_flag_v", "", list(timedim, depthdim, stationdim), FillValue, dlname, prec = "integer")
 
     dlname <- "quality_flag w"
-    qc_w_def <- ncvar_def("QC_flag_w", "", list(stationdim, depthdim, timedim), FillValue, dlname, prec = "integer")
+    qc_w_def <- ncvar_def("QC_flag_w", "", list(timedim, depthdim, stationdim), FillValue, dlname, prec = "integer")
 
     ####writing net CDF####
     #write out definitions to new nc file
@@ -662,27 +662,27 @@ oceNc_create <- function(adp, name,  metadata){
     lat_def <- ncvar_def( longname = 'latitude', units = 'degrees_north', dim =  stationdim, name = dlname, prec = 'double')
 
     dlname <- "eastward_sea_water_velocity"
-    u_def <- ncvar_def("EWCT", "m/sec", list(stationdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    u_def <- ncvar_def("EWCT", "m/sec", list(timedim, depthdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "northward_sea_water_velocity"
-    v_def <- ncvar_def("NSCT", "m/sec", list(stationdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    v_def <- ncvar_def("NSCT", "m/sec", list(timedim, depthdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "upward_sea_water_velocity"
-    w_def <- ncvar_def("VCSP", "m/sec", list(stationdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    w_def <- ncvar_def("VCSP", "m/sec", list(timedim, depthdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "time_02"
     t_def <- ncvar_def("ELTMEP01", "seconds since 1970-01-01T00:00:00Z", list( stationdim, timedim), FillValue, dlname, prec = "float")
 
     dlname <- "error_velocity_in_sea_water"
-    e_def <- ncvar_def("ERRV", "m/sec", list(stationdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    e_def <- ncvar_def("ERRV", "m/sec", list(timedim, depthdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "ADCP_echo_intensity_beam_1"
 
-    b1_def <- ncvar_def("BEAM_01", "counts", list(stationdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    b1_def <- ncvar_def("BEAM_01", "counts", list(timedim, depthdim, stationdim), FillValue, dlname, prec = "float")
 
 
     dlname <- "percent_good_beam_1"
-    pg1_def <- ncvar_def("PGDP_01", "counts", list(stationdim, depthdim, timedim), FillValue, dlname, prec = "float")
+    pg1_def <- ncvar_def("PGDP_01", "counts", list(timedim, depthdim, stationdim), FillValue, dlname, prec = "float")
 
     ####writing net CDF####
     #write out definitions to new nc file
@@ -860,8 +860,8 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "creator_institution", adp[['institution']])
     ncatt_put(ncout, 0, "program", adp[['program']])
     ncatt_put(ncout, 0, "sea_name", adp[['sea_name']])
-    ncatt_put(ncout, 0, "time_coverage_start", adp[['deployment_time']])
-    ncatt_put(ncout, 0, "time_coverage_end", adp[['recovery_time']])
+    ncatt_put(ncout, 0, "time_coverage_start", adp[['time_coverage_start']])
+    ncatt_put(ncout, 0, "time_coverage_end", adp[['time_coverage_end']])
     ncatt_put(ncout, 0, "geospatial_lat_min", adp[['latitude']])
     ncatt_put(ncout, 0, "geospatial_lat_max", adp[['latitude']])
     ncatt_put(ncout, 0, "geospatial_lat_units", "degrees_north")
