@@ -1767,6 +1767,9 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 0, "depth_const", adp[['depth_const']])
   ncatt_put(ncout, 0, "drifter", adp[['drifter']])
   ncatt_put(ncout, 0, "experiment", adp[['experiment']])
+  ncatt_put(ncout, 0, "cruise_name", adp[['cruise']])
+  ncatt_put(ncout, 0, "event_number", adp[['eventNumber']])
+
 
 
 
