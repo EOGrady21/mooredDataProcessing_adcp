@@ -760,7 +760,11 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "transmit_pulse_length_cm", adp[['xmitPulseLength']]*100)
     ncatt_put(ncout, 0, "false_target_reject_values", adp[['falseTargetThresh']])
     ncatt_put(ncout, 0, "serial_number", adp[['serialNumber']])
-    ncatt_put(ncout, 0, "transform", adp[['oceCoordinate']])
+
+    #     deprecated --- Diana Cardoso 06/01/2018
+    #ncatt_put(ncout, 0, "transform", adp[['oceCoordinate']])
+
+
     ncatt_put(ncout, 0, "data_type", adp[['instrumentType']])
     ncatt_put(ncout, 0, "data_subtype", adp[['data_subtype']])
     ncatt_put(ncout, 0, "coord_system", adp[['oceCoordinate']])
@@ -1031,7 +1035,10 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "transmit_pulse_length_cm", adp[['xmitPulseLength']])
     ncatt_put(ncout, 0, "false_target_reject_values", adp[['falseTargetThresh']])
     ncatt_put(ncout, 0, "serial_number", adp[['serialNumber']])
-    ncatt_put(ncout, 0, "transform", adp[['oceCoordinate']])
+
+    #deprecated --- Diana Cardoso 06/01/2018
+    #ncatt_put(ncout, 0, "transform", adp[['oceCoordinate']])
+
     ncatt_put(ncout, 0, "data_type", adp[['instrumentType']])
     ncatt_put(ncout, 0, "data_subtype", adp[['model']])
     ncatt_put(ncout, 0, "coord_system", adp[['oceCoordinate']])
@@ -1315,7 +1322,7 @@ oceNc_create <- function(adp, name,  metadata){
 #'
 #'     \bold{ Metadata:}  units (v, distance), cellSize, numberOfBeams, orientation,
 #'      model, type, eventNumber, serialNumber, ship (platform), scientist
-#'      (chief_scientist), institute (data_origin), cruise, station (mooring),
+#'      (chief_scientist), institute (data_origin), cruise (cruise_name), station (mooring),
 #'      countryInstituteCode, cruiseNumber, startTime, latitude, longitude,
 #'      waterDepth, sounding
 
@@ -1379,7 +1386,10 @@ adpCombine <- function(adp, raw, ncin = ''){
     starting_water_layer <- ncatt_get(ni,  0, 'starting_water_layer')
     ending_water_layer <- ncatt_get(ni, 0,  'ending_water_layer')
     depth_note <- ncatt_get(ni, 0,  'depth_note')
-    transform <- ncatt_get(ni, 0,  'transform')
+
+    #     deprecated --- Diana Cardoso 06/01/2018
+    #transform <- ncatt_get(ni, 0,  'transform')
+
     data_subtype <- ncatt_get(ni, 0,  'DATA_SUBTYPE')
     coord_system <- ncatt_get(ni, 0,  'COORD_SYSTEM')
     water_mass <- ncatt_get(ni, 0,  'WATER_MASS')
@@ -1396,13 +1406,14 @@ adpCombine <- function(adp, raw, ncin = ''){
     magnetic_variation <- ncatt_get(ni, 0,  'magnetic_variation')
     delta_t_sec <- ncatt_get(ni, 0, 'DELTA_T_sec')
     ping_interval <- ncatt_get(ni, 0, 'time_between_ping_groups')
-
+    data_origin <- ncatt_get(ni, 0, 'DATA_ORIGIN')
     xducer_offset_from_bottom <- ncatt_get(ni, 'depth', 'xducer_offset_from_bottom')
     bin_size <- ncatt_get(ni, 'depth', 'bin_size')
 
     nc_close(ni)
 
     adp <- oceSetMetadata(adp, 'creation_date', creation_date$value)
+    adp <- oceSetMetadata(adp, 'data_origin', data_origin$value)
     adp <- oceSetMetadata(adp, 'time_coverage_start', time_coverage_start$value)
     adp <- oceSetMetadata(adp, 'time_coverage_end', time_coverage_end$value)
     adp <- oceSetMetadata(adp, 'inst_type', inst_type$value)
@@ -1410,7 +1421,10 @@ adpCombine <- function(adp, raw, ncin = ''){
     adp <- oceSetMetadata(adp, 'starting_water_layer', starting_water_layer$value)
     adp <- oceSetMetadata(adp, 'ending_water_layer', ending_water_layer$value)
     adp <- oceSetMetadata(adp, 'depth_note', depth_note$value)
-    adp <- oceSetMetadata(adp, 'transform', transform$value)
+
+    #     deprecated --- Diana Cardoso 06/01/2018
+    #adp <- oceSetMetadata(adp, 'transform', transform$value)
+
     adp <- oceSetMetadata(adp, 'data_subtype', data_subtype$value)
     adp <- oceSetMetadata(adp, 'coord_system', coord_system$value)
     adp <- oceSetMetadata(adp, 'water_mass', water_mass$value)
@@ -1746,7 +1760,10 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 0, "transmit_pulse_length_cm", adp[['transmit_pulse_length_cm']])
   ncatt_put(ncout, 0, "false_target_reject_values", adp[['false_target_reject_values']])
   ncatt_put(ncout, 0, "serial_number", adp[['serial_number']])
-  ncatt_put(ncout, 0, "transform", adp[['transform']])
+
+  #     deprecated --- DIana Cardoso 06/01/2018
+  #ncatt_put(ncout, 0, "transform", adp[['transform']])
+
   ncatt_put(ncout, 0, "data_type", adp[['data_type']])
   ncatt_put(ncout, 0, "data_subtype", adp[['data_subtype']])
   ncatt_put(ncout, 0, "coord_system", adp[['coord_system']])
@@ -1756,7 +1773,7 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 0, "platform", adp[['ship']])
   ncatt_put(ncout, 0, "sounding", adp[['sounding']])
   ncatt_put(ncout, 0, "chief_scientist", adp[['scientist']])
-  ncatt_put(ncout, 0, "data_origin", adp[['institute']])
+
   ncatt_put(ncout, 0, "water_depth", adp[['sounding']])
   ncatt_put(ncout, 0, "delta_t_sec",adp[['delta_t_sec']])
   ncatt_put(ncout, 0, "pred_accuracy", adp[['pred_accuracy']])
@@ -1854,7 +1871,7 @@ adpNC <- function(adp, name){
   ####CF conventions & BODC standards####
   ncatt_put(ncout, 0, 'Conventions', 'CF-1.7')
   ncatt_put(ncout, 0, "creator_type", "person")
-  ncatt_put(ncout, 0, "creator_institution", adp[['data_origin']])
+
   ncatt_put(ncout, 0, "program", adp[['description']])
   ncatt_put(ncout, 0, "time_coverage_start", adp[['time_coverage_start']])
   ncatt_put(ncout, 0, "time_coverage_end", adp[['time_coverage_end']])
@@ -1875,7 +1892,7 @@ adpNC <- function(adp, name){
   }
   ncatt_put(ncout, 0, "geospatial_vertical_units", "metres")
   ncatt_put(ncout, 0, "geospatial_vertical_positive", 'down')
-  ncatt_put(ncout, 0, "institution", adp[['data_origin']])
+
   ncatt_put(ncout, 0, "project", adp[['project']])
   ncatt_put(ncout,0, "_FillValue", "1e35")
   ncatt_put(ncout, 0, "featureType", "timeSeriesProfile")
@@ -1889,6 +1906,11 @@ adpNC <- function(adp, name){
   # ncatt_put(ncout, 0, "creator_email", adp[['creator_email']])
   ncatt_put(ncout, 0, "processing_level", adp[['processing_level']])
   # ncatt_put(ncout, 0, "source", "R code: adcpProcess, github:")
+
+  #redundant metadata to be condensed
+  ncatt_put(ncout, 0, "institution", adp[['data_origin']])
+  ncatt_put(ncout, 0, "creator_institution", adp[['data_origin']])
+  ncatt_put(ncout, 0, "data_origin", adp[['data_origin']])
 
   ####BODC P01 names####
   ncatt_put(ncout, "EWCT", "sdn_parameter_urn", "SDN:P01::LCEWAP01")
