@@ -742,8 +742,12 @@ oceNc_create <- function(adp, name,  metadata){
   if (adp@metadata$source == 'raw'){
     ####pulled from adp object####
     ncatt_put(ncout, 0, "mooring_number", adp[['mooring_number']])
-    ncatt_put(ncout, 0, "deployment_date", adp[['deployment_time']])
-    ncatt_put(ncout, 0, "recovery_date", adp[['recovery_time']])
+
+    #       deprecated --- Diana Cardoso 06/01/2018
+    #ncatt_put(ncout, 0, "deployment_date", adp[['deployment_time']])
+    #ncatt_put(ncout, 0, "recovery_date", adp[['recovery_time']])
+
+
     ncatt_put(ncout, 0, "firmware_version", adp[['firmwareVersion']])
     ncatt_put(ncout, 0, "frequency", adp[['frequency']])
     ncatt_put(ncout, 0, "beam_pattern", adp[['beamPattern']])
@@ -1009,8 +1013,12 @@ oceNc_create <- function(adp, name,  metadata){
 
   if (adp@metadata$source == 'odf'){
     ncatt_put(ncout, 0, "mooring_number", adp[['mooring_number']])
-    ncatt_put(ncout, 0, "deployment_date", adp[['deployment_time']])
-    ncatt_put(ncout, 0, "recovery_date", adp[['recovery_time']])
+
+    #       deprecated --- Diana Cardoso 06/01/2018
+    #ncatt_put(ncout, 0, "deployment_date", adp[['deployment_time']])
+    #ncatt_put(ncout, 0, "recovery_date", adp[['recovery_time']])
+
+
     ncatt_put(ncout, 0, "firmware_version", adp[['firmwareVersion']])
     ncatt_put(ncout, 0, "frequency", adp[['frequency']])
     ncatt_put(ncout, 0, "beam_pattern", adp[['beamPattern']])
@@ -1364,8 +1372,8 @@ adpCombine <- function(adp, raw, ncin = ''){
     #pull log sheet metadata from incoming netCDF
 
     creation_date <- ncatt_get(ni, 0, 'CREATION_DATE')
-    deployment_date <- ncatt_get(ni, 0,   'start_time')
-    recovery_date <- ncatt_get(ni, 0,  'stop_time')
+    time_coverage_start <- ncatt_get(ni, 0,   'start_time')
+    time_coverage_end <- ncatt_get(ni, 0,  'stop_time')
     inst_type <- ncatt_get(ni, 0, 'INST_TYPE')
     historyadp <- ncatt_get(ni, 0,  'history')
     starting_water_layer <- ncatt_get(ni,  0, 'starting_water_layer')
@@ -1395,8 +1403,8 @@ adpCombine <- function(adp, raw, ncin = ''){
     nc_close(ni)
 
     adp <- oceSetMetadata(adp, 'creation_date', creation_date$value)
-    adp <- oceSetMetadata(adp, 'deployment_date', deployment_date$value)
-    adp <- oceSetMetadata(adp, 'recovery_date', recovery_date$value)
+    adp <- oceSetMetadata(adp, 'time_coverage_start', time_coverage_start$value)
+    adp <- oceSetMetadata(adp, 'time_coverage_end', time_coverage_end$value)
     adp <- oceSetMetadata(adp, 'inst_type', inst_type$value)
     adp <- oceSetMetadata(adp, 'history', historyadp$value)
     adp <- oceSetMetadata(adp, 'starting_water_layer', starting_water_layer$value)
@@ -1719,8 +1727,13 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 'time_string', 'time_zone', 'UTC')
   ####global####
   ncatt_put(ncout, 0, "mooring_number", adp[['station']])
-  ncatt_put(ncout, 0, "deployment_date", adp[['deployment_date']])
-  ncatt_put(ncout, 0, "recovery_date", adp[['recovery_date']])
+
+
+  #     deprecated --- Diana Cardoso 06/01/2018
+  #ncatt_put(ncout, 0, "deployment_date", adp[['deployment_date']])
+  #ncatt_put(ncout, 0, "recovery_date", adp[['recovery_date']])
+
+
   ncatt_put(ncout, 0, "firmware_version", adp[['firmware_version']])
   ncatt_put(ncout, 0, "frequency", adp[['frequency']])
   ncatt_put(ncout, 0, "beam_pattern", adp[['beam_pattern']])
@@ -1840,8 +1853,8 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 0, "creator_type", "person")
   ncatt_put(ncout, 0, "creator_institution", adp[['data_origin']])
   ncatt_put(ncout, 0, "program", adp[['description']])
-  ncatt_put(ncout, 0, "time_coverage_start", adp[['deployment_date']])
-  ncatt_put(ncout, 0, "time_coverage_end", adp[['recovery_date']])
+  ncatt_put(ncout, 0, "time_coverage_start", adp[['time_coverage_start']])
+  ncatt_put(ncout, 0, "time_coverage_end", adp[['time_coverage_end']])
   ncatt_put(ncout, 0, "geospatial_lat_min", adp[['latitude']])
   ncatt_put(ncout, 0, "geospatial_lat_max", adp[['latitude']])
   ncatt_put(ncout, 0, "geospatial_lat_units", "degrees_north")
