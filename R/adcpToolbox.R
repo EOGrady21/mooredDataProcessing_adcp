@@ -1331,7 +1331,8 @@ oceNc_create <- function(adp, name,  metadata){
 #'
 #' Contains:
 #'
-#'      \bold{Data:} PROCESSED EWCT, NSCT, VCSP, ERRV, BEAM_01, PGDP_01, time, distance
+#'      \bold{Data:} PROCESSED EWCT, NSCT, VCSP, ERRV, BEAM_01 (!which is
+#'      actually the average echo intensity), PGDP_04, time, distance
 #'
 #'
 #'     \bold{ Metadata:}  units (v, distance), cellSize, numberOfBeams, orientation,
@@ -1482,12 +1483,14 @@ adpCombine <- function(adp, raw, ncin = ''){
 
   #####pull data from raw file#####
   a <- read.adp(raw)
+  BEAM_01 <- a[['a', 'numeric']][,,1]
   BEAM_02 <- a[['a', 'numeric']][,,2]
   BEAM_03 <- a[['a', 'numeric']][,,3]
   BEAM_04 <- a[['a', 'numeric']][,,4]
+  PGDP_01 <- a[['g', 'numeric']][,,1]
   PGDP_02 <- a[['g', 'numeric']][,,2]
   PGDP_03 <- a[['g', 'numeric']][,,3]
-  PGDP_04 <- a[['g', 'numeric']][,,4]
+
   PTCH <- a[['pitch']]
   ROLL <- a[['roll']]
   HGHT <- a[['distance']]
@@ -1529,12 +1532,14 @@ adpCombine <- function(adp, raw, ncin = ''){
   PRES[limitvec == 4] <- NA
   SVEL[limitvec == 4] <- NA
 
+  BEAM_01[limitmat == 4] <- NA
   BEAM_02[limitmat == 4] <- NA
   BEAM_03[limitmat == 4] <- NA
   BEAM_04[limitmat == 4] <- NA
+  PGDP_01[limitmat == 4] <- NA
   PGDP_02[limitmat == 4] <- NA
   PGDP_03[limitmat == 4] <- NA
-  PGDP_04[limitmat == 4] <- NA
+
 
 
 
@@ -1548,7 +1553,7 @@ adpCombine <- function(adp, raw, ncin = ''){
 
 
   #combine beams into a single array using dimensions of odf data
-  aa[,,1] <- adp[['a', 'numeric']]
+  aa[,,1] <- na.omit(BEAM_01[, 1:length(adp[['distance']])])
   aa[,,2] <- na.omit(BEAM_02[, 1:length(adp[['distance']])])
   aa[,,3] <- na.omit(BEAM_03[, 1:length(adp[['distance']])])
   aa[,,4] <- na.omit(BEAM_04[, 1:length(adp[['distance']])])
@@ -1563,10 +1568,10 @@ adpCombine <- function(adp, raw, ncin = ''){
   gg <- array(dim = c(l, m, n))
 
   #combine beams into a single array using dimensions of odf data
-  gg[,,1] <- adp[['q', 'numeric']]
+  gg[,,1] <- na.omit(PGDP_01[, 1:length(adp[['distance']])])
   gg[,,2] <- na.omit(PGDP_02[, 1:length(adp[['distance']])])
   gg[,,3] <- na.omit(PGDP_03[, 1:length(adp[['distance']])])
-  gg[,,4] <- na.omit(PGDP_04[, 1:length(adp[['distance']])])
+  gg[,,4] <- adp[['q', 'numeric']]
 
   #put array into adp object
   adp <- oceSetData(adp, 'g', gg)
