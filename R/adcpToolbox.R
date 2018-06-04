@@ -1301,7 +1301,7 @@ oceNc_create <- function(adp, name,  metadata){
 #'\bold{ Metadata: } firmwareVersion, frequency, beamPattern, orientation, beamAngle,
 #' numberOfBeams (janus), pingsPerEnsemble, velocityResolution (pred_accuracy),
 #' lowCorrThresh (valid_correlation_range), percentGdMinimum
-#' (minmax_percent_good), errorVelocityMeaximum (error_velocity_threshold),
+#' (minmax_percent_good), errorVelocityMaximum (error_velocity_threshold),
 #' xmitPulseLength (transmit_pulse_length), falseTargetThresh
 #' (false_target_reject_values), serialNumber, instrumentType(data_type)
 #'
