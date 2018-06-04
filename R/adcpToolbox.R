@@ -542,7 +542,7 @@ oceNc_create <- function(adp, name,  metadata){
 
   ####setting dimensions and definitions####
   #dimension variables from adp object
-  time <- adp[['time']]
+  time <- as.POSIXct(adp[['time']], tz = 'UTC', origin = '1970-01-01 00:00:00')
   dist <- adp[['distance', 'numeric']]
   lon <- adp[['longitude']]
   lat <- adp[['latitude']]
@@ -1635,7 +1635,7 @@ adpNC <- function(adp, name){
 
   ####setting dimensions and definitions####
   #dimension variables from adp object
-  time <- adp[['time']]
+  time <- as.POSIXct(adp[['time']], tz = 'UTC', origin = '1970-01-01 00:00:00')
   dist <- adp[['distance', 'numeric']]
   lon <- adp[['longitude']]
   lat <- adp[['latitude']]
