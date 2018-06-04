@@ -489,7 +489,7 @@ odf2adp <- function(files, metadata) {
   adp <- as.adp(t, distance, v=abind(u, v, w, error, along=3), a=a, q=unknown)
   for (m in names(d@metadata)) {
     if (m != 'units' & m != 'flags' & m != 'dataNamesOriginal') {
-      adp <- oceSetMetadata(adp, m, d[[m]])
+      adp <- oceSetMetadata(adp, m, d[[m]], note = NULL)
     }
   }
 
@@ -500,7 +500,7 @@ odf2adp <- function(files, metadata) {
   ## add in any extra supplied metadata items
   if (!missing(metadata)) {
     for (m in seq_along(metadata)) {
-      adp <- oceSetMetadata(adp, names(metadata)[m], metadata[[m]])
+      adp <- oceSetMetadata(adp, names(metadata)[m], metadata[[m]], note = NULL)
     }
   }
   adp@metadata$source <- 'odf'
