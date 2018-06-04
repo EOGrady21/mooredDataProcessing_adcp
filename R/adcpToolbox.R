@@ -1301,8 +1301,9 @@ oceNc_create <- function(adp, name,  metadata){
 #'Contains:
 #'
 #'
-#' \bold{Data:} heading, pressure, sound speed data, BEAM_02-_04, PGDP_02-_04, PTCH,
-#' ROLL, HGHT, Tx, D
+#' \bold{Data:} heading, pressure, sound speed data, BEAM_02-_04, PGDP_02-_04,
+#' PTCH, ROLL, HGHT, Tx, D( D is not actually equal to depth values recorded in
+#' raw file but calculated using swDepth from recorded pressure values)
 #'
 #'
 #'\bold{ Metadata: } firmwareVersion, frequency, beamPattern, orientation, beamAngle,
