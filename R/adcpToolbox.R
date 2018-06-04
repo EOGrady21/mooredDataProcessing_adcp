@@ -417,7 +417,7 @@ adpFlag <- function(adp,  pg, er){
   adp <- setFlags(adp, name = 'v', i = good, value = 1)
 
 
-  adp@processingLog <- processingLogAppend(adp@processingLog, 'Quality control flags set based on flag scheme from BODC')
+  adp@processingLog <- processingLogAppend(adp@processingLog, 'Quality control flags set based on flag scheme L20 from BODC')
   return(adp)
 }
 
