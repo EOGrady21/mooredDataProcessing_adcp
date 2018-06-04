@@ -1311,7 +1311,7 @@ oceNc_create <- function(adp, name,  metadata){
 #' (minmax_percent_good), errorVelocityMaximum (error_velocity_threshold),
 #' xmitPulseLength (transmit_pulse_length), falseTargetThresh
 #' (false_target_reject_values), serialNumber, instrumentType(data_type),
-#' bin1distance
+#' bin1Distance
 #'
 #'
 #' b)	\bold{Archived netCDF}
@@ -1374,7 +1374,7 @@ adpCombine <- function(adp, raw, ncin = ''){
   false_target_reject_values <- a[['falseTargetThresh']]
   serial_number <- a[['serialNumber']]
   data_type <- a[['instrumentType']]
-  bin1distance <- a[['bin1distance']]
+  bin1Distance <- a[['bin1Distance']]
 
   adp <- oceSetMetadata(adp, 'firmware_version', firmware_version)
   adp <- oceSetMetadata(adp, 'frequency', frequency)
@@ -1392,7 +1392,7 @@ adpCombine <- function(adp, raw, ncin = ''){
   adp <- oceSetMetadata(adp, 'false_target_reject_values', false_target_reject_values)
   adp <- oceSetMetadata(adp, 'serial_number', serial_number)
   adp <- oceSetMetadata(adp, 'data_type', data_type)
-  adp <- oceSetMetadata(adp, 'bin1distance', bin1distance)
+  adp <- oceSetMetadata(adp, 'bin1Distance', bin1Distance)
 
   #####pull metadata from archive NC####
 
@@ -1747,7 +1747,7 @@ adpNC <- function(adp, name){
   ncvar_put(ncout, pg4_def, adp[['g', 'numeric']][,,4])
   ncvar_put(ncout, p_def, adp[['pitch']])
   ncvar_put(ncout, r_def, adp[['roll']])
-  ncvar_put(ncout, hght_def, ((adp[['sensor_depth']]- adp[['bin1distance']]) - adp[['distance']]))
+  ncvar_put(ncout, hght_def, ((adp[['sensor_depth']]- adp[['bin1Distance']]) - adp[['distance']]))
   ncvar_put(ncout, Tx_def, adp[['temperature']])
   ncvar_put(ncout, D_def, adp[['depth']])
   ncvar_put(ncout, head_def, adp[['heading']])
@@ -1939,17 +1939,17 @@ adpNC <- function(adp, name){
     ncatt_put(ncout, 0, "creator_email", adp[['creator_email']])
   }
   if(!is.null(adp[['processing_level']])){
-  ncatt_put(ncout, 0, "processing_level", adp[['processing_level']])
+    ncatt_put(ncout, 0, "processing_level", adp[['processing_level']])
   }
   ncatt_put(ncout, 0, "source", "R code: adcpProcess, github:") ##update with link to code
   if(!is.null(adp[['publisher_name']])){
-  ncatt_put(ncout, 0, "publisher_name", adp[['publisher_name']])
+    ncatt_put(ncout, 0, "publisher_name", adp[['publisher_name']])
   }
   if(!is.null(adp[['publisher_url']])){
-  ncatt_put(ncout, 0, "publisher_url", adp[['publisher_url']])
+    ncatt_put(ncout, 0, "publisher_url", adp[['publisher_url']])
   }
   if(!is.null(adp[['publisher_email']])){
-  ncatt_put(ncout, 0, "publisher_email", adp[['publisher_email']])
+    ncatt_put(ncout, 0, "publisher_email", adp[['publisher_email']])
   }
 
   #redundant metadata to be condensed
