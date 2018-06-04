@@ -1502,7 +1502,7 @@ adpCombine <- function(adp, raw, ncin = ''){
   ROLL <- a[['roll']]
   HGHT <- a[['distance']]
   Tx <- a[['temperature']]
-  D <- a[['depth']]
+  D <- swDepth(pressure = a[['pressure']], latitude = adp[['latitude']], eos = 'gsw')
   HEAD <- a[['heading']]
   PRES <- a[['pressure']]
   SVEL <- a[['soundSpeed']]
