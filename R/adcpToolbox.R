@@ -489,7 +489,7 @@ odf2adp <- function(files, metadata) {
   adp <- as.adp(t, distance, v=abind(u, v, w, error, along=3), a=a, q=unknown)
   for (m in names(d@metadata)) {
     if (m != 'units' & m != 'flags' & m != 'dataNamesOriginal') {
-      adp <- oceSetMetadata(adp, m, d[[m]])
+      adp <- oceSetMetadata(adp, m, d[[m]], note = NULL)
     }
   }
 
@@ -500,7 +500,7 @@ odf2adp <- function(files, metadata) {
   ## add in any extra supplied metadata items
   if (!missing(metadata)) {
     for (m in seq_along(metadata)) {
-      adp <- oceSetMetadata(adp, names(metadata)[m], metadata[[m]])
+      adp <- oceSetMetadata(adp, names(metadata)[m], metadata[[m]], note = NULL)
     }
   }
   adp@metadata$source <- 'odf'
@@ -743,7 +743,7 @@ oceNc_create <- function(adp, name,  metadata){
   ncatt_put(ncout, 'time' , 'calendar', 'gregorian')
   ncatt_put(ncout, 'time_string', 'note', 'time values as ISO8601 string, YY-MM-DD hh:mm:ss')
   ncatt_put(ncout, 'time_string', 'time_zone', 'UTC')
-  #nc_att_put(ncout,0, 'processing_level', adp[['processingLog']])
+  nc_att_put(ncout,0, 'processing_level', adp[['processingLog']])
 
 
   if (adp@metadata$source == 'raw'){
@@ -1224,8 +1224,8 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, "PGDP_04", "data_max", max(adp[['g', 'numeric']][,,4], na.rm= TRUE))
     ncatt_put(ncout, "hght", "data_min", min(adp[['depth', 'numeric']]))
     ncatt_put(ncout, "hght", "data_max", max(adp[['depth', 'numeric']]))
-    ncatt_put(ncout, "DEPH", "data_min", min(adp[['depth']]))
-    ncatt_put(ncout, "DEPH", "data_max", max(adp[['depth']]))
+    ncatt_put(ncout, "D", "data_min", min(adp[['depth']]))
+    ncatt_put(ncout, "D", "data_max", max(adp[['depth']]))
     ncatt_put(ncout, "Tx", "data_min", min(adp[['temperature']]))
     ncatt_put(ncout, "Tx", "data_max", max(adp[['temperature']]))
     ncatt_put(ncout, "PTCH", "data_min", min(adp[['pitch']]))
