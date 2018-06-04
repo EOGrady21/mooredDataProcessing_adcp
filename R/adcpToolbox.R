@@ -1052,7 +1052,10 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "water_depth", adp[['water_depth']])
     ncatt_put(ncout, 0, "delta_t_sec",adp[['sampling_interval']])
     ncatt_put(ncout, 0, "pred_accuracy", adp[['velocityResolution']])
+
+    #FIXME: should be pulled from odf...not in object... issue with oce read.odf
     ncatt_put(ncout, "depth", "xducer_offset_from_bottom", adp[['depth_off_bottom']])
+
     ncatt_put(ncout, "depth", "bin_size", adp[['cellSize']])
     ncatt_put(ncout, "EWCT", "sensor_type", adp[['instrumentType']])
     ncatt_put(ncout, "EWCT", "sensor_depth", adp[['sensor_depth']])
@@ -1321,7 +1324,7 @@ oceNc_create <- function(adp, name,  metadata){
 #'
 #'
 #'     \bold{ Metadata:}  units (v, distance), cellSize, numberOfBeams, orientation,
-#'      model, type, eventNumber, serialNumber, ship (platform), scientist
+#'      model, type, serialNumber, ship (platform), scientist
 #'      (chief_scientist), institute (data_origin), cruise (cruise_name), station (mooring),
 #'      countryInstituteCode, cruiseNumber, startTime, latitude, longitude,
 #'      waterDepth, sounding
@@ -1785,7 +1788,7 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 0, "drifter", adp[['drifter']])
   ncatt_put(ncout, 0, "experiment", adp[['experiment']])
   ncatt_put(ncout, 0, "cruise_name", adp[['cruise']])
-  ncatt_put(ncout, 0, "event_number", adp[['eventNumber']])
+
 
 
 
