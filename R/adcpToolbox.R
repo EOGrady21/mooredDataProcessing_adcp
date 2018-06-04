@@ -743,7 +743,7 @@ oceNc_create <- function(adp, name,  metadata){
   ncatt_put(ncout, 'time' , 'calendar', 'gregorian')
   ncatt_put(ncout, 'time_string', 'note', 'time values as ISO8601 string, YY-MM-DD hh:mm:ss')
   ncatt_put(ncout, 'time_string', 'time_zone', 'UTC')
-  #nc_att_put(ncout,0, 'processing_level', adp[['processingLog']])
+  ncatt_put(ncout,0, 'processing_level',paste(adp@processingLog$value))     #FIXME
 
 
   if (adp@metadata$source == 'raw'){
