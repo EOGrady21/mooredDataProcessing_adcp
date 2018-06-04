@@ -635,7 +635,7 @@ oceNc_create <- function(adp, name,  metadata){
     svel_def <- ncvar_def("SVEL", "m/s", list(timedim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "time_string"
-    ts_def <- ncvar_def("DTUT8601", units = "",dim =  list(dimnchar, timedim), missval = NULL, name =  dlname, prec = "char")
+    ts_def <- ncvar_def("DTUT8601", units = "",dim =  list(timedim, dimnchar), missval = NULL, name =  dlname, prec = "char")
 
 
     FillValue <- 0
@@ -686,9 +686,12 @@ oceNc_create <- function(adp, name,  metadata){
     dlname <- "percent_good_beam_1"
     pg1_def <- ncvar_def("PGDP_01", "counts", list(timedim, depthdim, stationdim), FillValue, dlname, prec = "float")
 
+    dlname <- "time_string"
+    ts_def <- ncvar_def("DTUT8601", units = "",dim =  list(timedim, dimnchar), missval = NULL, name =  dlname, prec = "char")
+
     ####writing net CDF####
     #write out definitions to new nc file
-    ncout <- nc_create(ncfname, list(u_def, v_def, w_def, e_def, t_def, b1_def,  pg1_def, lon_def, lat_def), force_v4 = TRUE)
+    ncout <- nc_create(ncfname, list(u_def, v_def, w_def, e_def, t_def, b1_def,  pg1_def, lon_def, lat_def, ts_def), force_v4 = TRUE)
 
 
   }
@@ -728,6 +731,7 @@ oceNc_create <- function(adp, name,  metadata){
   if (adp@metadata$source == 'odf'){
     ncvar_put(ncout, b1_def, adp[['a', 'numeric']])
     ncvar_put(ncout, pg1_def, adp[['q', 'numeric']])
+    ncvar_put(ncout, ts_def, adp[['time']])
 
   }
 
@@ -1718,7 +1722,7 @@ adpNC <- function(adp, name){
   svel_def <- ncvar_def("SVEL", "m/s", list(timedim, stationdim), FillValue, dlname, prec = "float")
 
   dlname <- "time_string"
-  ts_def <- ncvar_def("DTUT8601", units = "",dim =  list(dimnchar, timedim), missval = NULL, name =  dlname, prec = "char")
+  ts_def <- ncvar_def("DTUT8601", units = "",dim =  list(timedim, dimnchar), missval = NULL, name =  dlname, prec = "char")
 
 
   #####write out definitions to new nc file####
