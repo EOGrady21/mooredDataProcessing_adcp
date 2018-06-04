@@ -1310,7 +1310,8 @@ oceNc_create <- function(adp, name,  metadata){
 #' lowCorrThresh (valid_correlation_range), percentGdMinimum
 #' (minmax_percent_good), errorVelocityMaximum (error_velocity_threshold),
 #' xmitPulseLength (transmit_pulse_length), falseTargetThresh
-#' (false_target_reject_values), serialNumber, instrumentType(data_type)
+#' (false_target_reject_values), serialNumber, instrumentType(data_type),
+#' bin1distance
 #'
 #'
 #' b)	\bold{Archived netCDF}
@@ -1373,6 +1374,7 @@ adpCombine <- function(adp, raw, ncin = ''){
   false_target_reject_values <- a[['falseTargetThresh']]
   serial_number <- a[['serialNumber']]
   data_type <- a[['instrumentType']]
+  bin1distance <- a[['bin1distance']]
 
   adp <- oceSetMetadata(adp, 'firmware_version', firmware_version)
   adp <- oceSetMetadata(adp, 'frequency', frequency)
@@ -1390,6 +1392,7 @@ adpCombine <- function(adp, raw, ncin = ''){
   adp <- oceSetMetadata(adp, 'false_target_reject_values', false_target_reject_values)
   adp <- oceSetMetadata(adp, 'serial_number', serial_number)
   adp <- oceSetMetadata(adp, 'data_type', data_type)
+  adp <- oceSetMetadata(adp, 'bin1distance', bin1distance)
 
   #####pull metadata from archive NC####
 
@@ -1744,7 +1747,7 @@ adpNC <- function(adp, name){
   ncvar_put(ncout, pg4_def, adp[['g', 'numeric']][,,4])
   ncvar_put(ncout, p_def, adp[['pitch']])
   ncvar_put(ncout, r_def, adp[['roll']])
-  ncvar_put(ncout, hght_def, (adp[['sensor_depth']]- adp[['distance']]))
+  ncvar_put(ncout, hght_def, ((adp[['sensor_depth']]- adp[['bin1distance']]) - adp[['distance']]))
   ncvar_put(ncout, Tx_def, adp[['temperature']])
   ncvar_put(ncout, D_def, adp[['depth']])
   ncvar_put(ncout, head_def, adp[['heading']])
