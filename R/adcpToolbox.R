@@ -330,6 +330,7 @@ limit_time <- function(x, tz = 'UTC', dt = x[['time_coverage_start']], rt = x[['
       warning('No recovery time provided!')
     }
 
+    adp@processingLog <- processingLogAppend(adp@processingLog, paste0('Data has been cut off before deployment at  ', dt, '  and after recovery at ', rt))
 
     return(x)
   }
