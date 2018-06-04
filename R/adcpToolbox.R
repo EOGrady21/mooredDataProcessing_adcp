@@ -543,13 +543,13 @@ oceNc_create <- function(adp, name,  metadata){
   ####setting dimensions and definitions####
   #dimension variables from adp object
   time <- as.POSIXct(adp[['time']], tz = 'UTC', origin = '1970-01-01 00:00:00')
-  depth <- adp[['depth', 'numeric']]
+  dist <- adp[['distance', 'numeric']]
   lon <- adp[['longitude']]
   lat <- adp[['latitude']]
 
   #create dimensions
   timedim <- ncdim_def("time", "seconds since 1970-01-01T00:00:00Z", as.double(time))    #time formatting FIX
-  depthdim <- ncdim_def("depth", "metres", as.double(depth))
+  depthdim <- ncdim_def("depth", "metres", as.double(dist))
   stationdim <- ncdim_def("station", "", as.numeric(adp[['mooring_number']]))
   londim <- ncdim_def("lon", "degrees_east" , as.double(lon))
   latdim <- ncdim_def("lat", "degrees_north", as.double(lat))
@@ -1636,14 +1636,14 @@ adpNC <- function(adp, name){
   ####setting dimensions and definitions####
   #dimension variables from adp object
   time <- as.POSIXct(adp[['time']], tz = 'UTC', origin = '1970-01-01 00:00:00')
-  depth <- adp[['depth', 'numeric']]
+  dist <- adp[['distance', 'numeric']]
   lon <- adp[['longitude']]
   lat <- adp[['latitude']]
 
 
   #create dimensions
   timedim <- ncdim_def("time", "seconds since 1970-01-01T00:00:00Z", as.double(time))    #time formatting FIX
-  depthdim <- ncdim_def("depth", "metres", as.double(depth))
+  depthdim <- ncdim_def("depth", "metres", as.double(dist))
   stationdim <- ncdim_def("station", "counts", as.numeric(adp[['station']]))
   londim <- ncdim_def("lon", "degrees_east" , as.double(lon))
   latdim <- ncdim_def("lat", "degrees_north", as.double(lat))
