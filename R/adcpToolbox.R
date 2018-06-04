@@ -504,6 +504,7 @@ odf2adp <- function(files, metadata) {
     }
   }
   adp@metadata$source <- 'odf'
+  adp@processingLog <- processingLogAppend(adp@processingLog, 'Creation : Data and metadata read into adp object from ODF file')
 
   return(adp)
 }
