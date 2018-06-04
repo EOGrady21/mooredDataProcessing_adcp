@@ -1167,7 +1167,15 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, "lon", "standard_name", "longitude")
 
   }
-
+  if(!is.null(adp[['publisher_name']])){
+    ncatt_put(ncout, 0, "publisher_name", adp[['publisher_name']])
+  }
+  if(!is.null(adp[['publisher_url']])){
+    ncatt_put(ncout, 0, "publisher_url", adp[['publisher_url']])
+  }
+  if(!is.null(adp[['publisher_email']])){
+    ncatt_put(ncout, 0, "publisher_email", adp[['publisher_email']])
+  }
 
   ####
   ncatt_put(ncout, "EWCT", "data_max", max(adp[['v']][,,1], na.rm = TRUE))
@@ -1764,7 +1772,7 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 0, "false_target_reject_values", adp[['false_target_reject_values']])
   ncatt_put(ncout, 0, "serial_number", adp[['serial_number']])
 
-  #     deprecated --- DIana Cardoso 06/01/2018
+  #     deprecated --- Diana Cardoso 06/01/2018
   #ncatt_put(ncout, 0, "transform", adp[['transform']])
 
   ncatt_put(ncout, 0, "data_type", adp[['data_type']])
@@ -1903,12 +1911,31 @@ adpNC <- function(adp, name){
 
   #added meta to meet conventions (not found in archive) #to be inserted manually
   #??????
-  # ncatt_put(ncout, 0, "sea_name", adp[['sea_name']])
-  # ncatt_put(ncout, 0, "creator_name", adp[['creator_name']])
-  # ncatt_put(ncout, 0, "creator_url", adp[['creator_url']])
-  # ncatt_put(ncout, 0, "creator_email", adp[['creator_email']])
+  if(!is.null(adp[['sea_name']])){
+    ncatt_put(ncout, 0, "sea_name", adp[['sea_name']])
+  }
+  if(!is.null(adp[['creator_name']])){
+    ncatt_put(ncout, 0, "creator_name", adp[['creator_name']])
+  }
+  if( !is.null(adp[['creator_url']])){
+    ncatt_put(ncout, 0, "creator_url", adp[['creator_url']])
+  }
+  if(!is.null(adp[['creator_email']])){
+    ncatt_put(ncout, 0, "creator_email", adp[['creator_email']])
+  }
+  if(!is.null(adp[['processing_level']])){
   ncatt_put(ncout, 0, "processing_level", adp[['processing_level']])
-  # ncatt_put(ncout, 0, "source", "R code: adcpProcess, github:")
+  }
+  ncatt_put(ncout, 0, "source", "R code: adcpProcess, github:") ##update with link to code
+  if(!is.null(adp[['publisher_name']])){
+  ncatt_put(ncout, 0, "publisher_name", adp[['publisher_name']])
+  }
+  if(!is.null(adp[['publisher_url']])){
+  ncatt_put(ncout, 0, "publisher_url", adp[['publisher_url']])
+  }
+  if(!is.null(adp[['publisher_email']])){
+  ncatt_put(ncout, 0, "publisher_email", adp[['publisher_email']])
+  }
 
   #redundant metadata to be condensed
   ncatt_put(ncout, 0, "institution", adp[['data_origin']])
