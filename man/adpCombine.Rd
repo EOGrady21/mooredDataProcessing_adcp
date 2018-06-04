@@ -62,8 +62,8 @@ Contains:
 
 
     \bold{ Metadata:}  units (v, distance), cellSize, numberOfBeams, orientation,
-     model, type, eventNumber, serialNumber, ship (platform), scientist
-     (chief_scientist), institute (data_origin), cruise, station (mooring),
+     model, type, serialNumber, ship (platform), scientist
+     (chief_scientist), institute (data_origin), cruise (cruise_name), station (mooring),
      countryInstituteCode, cruiseNumber, startTime, latitude, longitude,
      waterDepth, sounding
 }

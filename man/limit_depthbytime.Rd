@@ -10,7 +10,7 @@ limit_depthbytime(adp, tz = "UTC")
 \item{adp}{oce object of class adp to be limited
 
  requires certain meta data features to compute including pressure, latitude,
- time, deployment_time, recovery_time}
+ time, time_coverage_start, time_coverage_end}
 }
 \description{
 Uses deployment and recovery times to limit depth within times

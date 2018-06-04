@@ -4,17 +4,17 @@
 \alias{limit_time}
 \title{ADCP Processing step 3.4}
 \usage{
-limit_time(x, tz = "UTC", dt = x[["deployment_time"]],
-  rt = x[["recovery_time"]])
+limit_time(x, tz = "UTC", dt = x[["time_coverage_start"]],
+  rt = x[["time_coverage_end"]])
 }
 \arguments{
 \item{x}{adp object from oce-class adp}
 
 \item{tz}{time zone, default is 'UTC'}
 
-\item{dt}{deployment time of ADCP, default pulls value from metadata}
+\item{dt}{deployment time of ADCP, default pulls value from metadata (time_coverage_start)}
 
-\item{rt}{recovery time of ADCP, default pulls value from metadata}
+\item{rt}{recovery time of ADCP, default pulls value from metadata (time_coverage_end)}
 }
 \value{
 adp object with velocities limited to active ADCP measurement times
