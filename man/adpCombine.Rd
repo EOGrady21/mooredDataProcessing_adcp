@@ -24,16 +24,18 @@ Combines archived data and metadata from raw, odf and netCDF
 Contains:
 
 
-\bold{Data:} heading, pressure, sound speed data, BEAM_02-_04, PGDP_02-_04, PTCH,
-ROLL, HGHT, Tx, D
+\bold{Data:} heading, pressure, sound speed data, BEAM_02-_04, PGDP_02-_04,
+PTCH, ROLL, HGHT, Tx, D( D is not actually equal to depth values recorded in
+raw file but calculated using swDepth from recorded pressure values)
 
 
 \bold{ Metadata: } firmwareVersion, frequency, beamPattern, orientation, beamAngle,
 numberOfBeams (janus), pingsPerEnsemble, velocityResolution (pred_accuracy),
 lowCorrThresh (valid_correlation_range), percentGdMinimum
-(minmax_percent_good), errorVelocityMeaximum (error_velocity_threshold),
+(minmax_percent_good), errorVelocityMaximum (error_velocity_threshold),
 xmitPulseLength (transmit_pulse_length), falseTargetThresh
-(false_target_reject_values), serialNumber, instrumentType(data_type)
+(false_target_reject_values), serialNumber, instrumentType(data_type),
+bin1Distance
 
 
 b)	\bold{Archived netCDF}
@@ -58,7 +60,8 @@ xducer_offset_from_bottom, depth: bin_size
 
 Contains:
 
-     \bold{Data:} PROCESSED EWCT, NSCT, VCSP, ERRV, BEAM_01, PGDP_01, time, distance
+     \bold{Data:} PROCESSED EWCT, NSCT, VCSP, ERRV, BEAM_01 (!which is
+     actually the average echo intensity), PGDP_04, time, distance
 
 
     \bold{ Metadata:}  units (v, distance), cellSize, numberOfBeams, orientation,
