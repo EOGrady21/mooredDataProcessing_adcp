@@ -2157,4 +2157,59 @@ adpNC <- function(adp, name){
 
 
 
+###inserting data from other instruments####
+
+#' Title
+#'
+#' @param adp adp object into which to insert data
+#' @param var variable you wish to pull from other instrument
+#' @param file file where data from alternate instrument is stored
+#' @param offset the mooring separation between the instruments (in metres)
+#'
+#' @return adp object with data set completed from alternate sources
+#' @export
+#'
+#' @examples
+#'
+#'       #list odf files
+#' odflist <- list.files(path = ".", pattern =  "MADCP*...*00.ODF")
+#'
+#'       #read list of odf files into adp object
+#' adp <- odf2adp(odflist)
+#'
+#'
+#'
+#'       #add in raw and netCDF metadata and data to adp objecct
+#' raw <- list.files(path = '.', pattern = "*.000")
+#' nc <- list.files(path = '.', pattern = "*.nc")
+#' adp <- adpCombine(adp, raw, nc)
+#'
+#'
+#'        #insert microcat pressure data
+#'file <- list.files(path = '.', pattern = "MCTD*...*.ODF")
+#' adp <- insertInst(adp, var = 'pressure', file = file)
+#'
+#'
+
+
+
+insertInst <- function(adp, var, file, offset = 0){
+  inst <- read.oce(file)
+  vr <- inst[[var]]
+  u <- inst@metadata$units[var]
+  if (var == 'pressure'){
+    if (offset != 0 ){
+      vr <-  vr + offset      #generalized seawater conversion between metres and decibar (1m = 1dbar)
+    }
+  }
+  adp <- oceSetData(adp, var, vr, note = NULL)
+  adp@metadata$units[var] <- u
+
+  adp@processingLog <- processingLogAppend(adp@processingLog, paste(var, '  pulled from  ', file, '   with offset of  ', offset, 'm.'))
+
+  return(adp)
+
+}
+
+
 
