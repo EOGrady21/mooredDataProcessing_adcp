@@ -635,7 +635,7 @@ oceNc_create <- function(adp, name,  metadata){
     svel_def <- ncvar_def("SVEL", "m/s", list(timedim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "time_string"
-    ts_def <- ncvar_def("DTUT8601", units = "",dim =  list(timedim, dimnchar), missval = NULL, name =  dlname, prec = "char")
+    ts_def <- ncvar_def("DTUT8601", units = "",dim =  list( dimnchar, timedim), missval = NULL, name =  dlname, prec = "char")
 
 
     FillValue <- 0
@@ -687,7 +687,7 @@ oceNc_create <- function(adp, name,  metadata){
     pg1_def <- ncvar_def("PGDP_01", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "time_string"
-    ts_def <- ncvar_def("DTUT8601", units = "",dim =  list(timedim, dimnchar), missval = NULL, name =  dlname, prec = "char")
+    ts_def <- ncvar_def("DTUT8601", units = "",dim =  list(dimnchar, timedim), missval = NULL, name =  dlname, prec = "char")
 
     ####writing net CDF####
     #write out definitions to new nc file
@@ -1726,7 +1726,7 @@ adpNC <- function(adp, name){
   svel_def <- ncvar_def("SVEL", "m/s", list(timedim, stationdim), FillValue, dlname, prec = "float")
 
   dlname <- "time_string"
-  ts_def <- ncvar_def("DTUT8601", units = "",dim =  list(timedim, dimnchar), missval = NULL, name =  dlname, prec = "char")
+  ts_def <- ncvar_def("DTUT8601", units = "",dim =  list( dimnchar, timedim), missval = NULL, name =  dlname, prec = "char")
 
 
   #####write out definitions to new nc file####
