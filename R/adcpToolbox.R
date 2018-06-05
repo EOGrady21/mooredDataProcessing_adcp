@@ -2159,7 +2159,16 @@ adpNC <- function(adp, name){
 
 ###inserting data from other instruments####
 
-#' Title
+#' Insert Pressure from alternate instrument
+#'
+#' Use the measured pressure from an alternate instrument positioned on the same
+#' moooring as the ADCP This has benefits of a more accurate pressure reading
+#' which can be translated to depth Note: If the pressure sensor is below the
+#' ADCP the mooring separation distance (offset) should be negative.
+#'
+#' Extreme caution should be used when applying this function to anything other
+#' than pressure as there may be significant differences in values despite only
+#' a few metres separation.
 #'
 #' @param adp adp object into which to insert data
 #' @param var variable you wish to pull from other instrument

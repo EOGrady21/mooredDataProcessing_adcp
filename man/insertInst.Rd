@@ -2,7 +2,7 @@
 % Please edit documentation in R/adcpToolbox.R
 \name{insertInst}
 \alias{insertInst}
-\title{Title}
+\title{Insert Pressure from alternate instrument}
 \usage{
 insertInst(adp, var, file, offset = 0)
 }
@@ -19,7 +19,10 @@ insertInst(adp, var, file, offset = 0)
 adp object with data set completed from alternate sources
 }
 \description{
-Title
+Use the measured pressure from an alternate instrument positioned on the same
+moooring as the ADCP This has benefits of a more accurate pressure reading
+which can be translated to depth Note: If the pressure sensor is below the
+ADCP the mooring separation distance (offset) should be negative.
 }
 \examples{
 
