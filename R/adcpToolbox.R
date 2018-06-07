@@ -743,7 +743,7 @@ oceNc_create <- function(adp, name,  metadata){
   ncatt_put(ncout, 'time' , 'calendar', 'gregorian')
   ncatt_put(ncout, 'time_string', 'note', 'time values as ISO8601 string, YY-MM-DD hh:mm:ss')
   ncatt_put(ncout, 'time_string', 'time_zone', 'UTC')
-  #ncatt_put(ncout,0, 'processing_level',c(adp@processingLog$value))     #FIXME
+  ncatt_put(ncout,0, 'processing_level',adp[['processing_level']])     #FIXME
 
 
   if (adp@metadata$source == 'raw'){
@@ -2229,6 +2229,14 @@ insertInst <- function(adp, var, file, offset = 0){
       vr <-  vr + offset      #generalized seawater conversion between metres and decibar (1m = 1dbar)
     }
   }
+  #check dimensions
+
+  if(length(adp[['time']]) != length(vr)){
+    warning('dimensions are incorrect, attempt to rectify, please confirm')
+    length(vr) <- length(adp[['time']])
+
+  }
+
   adp <- oceSetData(adp, var, vr, note = NULL)
   adp@metadata$units[var] <- u
 
