@@ -1498,6 +1498,10 @@ adpCombine <- function(adp, raw, ncin = ''){
   PGDP_01 <- a[['g', 'numeric']][,,1]
   PGDP_02 <- a[['g', 'numeric']][,,2]
   PGDP_03 <- a[['g', 'numeric']][,,3]
+  CM1 <- a[['q', 'numeric']][,,1]
+  CM2 <- a[['q', 'numeric']][,,2]
+  CM3 <- a[['q', 'numeric']][,,3]
+  CM4 <- a[['q', 'numeric']][,,4]
 
   PTCH <- a[['pitch']]
   ROLL <- a[['roll']]
@@ -1547,6 +1551,10 @@ adpCombine <- function(adp, raw, ncin = ''){
   PGDP_01[limitmat == 4] <- NA
   PGDP_02[limitmat == 4] <- NA
   PGDP_03[limitmat == 4] <- NA
+  CM1[limitmat == 4] <- NA
+  CM2[limitmat == 4] <- NA
+  CM3[limitmat == 4] <- NA
+  CM4[limitmat == 4] <- NA
 
 
 
@@ -1583,6 +1591,16 @@ adpCombine <- function(adp, raw, ncin = ''){
 
   #put array into adp object
   adp <- oceSetData(adp, 'g', gg)
+
+  #add correlation magnitude array
+  qq <- array(dim = c(l, m, n))
+
+  qq[,,1] <- na.omit(CM1[, 1:length(adp[['distance']])])
+  qq[,,2] <- na.omit(CM2[, 1:length(adp[['distance']])])
+  qq[,,3] <- na.omit(CM3[, 1:length(adp[['distance']])])
+  qq[,,4] <- na.omit(CM4[, 1:length(adp[['distance']])])
+
+  adp <- oceSetData(adp, 'q', qq)
 
   #insert other data
 
