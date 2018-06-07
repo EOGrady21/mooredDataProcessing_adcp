@@ -1,8 +1,3 @@
-
-####create netCDF file from combined adp source####
-##in style of NOAA###
-
-
 adpNC <- function(adp, name){
   if (!inherits(adp, "adp")){
     stop("method is only for objects of class '", "adp", "'")
@@ -18,14 +13,14 @@ adpNC <- function(adp, name){
   ####setting dimensions and definitions####
   #dimension variables from adp object
   time <- as.POSIXct(adp[['time']], tz = 'UTC', origin = '1970-01-01 00:00:00')
-  pres <- adp[['pressure', 'numeric']]
+  dist <- adp[['distance', 'numeric']]
   lon <- adp[['longitude']]
   lat <- adp[['latitude']]
 
 
   #create dimensions
   timedim <- ncdim_def("time", "seconds since 1970-01-01T00:00:00Z", as.double(time))    #time formatting FIX
-  presdim <- ncdim_def("pressure", "metres", as.double(pres))
+  distdim <- ncdim_def("distance", "metres", as.double(dist))
   stationdim <- ncdim_def("station", "counts", as.numeric(adp[['station']]))
   londim <- ncdim_def("lon", "degrees_east" , as.double(lon))
   latdim <- ncdim_def("lat", "degrees_north", as.double(lat))
@@ -52,54 +47,54 @@ adpNC <- function(adp, name){
   t_def <- ncvar_def("ELTMEP01", "seconds since 1970-01-01T00:00:00Z", list( stationdim, timedim), FillValue, dlname, prec = "double")
 
   dlname <- "bin"
-  bdef <- ncvar_def("bin_number", "counts", list(presdim, sttationdim), FillValue, dlname, prec = "float")
+  bdef <- ncvar_def("bin_number", "counts", list(distdim, stationdim), FillValue, dlname, prec = "float")
 
   dlname <- "eastward_sea_water_velocity"
-  u_def <- ncvar_def("EWCT", "m/sec", list(timedim, presdim, stationdim), FillValue, dlname, prec = "float")
+  u_def <- ncvar_def("EWCT", "m/sec", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
   dlname <- "northward_sea_water_velocity"
-  v_def <- ncvar_def("NSCT", "m/sec", list(timedim, presdim, stationdim), FillValue, dlname, prec = "float")
+  v_def <- ncvar_def("NSCT", "m/sec", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
   dlname <- "upward_sea_water_velocity"
-  w_def <- ncvar_def("VCSP", "m/sec", list(timedim, presdim, stationdim), FillValue, dlname, prec = "float")
+  w_def <- ncvar_def("VCSP", "m/sec", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
 
   dlname <- "error_velocity_in_sea_water"
-  e_def <- ncvar_def("ERRV", "m/sec", list(timedim, presdim, stationdim), FillValue, dlname, prec = "float")
+  e_def <- ncvar_def("ERRV", "m/sec", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
   dlname <- "ADCP_echo_intensity_beam_1"
 
-  b1_def <- ncvar_def("BEAM_01", "counts", list(timedim, presdim, stationdim), FillValue, dlname, prec = "float")
+  b1_def <- ncvar_def("BEAM_01", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
   dlname <- "ADCP_echo_intensity_beam_2"
-  b2_def <- ncvar_def("BEAM_02", "counts", list(timedim, presdim, stationdim), FillValue, dlname, prec = "float")
+  b2_def <- ncvar_def("BEAM_02", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
   dlname <- "ADCP_echo_intensity_beam_3"
-  b3_def <- ncvar_def("BEAM_03", "counts", list(timedim, presdim, stationdim), FillValue, dlname, prec = "float")
+  b3_def <- ncvar_def("BEAM_03", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
   dlname <- "ADCP_echo_intensity_beam_4"
-  b4_def <- ncvar_def("BEAM_04", "counts", list(timedim, presdim, stationdim), FillValue, dlname, prec = "float")
+  b4_def <- ncvar_def("BEAM_04", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
 
   dlname <- "percent_good_beam_1"
-  pg1_def <- ncvar_def("PGDP_01", "counts", list(timedim, presdim, stationdim), FillValue, dlname, prec = "float")
+  pg1_def <- ncvar_def("PGDP_01", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
 
   dlname <- "percent_good_beam_4"
-  pg4_def <- ncvar_def("PGDP_04", "counts", list(timedim, presdim, stationdim), FillValue, dlname, prec = "float")
+  pg4_def <- ncvar_def("PGDP_04", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
 
   dlname <- "correlation_magnitude_1"
-  cm1_def <- ncvar_def("CM1", "counts", list(timedim, presdim, stationdim), FillValue, dlname, prec = "float")
+  cm1_def <- ncvar_def("CM1", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
   dlname <- "correlation_magnitude_2"
-  cm2_def <- ncvar_def("CM2", "counts", list(timedim, presdim, stationdim), FillValue, dlname, prec = "float")
+  cm2_def <- ncvar_def("CM2", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
   dlname <- "correlation_magnitude_3"
-  cm3_def <- ncvar_def("CM3", "counts", list(timedim, presdim, stationdim), FillValue, dlname, prec = "float")
+  cm3_def <- ncvar_def("CM3", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
   dlname <- "correlation_magnitude_4"
-  cm4_def <- ncvar_def("CM4", "counts", list(timedim, presdim, stationdim), FillValue, dlname, prec = "float")
+  cm4_def <- ncvar_def("CM4", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
 
   dlname <- "heading"
@@ -555,5 +550,3 @@ adpNC <- function(adp, name){
 
 
 }
-
-
