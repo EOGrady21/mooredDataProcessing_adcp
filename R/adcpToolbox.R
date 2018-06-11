@@ -1498,10 +1498,10 @@ adpCombine <- function(adp, raw, ncin = ''){
   PGDP_01 <- a[['g', 'numeric']][,,1]
   PGDP_02 <- a[['g', 'numeric']][,,2]
   PGDP_03 <- a[['g', 'numeric']][,,3]
-  CM1 <- a[['q', 'numeric']][,,1]
-  CM2 <- a[['q', 'numeric']][,,2]
-  CM3 <- a[['q', 'numeric']][,,3]
-  CM4 <- a[['q', 'numeric']][,,4]
+  CMAG_01 <- a[['q', 'numeric']][,,1]
+  CMAG_02 <- a[['q', 'numeric']][,,2]
+  CMAG_03 <- a[['q', 'numeric']][,,3]
+  CMAG_04 <- a[['q', 'numeric']][,,4]
 
   PTCH <- a[['pitch']]
   ROLL <- a[['roll']]
@@ -1551,10 +1551,10 @@ adpCombine <- function(adp, raw, ncin = ''){
   PGDP_01[limitmat == 4] <- NA
   PGDP_02[limitmat == 4] <- NA
   PGDP_03[limitmat == 4] <- NA
-  CM1[limitmat == 4] <- NA
-  CM2[limitmat == 4] <- NA
-  CM3[limitmat == 4] <- NA
-  CM4[limitmat == 4] <- NA
+  CMAG_01[limitmat == 4] <- NA
+  CMAG_02[limitmat == 4] <- NA
+  CMAG_03[limitmat == 4] <- NA
+  CMAG_04[limitmat == 4] <- NA
 
 
 
@@ -1595,10 +1595,10 @@ adpCombine <- function(adp, raw, ncin = ''){
   #add correlation magnitude array
   qq <- array(dim = c(l, m, n))
 
-  qq[,,1] <- na.omit(CM1[, 1:length(adp[['distance']])])
-  qq[,,2] <- na.omit(CM2[, 1:length(adp[['distance']])])
-  qq[,,3] <- na.omit(CM3[, 1:length(adp[['distance']])])
-  qq[,,4] <- na.omit(CM4[, 1:length(adp[['distance']])])
+  qq[,,1] <- na.omit(CMAG_01[, 1:length(adp[['distance']])])
+  qq[,,2] <- na.omit(CMAG_02[, 1:length(adp[['distance']])])
+  qq[,,3] <- na.omit(CMAG_03[, 1:length(adp[['distance']])])
+  qq[,,4] <- na.omit(CMAG_04[, 1:length(adp[['distance']])])
 
   adp <- oceSetData(adp, 'q', qq)
 
