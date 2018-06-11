@@ -749,7 +749,6 @@ oceNc_create <- function(adp, name,  metadata){
   ncatt_put(ncout, 0, "cdm_data_type", "station")
 
 
-
   if (adp@metadata$source == 'raw'){
     ####pulled from adp object####
     ncatt_put(ncout, 0, "mooring_number", adp[['mooring_number']])
