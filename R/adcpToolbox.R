@@ -743,7 +743,11 @@ oceNc_create <- function(adp, name,  metadata){
   ncatt_put(ncout, 'time' , 'calendar', 'gregorian')
   ncatt_put(ncout, 'time_string', 'note', 'time values as ISO8601 string, YY-MM-DD hh:mm:ss')
   ncatt_put(ncout, 'time_string', 'time_zone', 'UTC')
-  ncatt_put(ncout,0, 'processing_level',adp[['processing_level']])
+  ncatt_put(ncout, 0, 'processing_level',adp[['processing_level']])
+  ncatt_put(ncout, 0, "time_coverage_duration", (tail(adp[['time']], n = 1) - adp[['time']][[1]])/ 86400)
+  ncatt_put(ncout, 0, "time_coverage_duration_units", "days")
+  ncatt_put(ncout, 0, "cdm_data_type", "station")
+
 
 
   if (adp@metadata$source == 'raw'){
@@ -1787,6 +1791,9 @@ adpNC <- function(adp, name){
   ####global####
   ncatt_put(ncout, 0, "mooring_number", adp[['station']])
 
+  ncatt_put(ncout, 0, "time_coverage_duration", (tail(adp[['time']], n = 1) - adp[['time']][[1]])/ 86400)
+  ncatt_put(ncout, 0, "time_coverage_duration_units", "days")
+  ncatt_put(ncout, 0, "cdm_data_type", "station")
 
   #     deprecated --- Diana Cardoso 06/01/2018
   #ncatt_put(ncout, 0, "deployment_date", adp[['deployment_date']])
