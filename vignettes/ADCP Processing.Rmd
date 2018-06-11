@@ -1,0 +1,112 @@
+---
+title: "ADCP Processing"
+author: "E. Chisholm"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+**Abstract.** This vignette walks the user through the steps of processing raw ADCP data as performed by data analysts at Bedford Institute of Ocenaography (BIO) to achieve final processed data which can be used to summarize ocean current trends and create useful visualization tools. 
+
+The current state of the package is a function toolbox which can be sourced to provide access to all the relevant functions by calling the following. 
+
+```{r eval = FALSE}
+source('adcpToolbox.R')
+```
+
+# Reading adp files
+
+ADCP data can be easily read into r using the oce package. For more information see the adp vignette included in the oce package. 
+
+In this toolbox the function `read.adp.easy()` can be used to call both the `read.adp` function for oce as well as include in the created adp object a series of metadata items from a csv file. This can be useful when there is much metadata which is included on the log sheet which needs to be input as reference for the adp data set. This is the first step of processing and is achieved by calling,
+
+suppose `f.000` is naming a raw adcp file and `g.csv` names a csv file which includes a series of metadata points organized as column 1 = names, column 2 = values.
+
+```{r eval = FALSE}
+#       read in raw data and metadata
+adp <- read.adp.easy('f.000', 'g.csv')
+```
+
+#Processing ADCP data
+
+There are multiple steps which ADCP toolbox uses to walk through data processing for this complex and multidimensional data. Although thresholds and quality control measures should be enough to remove any bad data it is common practice for processers to review data through plots and other methods to manually check that the data is thoroughly checked and of the highest quality. 
+
+**Magnetic Declination.**
+Applying magnetic declination is key to processing ADCP data and correcting the coordinate system which can often be skewed or not correctly calibrated to reflect earth's geographic coordinates. 
+
+`applyMagneticDeclinationAdp()` is used to correct for a declination offset and rotate the geospatial data as appropriate. 
+Magnetic declination can be applied as an average of the declination at start and end points of the data set or as an interpolated value over the entire time series of the data set. 
+
+Currently ADCP toolbox is capable of applying an average only but there is space within the function to insert an interpolated value function with an argument which selcts between the two methods. This function could also be updated to include other methods with little effort by developers. 
+
+The function is called by the following, 
+
+```{r eval = FALSE}
+data(adp)
+#       apply magnetic declination
+adp <- applyMagneticDeclinationAdp(adp)
+
+```
+
+#Limiting and nulling data
+
+**limiting time values.**
+
+Limiting the data set by time eliminates any pre and post deployment data from when the instrument was onboard or at the surface. This data is nulled as apprpriate by the function `limit_depthbytime()`
+This function specifically limits depth values to the time during deployment, calculating depth values based on `swDepth` and inserting a mean depth into the metadata based on this calculation. 
+
+```{r eval = FALSE}
+data(adp)
+#       limit depth by recovery/deployment times
+adp <- limit_depthbytime(adp)
+
+
+```
+
+Note that this function uses the metadata values stored within the adp object to make these calculations and null metadata may result in strange errors. 
+`time_coverage_start` and `time_coverage_end` as well as `latitude` are required for this function to operate.
+
+
+**limit by time. **
+
+It is also sometimes necessary to limit other variables based on deployment and recovery times to ensure correcta verage calculations and dimensions matching between variables. The `limit_time` function eliminates salinity, pressure, temperature, pitch, roll and heading variables outside of the active deployment times. 
+
+This function also requires `time_coverage_start` and `time_coverage_end` metadata values to operate. 
+
+Example:
+
+```{r eval = FALSE}
+data(adp)
+#       limit time and other variables based on deployment/ recovery times
+adp <- limit_time(adp)
+
+
+```
+
+**limit by depth. **
+
+It may also be necessary to limit the data set to exclude surface contamination data. If an ADCP is within ping range of the surface there can sometimes be a large chunk of data near the top which is actually above the surface of the water. 
+
+This can be removed by calling `limit_depthbyrmax` a function which employs the Teledyne RDI equation to determine the maximum acceptable data range based on total depth and instrument characteristics then nulls any data outside that maximum range. 
+
+The limit by rmax function has the same effect as calling `adpFlag()` however this function can be used in cases where processers do not wish to use the other features included in `adpFlag()` or have more direct control over the data manipulation. 
+
+#Flagging data
+
+
+
+
+
+
+
