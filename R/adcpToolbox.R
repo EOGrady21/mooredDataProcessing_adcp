@@ -743,7 +743,7 @@ oceNc_create <- function(adp, name,  metadata){
   ncatt_put(ncout, 'time' , 'calendar', 'gregorian')
   ncatt_put(ncout, 'time_string', 'note', 'time values as ISO8601 string, YY-MM-DD hh:mm:ss')
   ncatt_put(ncout, 'time_string', 'time_zone', 'UTC')
-  ncatt_put(ncout,0, 'processing_level',adp[['processing_level']])     #FIXME
+  ncatt_put(ncout,0, 'processing_level',adp[['processing_level']])
 
 
   if (adp@metadata$source == 'raw'){
@@ -1118,7 +1118,7 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "creator_url", adp[['creator_url']])
     ncatt_put(ncout, 0, "creator_email", adp[['creator_email']])
     ncatt_put(ncout, 0, "project", adp[['project']])
-    ncatt_put(ncout, 0, "processing_level", adp[['processingLevel']])
+    ncatt_put(ncout, 0, "processing_level", adp[['processing_level']])
     ncatt_put(ncout, 0 , "flag_meanings", adp[['flag_meaning']])
     ncatt_put(ncout, 0 , "flag_values", c(1:9))
     ncatt_put(ncout, 0, "source", "R code: adcpProcess, github:")
