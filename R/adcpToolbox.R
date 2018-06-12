@@ -2254,3 +2254,22 @@ insertInst <- function(adp, var, file, offset = 0){
 
 
 
+####export processing log####
+
+#'Export processing log from adp object to be included in netCDF
+#'
+#'
+#'This function can be used to export the processing log recorded in the adp
+#'object as a single text string to be included in a netCDF
+#'
+#'@param adp
+#'
+#' @return
+#' @export
+#'
+#' @examples
+exportPL <- function(adp){
+  pl <- toString(adp@processingLog$value)
+  adp@metadata$processing_level <- pl
+  return(adp)
+}
