@@ -40,9 +40,9 @@ adp <- read.adp.easy('f.000', 'g.csv')
 
 #Processing ADCP data
 
-There are multiple steps which ADCP toolbox uses to walk through data processing for this complex and multidimensional data. Although thresholds and quality control measures should be enough to remove any bad data it is common practice for processers to review data through plots and other methods to manually check that the data is thoroughly checked and of the highest quality. 
+There are multiple steps which ADCP toolbox uses to walk through data processing for this complex and multidimensional data. Although thresholds and quality control measures should be enough to remove any bad data it is common practice for processors to review data through plots and other methods to manually check that the data is thoroughly checked and of the highest quality. 
 
-**Magnetic Declination.**
+**Magnetic declination.**
 Applying magnetic declination is key to processing ADCP data and correcting the coordinate system which can often be skewed or not correctly calibrated to reflect earth's geographic coordinates. 
 
 `applyMagneticDeclinationAdp()` is used to correct for a declination offset and rotate the geospatial data as appropriate. 
@@ -53,7 +53,7 @@ Currently ADCP toolbox is capable of applying an average only but there is space
 The function is called by the following, 
 
 ```{r eval = FALSE}
-data(adp)
+
 #       apply magnetic declination
 adp <- applyMagneticDeclinationAdp(adp)
 
@@ -61,13 +61,13 @@ adp <- applyMagneticDeclinationAdp(adp)
 
 #Limiting and nulling data
 
-**limiting time values.**
+**Limit time values.**
 
 Limiting the data set by time eliminates any pre and post deployment data from when the instrument was onboard or at the surface. This data is nulled as apprpriate by the function `limit_depthbytime()`
 This function specifically limits depth values to the time during deployment, calculating depth values based on `swDepth` and inserting a mean depth into the metadata based on this calculation. 
 
 ```{r eval = FALSE}
-data(adp)
+
 #       limit depth by recovery/deployment times
 adp <- limit_depthbytime(adp)
 
@@ -78,7 +78,7 @@ Note that this function uses the metadata values stored within the adp object to
 `time_coverage_start` and `time_coverage_end` as well as `latitude` are required for this function to operate.
 
 
-**limit by time. **
+**Limit by time. **
 
 It is also sometimes necessary to limit other variables based on deployment and recovery times to ensure correcta verage calculations and dimensions matching between variables. The `limit_time` function eliminates salinity, pressure, temperature, pitch, roll and heading variables outside of the active deployment times. 
 
@@ -87,22 +87,72 @@ This function also requires `time_coverage_start` and `time_coverage_end` metada
 Example:
 
 ```{r eval = FALSE}
-data(adp)
+
 #       limit time and other variables based on deployment/ recovery times
 adp <- limit_time(adp)
 
 
 ```
 
-**limit by depth. **
+**Limit by depth. **
 
 It may also be necessary to limit the data set to exclude surface contamination data. If an ADCP is within ping range of the surface there can sometimes be a large chunk of data near the top which is actually above the surface of the water. 
 
 This can be removed by calling `limit_depthbyrmax` a function which employs the Teledyne RDI equation to determine the maximum acceptable data range based on total depth and instrument characteristics then nulls any data outside that maximum range. 
 
-The limit by rmax function has the same effect as calling `adpFlag()` however this function can be used in cases where processers do not wish to use the other features included in `adpFlag()` or have more direct control over the data manipulation. 
+The limit by rmax function has the same effect as calling `adpFlag()` however this function can be used in cases where processors do not wish to use the other features included in `adpFlag()` or have more direct control over the data manipulation. 
+
 
 #Flagging data
+
+The final step of processing before export should be to remove any suspicious data within the valid time and depth series based on error velocity and percent good thresholds. These quality control vaqriables calculated within the ADCP can be found in the oce object (see adp-class help file). 
+
+The specifics of the measurements and their calculations will not be included in this document as if someone is processing ADCP data it is likely they are already familiar with these terms. A good place to start if one is unfamiliar would be the User's manual for the specific ADCP model being used. 
+
+At BIO the typical thresholds being used to eliminate bad data have been a maximum of 0.46 m/s error velocity and a sum of percent good beams 1 (which represent percent good of 3-beam solutions) and 4 (which represents percent good of 4-beam solutions), with totals set to a minimum of 25. These thresholds were supported by references at one point, the error velocity threshold is based on a USGS standard and the percent good is based on a convention  in the RDI manual. These numbers can vary based on processing goals, some standards from USGS suggest an error velocity threshold which is based on other instrument characteristics (see link: <https://water.usgs.gov/admin/memo/SW/OSW.2002.03.htm>). Some institutions vary their percent good threshold to as low as 10% and use other methods of processing such as correlation magnitude to eliminate erroneous data. 
+
+The function `adpFlag` is designed to handle whatever threshold is decided by the processor, it takes arguments for a minimum percent good and a maximum error velocity, if there is need in the future this could easily be updated to include a correlation magnitude threshold. 
+
+Initializing and setting the flag limits is as easy as calling. 
+```{r eval = FALSE}
+#       flag data outside percent good/ error bounds
+adp <- adpFlag(adp, 25, 0.46)
+```
+
+Where minimum PGd = 25, where PGd = beam 1 + beam 4, and maximum error velocity = 0.46 m/s (note units, this is often given as ft/sec in USGS documentation). 
+
+Once the flags are set it is then possible to null data based on given flag values.This function currently uses L20 BODC flagging vocabulary but could be set to use a series of flag schemes if more were presented as necessary. 
+
+The oce function `handleFlags()` can then be used to set any bad flag data points to `NA`, the `adpFlag()` function uses "4" to represent bad data and "1" to represent good data but if processors were flagging data based on other qualities outside `adpFlag()` then `handleFlags()` could be used to deal with these other values as well. 
+
+Example:
+
+```{r eval = FALSE}
+
+#       set flags to NA
+adp <- handleFlags(adp, flags = 4, actions = list('NA'))
+```
+
+
+#Exporting data
+
+
+At BIO it is typical for processed data to be exported in two file formats, ODF and netCDF. ODF (Ocean Data Format) is mostly used internally at Fisheries and Oceans as well as the databases they maintain. Thes files separate ADCP data based on depth bins including an entire timeseries over a single depth point in each file. netCDF files are a standard mode of data transport and are used b y many international agencies. These files follow specific format codes in order to adhere to database rules and conventions. They include the entire data set from the ADCP as well as a wealth of metadata. 
+
+ODF file export is currently being updated and developed as a separate R package that specifically deals with ODF files, their generation and readability. This package has not yet been released but hopefully it will continue to improve and be available soon.
+
+netCDF files can be generated within R easily using the package `ncdf4`. ADCP toolbox uses some of these functions to build a netCDF file directly from the `adp` object which adheres to the conventions and standards required to meet international standards. 
+
+The process of generating a netCDF should be as simple as 
+```{r eval = FALSE}
+
+#       export to netCDF file
+oceNc_create(adp, 'test00035')
+
+```
+
+However standards may change and there may be specific requirements for specific projects, the function is built in a way that is simple to manipulate to your specific needs. Ideally a processor would use this function as a template to tweak and then use to generate infinite netCDF files which perfectly adhere to the specific standards required for their project. 
+
 
 
 
