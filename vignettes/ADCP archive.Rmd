@@ -28,7 +28,7 @@ BIO archives of ADCP data typically contain the processed and final data forms i
 
 
 #Combining Files
-Once the data has been gathered in appropriate file types, we can begin to combine the data into a single netCDF file.
+Once the data has been gathered in appropriate file types, we can begin to combine the data into a single netCDF file. Note that in order to combine these files the following functions attempt to match the dimensions of each file type. The raw and netCDF data frames are often larger than the ODF data since they remain unprocessed. This process will trim the data frames to match the dimensions of the ODF files but data should be manually confirmed. The ODF files also have a time offset applied that is 1/2 of the sampling interval, this offset is applied to the netCDF and raw files in order to align the sample times. 
 
 ##*Step 1*
 To begin the ODF files are collected and listed in an R object. We then use the function `odf2adp()` in order to translate these individuaal ODF files into a coherent adp object. This speeds processing and makes the data  frame easily accessible and manageable using well documented `oce` methods. This function orderes the file by depth and inserts the individual data components into a large array which is contained in the `adp` object. 
