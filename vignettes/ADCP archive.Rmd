@@ -1,0 +1,167 @@
+---
+title: "ADCP Archive"
+author: "E. Chisholm"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+#Introduction
+The goal of this vignette is to describe the process of reformatting archived ADCP data into fully standardized netCDF. This process involves pulling data and metadata from multiple sources. By pulling from archived ODF files, archived netCDF files and raw data we are able to combine various elements to create a standard netCDF which adheres to a series of international standards
+
+#International Standards
+This document is attempting to create a file which adheres to, BODC/ SDN (British Oceanographic Data Centre and Sea Data Net), CF Conventions and best practices (climate and Forecast), MEDS (Marine Environmental Data Service, Canada) as well as maintaining a certain level of compatibility with original BIO (Bedford Institute of Oceanography) files. 
+
+
+#Sources
+BIO archives of ADCP data typically contain the processed and final data forms in a series of individual depth ODF files, with a larger data dump contained in a netCDF (before processing), finally the raw data file can be accessed as well. The concern was that netCDF files may often be inaccessible or corrupted so this workflow relies, wherever possible, on ODF and raw sources. 
+
+
+#Combining Files
+Once the data has been gathered in appropriate file types, we can begin to combine the data into a single netCDF file.
+
+##*Step 1*
+To begin the ODF files are collected and listed in an R object. We then use the function `odf2adp()` in order to translate these individuaal ODF files into a coherent adp object. This speeds processing and makes the data  frame easily accessible and manageable using well documented `oce` methods. This function orderes the file by depth and inserts the individual data components into a large array which is contained in the `adp` object. 
+
+Example:
+
+```{r eval = FALSE}
+#list odf files
+files <- list.files(path = ".", pattern =  "MADCP*...*00.ODF")
+
+      #read list of odf files into adp object
+adp <- odf2adp(files)
+
+```
+
+ Archived ODFs (series for each mooring)
+ Contains:
+
+Data:
+
+* PROCESSED EWCT,
+* NSCT, 
+* VCSP, 
+* ERRV, 
+* BEAM_01 (!which is actually the average echo intensity), 
+* PGDP_04,
+* time, 
+* distance
+
+Metadata: units (v, distance), cellSize, numberOfBeams, orientation,
+    model, type, serialNumber, ship (platform), scientist
+    (chief_scientist), institute (data_origin), cruise (cruise_name), station (mooring),
+    countryInstituteCode, cruiseNumber, startTime, latitude, longitude,
+    waterDepth, sounding
+
+##*Step 2*
+Although we now have the ODF data saved in an adp object there is still more required to fill out the data set. The next step is to bring in the raw data and the netCDF and combine them to fill in the missing pieces of the ODF data. Using the function `adpCombine()` allows us to do this easily.
+
+Example: 
+```{r eval = FALSE}
+#       add in raw and netCDF metadata and data to adp objecct
+raw <- "M1897000.000"
+nc <- list.files(path = '.', pattern = "*1800.nc")
+adp <- adpCombine(adp, raw, nc)
+```
+
+This function pulls the required data and metadata items from each file respectively and combines them all into a single adp object. 
+
+####Raw file (.000)
+
+Contains
+
+
+Data:
+
+
+* heading
+* pressure 
+* sound speed data 
+* BEAM_02-_04 
+* PGDP_02-_04
+* PTCH 
+* ROLL 
+* HGHT
+* Tx
+* D
+
+***( D is not actually equal to depth values recorded in raw file but calculated using swDepth     from recorded pressure values)***
+
+
+ Metadata: firmwareVersion, frequency, beamPattern, orientation, beamAngle,
+    numberOfBeams (janus), pingsPerEnsemble, velocityResolution (pred_accuracy),
+    lowCorrThresh (valid_correlation_range), percentGdMinimum
+    (minmax_percent_good), errorVelocityMaximum (error_velocity_threshold),
+    xmitPulseLength (transmit_pulse_length), falseTargetThresh
+    (false_target_reject_values), serialNumber, instrumentType(data_type),
+    bin1Distance
+
+
+####Archived netCDF
+
+Contains:
+
+
+Data: 
+
+* BEAM_02-_04
+* PGDP_02-_04
+* PTCH
+* ROLL 
+* HGHT 
+* Tx 
+* D
+    ***note this DATA is pulled from the RAW file in case NC file is corrupted or missing***
+
+
+*Metadata:*
+    creation_date,  start_time, stop_time, inst_type, history,
+    starting_water_layer, ending_water_layer, depth_note, transform,
+    data_subtype, coord_system, water_mass, pos_const, depth_const, drifter,
+    var_fill, experiment, project, descript, data_cmnt, fill_flag, composite,
+    magnetic_variation, , delta_t_sec, time_between_ping_groups, depth:
+    xducer_offset_from_bottom, depth: bin_size
+
+
+##*Step 3*
+The final step of combining these files is to export them to an appropriate, standard netCDF which can be done with the function `adpNC()`. This function takes the fully incorporated adp object and exports it as a netCDF which conforms to all the international standards listed above. 
+
+Example:
+```{r eval = FALSE}
+#       create NC file from commbined adp
+
+adpNC(adp, 'test0000')
+```
+Where test0000 is the name of the netCDF being produced. 
+
+######Note:
+  If you wish to create a standard name for the netCDF which abides by file naming conventions at BIO, use the function `name.file()` which uses appropriate metadata items from the object it is given to populate the file name structure. 
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
