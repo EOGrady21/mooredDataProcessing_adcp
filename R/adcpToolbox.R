@@ -1331,9 +1331,9 @@ oceNc_create <- function(adp, name,  metadata){
 #'
 #'
 #' \bold{Metadata: }creation_date,  start_time, stop_time, inst_type, history,
-#' starting_water_layer, ending_water_layer, depth_note, transform,
-#' data_subtype, coord_system, water_mass, pos_const, depth_const, drifter,
-#' var_fill, experiment, project, descript, data_cmnt, fill_flag, composite,
+#'  ,  ,  , transform,
+#' data_subtype, coord_system, water_mass,  ,  ,  ,
+#' var_fill, experiment, project, descript, data_cmnt, fill_flag,  ,
 #' magnetic_variation, , delta_t_sec, time_between_ping_groups, depth:
 #' xducer_offset_from_bottom, depth: bin_size
 #'
@@ -1412,9 +1412,10 @@ adpCombine <- function(adp, raw, ncin = ''){
     time_coverage_end <- ncatt_get(ni, 0,  'stop_time')
     inst_type <- ncatt_get(ni, 0, 'INST_TYPE')
     historyadp <- ncatt_get(ni, 0,  'history')
-    starting_water_layer <- ncatt_get(ni,  0, 'starting_water_layer')
-    ending_water_layer <- ncatt_get(ni, 0,  'ending_water_layer')
-    depth_note <- ncatt_get(ni, 0,  'depth_note')
+    #deprecated - Diana Cardoso June 15 2018
+    #starting_water_layer <- ncatt_get(ni,  0, 'starting_water_layer')
+    #ending_water_layer <- ncatt_get(ni, 0,  'ending_water_layer')
+    #depth_note <- ncatt_get(ni, 0,  'depth_note')
 
     #     deprecated --- Diana Cardoso 06/01/2018
     #transform <- ncatt_get(ni, 0,  'transform')
@@ -1422,16 +1423,18 @@ adpCombine <- function(adp, raw, ncin = ''){
     data_subtype <- ncatt_get(ni, 0,  'DATA_SUBTYPE')
     coord_system <- ncatt_get(ni, 0,  'COORD_SYSTEM')
     water_mass <- ncatt_get(ni, 0,  'WATER_MASS')
-    pos_const <- ncatt_get(ni, 0,  'POS_CONST')
-    depth_const <- ncatt_get(ni, 0,  'DEPTH_CONST')
-    drifter <- ncatt_get(ni, 0,  'DRIFTER')
+    #deprecated Diana Cardoso June 15 2018
+    #pos_const <- ncatt_get(ni, 0,  'POS_CONST')
+    #depth_const <- ncatt_get(ni, 0,  'DEPTH_CONST')
+    #drifter <- ncatt_get(ni, 0,  'DRIFTER')
     FillValue <- ncatt_get(ni, 0,  'VAR_FILL')
     experiment <- ncatt_get(ni, 0,  'EXPERIMENT')
     project <- ncatt_get(ni, 0,  'PROJECT')
     description <- ncatt_get(ni, 0,  'DESCRIPT')
     data_comment <- ncatt_get(ni,  0, 'DATA_CMNT')
     fill_flag <- ncatt_get(ni, 0,  'FILL_FLAG')
-    composite <- ncatt_get(ni, 0,  'COMPOSITE')
+    #deprecated Diana Cardoso June 15 2018
+    #composite <- ncatt_get(ni, 0,  'COMPOSITE')
     magnetic_variation <- ncatt_get(ni, 0,  'magnetic_variation')
     delta_t_sec <- ncatt_get(ni, 0, 'DELTA_T_sec')
     ping_interval <- ncatt_get(ni, 0, 'time_between_ping_groups')
@@ -1447,9 +1450,10 @@ adpCombine <- function(adp, raw, ncin = ''){
     adp <- oceSetMetadata(adp, 'time_coverage_end', time_coverage_end$value)
     adp <- oceSetMetadata(adp, 'inst_type', inst_type$value)
     adp <- oceSetMetadata(adp, 'history', historyadp$value)
-    adp <- oceSetMetadata(adp, 'starting_water_layer', starting_water_layer$value)
-    adp <- oceSetMetadata(adp, 'ending_water_layer', ending_water_layer$value)
-    adp <- oceSetMetadata(adp, 'depth_note', depth_note$value)
+    #deprecated - diana cardoso June 15 2018
+    #adp <- oceSetMetadata(adp, 'starting_water_layer', starting_water_layer$value)
+    #adp <- oceSetMetadata(adp, 'ending_water_layer', ending_water_layer$value)
+    #adp <- oceSetMetadata(adp, 'depth_note', depth_note$value)
 
     #     deprecated --- Diana Cardoso 06/01/2018
     #adp <- oceSetMetadata(adp, 'transform', transform$value)
@@ -1457,16 +1461,18 @@ adpCombine <- function(adp, raw, ncin = ''){
     adp <- oceSetMetadata(adp, 'data_subtype', data_subtype$value)
     adp <- oceSetMetadata(adp, 'coord_system', coord_system$value)
     adp <- oceSetMetadata(adp, 'water_mass', water_mass$value)
-    adp <- oceSetMetadata(adp, 'pos_const', pos_const$value)
-    adp <- oceSetMetadata(adp, 'depth_const', depth_const$value)
-    adp <- oceSetMetadata(adp, 'drifter', drifter$value)
+    #deprecated Diana Cardoso - June 15 2018
+    #adp <- oceSetMetadata(adp, 'pos_const', pos_const$value)
+    #adp <- oceSetMetadata(adp, 'depth_const', depth_const$value)
+    #adp <- oceSetMetadata(adp, 'drifter', drifter$value)
+    #adp <- oceSetMetadata(adp, 'composite', composite$value)
+
     adp <- oceSetMetadata(adp, 'FillValue', FillValue$value)
     adp <- oceSetMetadata(adp, 'experiment', experiment$value)
     adp <- oceSetMetadata(adp, 'project', project$value)
     adp <- oceSetMetadata(adp, 'description', description$value)
     adp <- oceSetMetadata(adp, 'data_comment', data_comment$value)
     adp <- oceSetMetadata(adp, 'fill_flag', fill_flag$value)
-    adp <- oceSetMetadata(adp, 'composite', composite$value)
     adp <- oceSetMetadata(adp, 'magnetic_variation', magnetic_variation$value)
     adp <- oceSetMetadata(adp, 'delta_t_sec', delta_t_sec$value)
     adp <- oceSetMetadata(adp, 'xducer_offset_from_bottom', xducer_offset_from_bottom$value)
@@ -1485,9 +1491,9 @@ adpCombine <- function(adp, raw, ncin = ''){
   if(missing(ncin)){
     warning('NC file not provided, object is missing metadata')
     warning(
-      ' please provide creation_date,  start_time, stop_time, inst_type, history, starting_water_layer, ending_water_layer, depth_note, transform,
-      data_subtype, coord_system, water_mass, pos_const, depth_const, drifter,
-      var_fill, experiment, project, descript, data_cmnt, fill_flag, composite,
+      ' please provide creation_date,  start_time, stop_time, inst_type, history,  ,  ,  , transform,
+      data_subtype, coord_system, water_mass,  ,  ,  ,
+      var_fill, experiment, project, descript, data_cmnt, fill_flag,  ,
       magnetic_variation, , delta_t_sec, time_between_ping_groups, depth:
       xducer_offset_from_bottom, depth: bin_size'
     )
@@ -1832,11 +1838,12 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 0, "delta_t_sec",adp[['delta_t_sec']])
   ncatt_put(ncout, 0, "pred_accuracy", adp[['pred_accuracy']])
   ncatt_put(ncout, 0, "history", adp[['history']])
-  ncatt_put(ncout, 0, "starting_water_layer", adp[['starting_water_layer']])
-  ncatt_put(ncout, 0, "ending_water_layer", adp[['ending_water_layer']])
-  ncatt_put(ncout, 0, "pos_const", adp[['pos_const']])
-  ncatt_put(ncout, 0, "depth_const", adp[['depth_const']])
-  ncatt_put(ncout, 0, "drifter", adp[['drifter']])
+  #deprecated Diana Cardoso- June 15 2018
+  #ncatt_put(ncout, 0, "starting_water_layer", adp[['starting_water_layer']])
+  #ncatt_put(ncout, 0, "ending_water_layer", adp[['ending_water_layer']])
+  #ncatt_put(ncout, 0, "pos_const", adp[['pos_const']])
+  #ncatt_put(ncout, 0, "depth_const", adp[['depth_const']])
+  #ncatt_put(ncout, 0, "drifter", adp[['drifter']])
   ncatt_put(ncout, 0, "experiment", adp[['experiment']])
   ncatt_put(ncout, 0, "cruise_name", adp[['cruise']])
 
