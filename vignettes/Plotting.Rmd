@@ -1,0 +1,61 @@
+---
+title: "Plotting"
+author: "E. Chisholm"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+#Plotting to ensure data viability in ADCP data processing
+##A guide on how to plot various elements and identify problems with a dataset
+
+
+This guide is intended to act as a reference for data processors when dealing with complex ADCP data. Alhtough processing scripts can simply quality control there is also a necessary human element in order to verify processing and ensure the highest quality of data. 
+
+###Plotting Pressure
+Plotting pressure can be an extremely useful tool for identifying edges of deployment within an ADCP data set. If there are pressure spikes on either side of the data set then it is likely required to trim more off the edges in order to isolate the highest quality data measured when the instrument was fully in position. This is especially true of moored data but can be used as a n indicator in other cases as well. ADCP pressure measurements can also sometimes be erroneous depending on the instrumentation. This can be a beneficial tool to check if the pressure values are reasonable and match with known depth of instrument from mooring logs or other experience. 
+
+In order to plot pressure from an adp object in oce use the following call:
+
+```{r}
+data(adp) #read in sample data
+plot(adp, which = 15) #plot pressure values
+```
+
+It may be beneficial to make this plot multiple times, before and after trimming deployment edges. It may also be beneficial to plot and examine pressure data from nearby moored instruments to verify data. 
+
+
+###Bin by Bin plotting
+
+Bin by bin plotting can be useful in analyzing individual depths of adcp variables and comparing over a timeseries. *what are yyou looking for*
+
+This can be achieved with the function `plotBin()`, see help file for more information.
+
+```{r eval = FALSE}
+
+plotBin(adp@data$v[,,1])
+```
+
+
+This function produces a series of plots with each plot representing an individual depth bin within the chosen variable. It may be most useful to use this function when anylyzing velocity components, echo intensity and error indicators such as percent good. 
+
+###Average Echo Intensity
+
+This plot will show time averaged echo intensity plotted against bin. Any significant deviations between beam lines may indicate side lobe(*describe*) or a more serious error within the instrument
+
+*function*
+```{r eval = FALSE}
+
+```
+
+
+
