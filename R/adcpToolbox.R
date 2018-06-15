@@ -445,6 +445,9 @@ name.file <- function(adp){
   name
 }
 
+
+####odf2adp####
+
 #' ADCP Processing ODF to NetCDF
 #'
 #'@family odf
@@ -2272,4 +2275,23 @@ exportPL <- function(adp){
   pl <- toString(adp@processingLog$value)
   adp@metadata$processing_level <- pl
   return(adp)
+}
+
+
+####plotting functions####
+####bin by bin plot###
+#'
+#'Bin by bin plot
+#'
+#'
+#'use to plot each "bin" of any chosen variable (u, v, error, echo intensity)
+#'to use with adp object example:
+#'````plotBin(adp@data$v[,,1])````
+#'
+#' @param v variable matrix from adcp data, should be 2 dimensional (time, distance or bin)
+#'
+
+plotBin <- function(v){
+  for(i in 1:length(v[1, ]))
+    plot(v[,i], xlab = "time", ylab = "m/sec", main = (paste( "Bin", i)), type = 'l')
 }
