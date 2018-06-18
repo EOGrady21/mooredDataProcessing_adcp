@@ -2236,7 +2236,7 @@ adpNC <- function(adp, name){
 
 
 
-insertInst <- function(adp, var, file, offset = 0){
+insertInst <- function(adp, var, file = adp[['alternate_pressure_file']], offset = adp[['vertical_seperation']]){
   inst <- read.oce(file)
   vr <- inst[[var]]
   u <- inst@metadata$units[var]
@@ -2257,10 +2257,10 @@ insertInst <- function(adp, var, file, offset = 0){
 
   }
 
-  adp <- oceSetData(adp, paste(var, 'added', sep = '_'), vr, note = NULL)
-  adp@metadata$units[var] <- u
+  adp <- oceSetData(adp, paste(var, 'alternate', sep = '_'), vr, note = NULL)
+  adp@metadata$units[paste(var, 'alternate', sep = '_')] <- u
 
-  adp@processingLog <- processingLogAppend(adp@processingLog, paste(var, '  pulled from  ', file, '   with offset of  ', offset, 'm.'))
+  adp@processingLog <- processingLogAppend(adp@processingLog, paste(var, '_alternate', '  pulled from  ', file, '   with offset of  ', offset, 'm.'))
 
   return(adp)
 
