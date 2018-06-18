@@ -2249,6 +2249,10 @@ insertInst <- function(adp, var, file, offset = 0){
 
   if(length(adp[['time']]) != length(vr)){
     warning('dimensions are incorrect, attempt to rectify, please confirm')
+    t <- inst[['time']]
+    vr[t < adp[['time_coverage_start']]] <- NA
+    vr[t > adp[['time_coverage_end']]] <- NA
+    vr <- na.omit(vr)
     length(vr) <- length(adp[['time']])
 
   }
