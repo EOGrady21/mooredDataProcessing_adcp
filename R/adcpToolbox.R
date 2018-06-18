@@ -2253,7 +2253,7 @@ insertInst <- function(adp, var, file, offset = 0){
 
   }
 
-  adp <- oceSetData(adp, var, vr, note = NULL)
+  adp <- oceSetData(adp, paste(var, 'added', sep = '_'), vr, note = NULL)
   adp@metadata$units[var] <- u
 
   adp@processingLog <- processingLogAppend(adp@processingLog, paste(var, '  pulled from  ', file, '   with offset of  ', offset, 'm.'))
