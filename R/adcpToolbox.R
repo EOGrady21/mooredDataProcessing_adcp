@@ -375,7 +375,7 @@ limit_time <- function(x, tz = 'UTC', dt = x[['time_coverage_start']], rt = x[['
 ####adcp process function
 
 
-adpFlag <- function(adp,  pg, er){
+adpFlag <- function(adp,  pg = adp[['percentgd_threshold']], er= adp[['error_threshold']]){
   require(oce)
   if (!inherits(x = adp, "adp")){
     stop("method is only for objects of class '", "adp", "'")
