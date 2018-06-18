@@ -2291,6 +2291,35 @@ exportPL <- function(adp){
 }
 
 
+####adjustDepths####
+#' Adjust Bin Depths
+#' if in processing you have inserted pressure from another instrument and
+#' choose to use these new pressure values to calculate bin depths then this
+#' function can be used to adjust bin depths based on more accurate pressure
+#' readings.
+#'
+#'
+#' @param adp an oce object contasining adcp data as well as alternate pressure data from another instrument
+
+
+
+adjustDepths <- function(adp){
+  if (!is.null(adp[['pressure_alternate']])){
+    vsep <- adp[['vertical_seperation']]
+    if (is.null(vsep)){
+      warning('No vertical seperation provided!')
+    }
+    pres <- adp[['pressure_alternate']]
+
+    presadj <- pres + vsep
+
+    adp[['depth']] <- swDepth(pressure = presadj, latitude = adp[['latitude']], eos = 'gsw')
+
+    adp@processingLog <- processingLogAppend(paste('Depths adjusted based on pressure data from', adp[['alternate_pressure_file']], 'with vertical seperation of', adp[['vertical_seperation']], sep = '  '))
+  }
+
+}
+
 ####plotting functions####
 ####bin by bin plot###
 #'
