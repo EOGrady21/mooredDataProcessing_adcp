@@ -1802,6 +1802,12 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 0, "time_coverage_duration", (tail(adp[['time']], n = 1) - adp[['time']][[1]])/ 86400)
   ncatt_put(ncout, 0, "time_coverage_duration_units", "days")
   ncatt_put(ncout, 0, "cdm_data_type", "station")
+  ncatt_put(ncout, 0, "sea_name", adp[['sea_name']])
+  ncatt_put(ncout, 0, "publisher_name", adp[['publisher_name']])
+  ncatt_put(ncout, 0, "publisher_email", adp[['publisher_email']])
+  ncatt_put(ncout, 0, "keywords_vocabulary", adp[['keywords_vocabulary']])
+  ncatt_put(ncout, 0, "keywords", adp[['keywords']])
+  ncatt_put(ncout, 0, "standard_name_vocabulary", adp[['standard_name_vocabulary']])
 
   #     deprecated --- Diana Cardoso 06/01/2018
   #ncatt_put(ncout, 0, "deployment_date", adp[['deployment_date']])
