@@ -2290,7 +2290,6 @@ exportPL <- function(adp){
   return(adp)
 }
 
-
 ####adjustDepths####
 #' Adjust Bin Depths
 #' if in processing you have inserted pressure from another instrument and
@@ -2315,11 +2314,10 @@ adjustDepths <- function(adp){
 
     adp[['depth']] <- swDepth(pressure = presadj, latitude = adp[['latitude']], eos = 'gsw')
 
-    adp@processingLog <- processingLogAppend(paste('Depths adjusted based on pressure data from', adp[['alternate_pressure_file']], 'with vertical seperation of', adp[['vertical_seperation']], sep = '  '))
+    adp@processingLog <- processingLogAppend(adp@processingLog, paste('Depths adjusted based on pressure data from', adp[['alternate_pressure_file']], 'with vertical seperation of', adp[['vertical_seperation']], sep = '  '))
   }
 
 }
-
 ####plotting functions####
 ####bin by bin plot###
 #'
