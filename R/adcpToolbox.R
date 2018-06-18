@@ -1808,6 +1808,7 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 0, "keywords_vocabulary", adp[['keywords_vocabulary']])
   ncatt_put(ncout, 0, "keywords", adp[['keywords']])
   ncatt_put(ncout, 0, "standard_name_vocabulary", adp[['standard_name_vocabulary']])
+  ncatt_put(ncout, 0, "processing_history", adp[['processing_level']])
 
   #     deprecated --- Diana Cardoso 06/01/2018
   #ncatt_put(ncout, 0, "deployment_date", adp[['deployment_date']])
