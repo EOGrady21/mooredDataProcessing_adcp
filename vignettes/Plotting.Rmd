@@ -72,10 +72,10 @@ echoint <- adp[['a', 'numeric']]
   a3 <- echoint[,,3]
   a4 <- echoint[,,4]
   #create time averaged mean values for each bin and beam
-  a1m <- rowMeans(a1, na.rm = TRUE)
-  a2m <- rowMeans(a2, na.rm = TRUE)
-  a3m <- rowMeans(a3, na.rm = TRUE)
-  a4m <- rowMeans(a4, na.rm = TRUE)
+  a1m <- colMeans(a1, na.rm = TRUE)
+  a2m <- colMeans(a2, na.rm = TRUE)
+  a3m <- colMeans(a3, na.rm = TRUE)
+  a4m <- colMeans(a4, na.rm = TRUE)
   #number of bins calculated
   bins <- c(1:length(a1m))
   #plot means by bin
