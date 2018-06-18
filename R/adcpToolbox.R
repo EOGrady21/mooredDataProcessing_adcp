@@ -746,7 +746,7 @@ oceNc_create <- function(adp, name,  metadata){
   ncatt_put(ncout, 'time' , 'calendar', 'gregorian')
   ncatt_put(ncout, 'time_string', 'note', 'time values as ISO8601 string, YY-MM-DD hh:mm:ss')
   ncatt_put(ncout, 'time_string', 'time_zone', 'UTC')
-  ncatt_put(ncout, 0, 'processing_level',adp[['processing_level']])
+  ncatt_put(ncout, 0, 'processing_history',adp[['processing_history']])
   ncatt_put(ncout, 0, "time_coverage_duration", (tail(adp[['time']], n = 1) - adp[['time']][[1]]))
   ncatt_put(ncout, 0, "time_coverage_duration_units", "days")
   ncatt_put(ncout, 0, "cdm_data_type", "station")
@@ -900,7 +900,7 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "creator_url", adp[['creator_url']])
     ncatt_put(ncout, 0, "creator_email", adp[['creator_email']])
     ncatt_put(ncout, 0, "project", adp[['project']])
-    ncatt_put(ncout, 0, "processing_level", adp[['processing_level']])
+    ncatt_put(ncout, 0, "processing_history", adp[['processing_history']])
     ncatt_put(ncout, 0 , "flag_meanings", adp[['flag_meaning']])
     ncatt_put(ncout, 0 , "flag_values", c(1:9))
     ncatt_put(ncout, 0, "source", "R code: adcpProcess, github:")
@@ -1127,7 +1127,7 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "creator_url", adp[['creator_url']])
     ncatt_put(ncout, 0, "creator_email", adp[['creator_email']])
     ncatt_put(ncout, 0, "project", adp[['project']])
-    ncatt_put(ncout, 0, "processing_level", adp[['processing_level']])
+    ncatt_put(ncout, 0, "processing_history", adp[['processing_history']])
     ncatt_put(ncout, 0 , "flag_meanings", adp[['flag_meaning']])
     ncatt_put(ncout, 0 , "flag_values", c(1:9))
     ncatt_put(ncout, 0, "source", "R code: adcpProcess, github:")
@@ -1815,7 +1815,7 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 0, "keywords_vocabulary", adp[['keywords_vocabulary']])
   ncatt_put(ncout, 0, "keywords", adp[['keywords']])
   ncatt_put(ncout, 0, "standard_name_vocabulary", adp[['standard_name_vocabulary']])
-  ncatt_put(ncout, 0, "processing_history", adp[['processing_level']])
+  ncatt_put(ncout, 0, "processing_history", adp[['processing_history']])
 
   #     deprecated --- Diana Cardoso 06/01/2018
   #ncatt_put(ncout, 0, "deployment_date", adp[['deployment_date']])
@@ -1987,8 +1987,8 @@ adpNC <- function(adp, name){
   if(!is.null(adp[['creator_email']])){
     ncatt_put(ncout, 0, "creator_email", adp[['creator_email']])
   }
-  if(!is.null(adp[['processing_level']])){
-    ncatt_put(ncout, 0, "processing_level", adp[['processing_level']])
+  if(!is.null(adp[['processing_history']])){
+    ncatt_put(ncout, 0, "processing_history", adp[['processing_history']])
   }
   ncatt_put(ncout, 0, "source", "R code: adcpProcess, github:") ##update with link to code
   if(!is.null(adp[['publisher_name']])){
@@ -2298,7 +2298,7 @@ insertInst <- function(adp, var, file = adp[['alternate_pressure_file']], offset
 #' @examples
 exportPL <- function(adp){
   pl <- toString(adp@processingLog$value)
-  adp@metadata$processing_level <- pl
+  adp@metadata$processing_history <- pl
   return(adp)
 }
 
