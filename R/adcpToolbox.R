@@ -1799,7 +1799,7 @@ adpNC <- function(adp, name){
   ####global####
   ncatt_put(ncout, 0, "mooring_number", adp[['station']])
 
-  ncatt_put(ncout, 0, "time_coverage_duration", (tail(adp[['time']], n = 1) - adp[['time']][[1]])/ 86400)
+  ncatt_put(ncout, 0, "time_coverage_duration", (tail(adp[['time']], n = 1) - adp[['time']][[1]]))
   ncatt_put(ncout, 0, "time_coverage_duration_units", "days")
   ncatt_put(ncout, 0, "cdm_data_type", "station")
   ncatt_put(ncout, 0, "sea_name", adp[['sea_name']])
