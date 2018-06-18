@@ -1383,23 +1383,23 @@ adpCombine <- function(adp, raw, ncin = ''){
   data_type <- a[['instrumentType']]
   bin1Distance <- a[['bin1Distance']]
 
-  adp <- oceSetMetadata(adp, 'firmware_version', firmware_version)
-  adp <- oceSetMetadata(adp, 'frequency', frequency)
-  adp <- oceSetMetadata(adp, 'beam_pattern' , beam_pattern)
-  adp <- oceSetMetadata(adp, 'orientation', orientation)
-  adp <- oceSetMetadata(adp, 'beam_angle', beam_angle)
-  adp <- oceSetMetadata(adp, 'janus', janus)
-  adp <- oceSetMetadata(adp, 'pings_per_ensemble', pings_per_ensemble)
-  adp <- oceSetMetadata(adp, 'pred_accuracy', pred_accuracy)
-  adp <- oceSetMetadata(adp, 'valid_correlation_range', valid_correlation_range)
-  adp <- oceSetMetadata(adp, 'minmax_percent_good', minmax_percent_good)
-  adp <- oceSetMetadata(adp, 'error_velocity_threshold', error_velocity_threshold)
-  #adp <- oceSetMetadata(adp, 'time_between_ping_groups', )
-  adp <- oceSetMetadata(adp, 'transmit_pulse_length_cm', transmit_pulse_length_cm)
-  adp <- oceSetMetadata(adp, 'false_target_reject_values', false_target_reject_values)
-  adp <- oceSetMetadata(adp, 'serial_number', serial_number)
-  adp <- oceSetMetadata(adp, 'data_type', data_type)
-  adp <- oceSetMetadata(adp, 'bin1Distance', bin1Distance)
+  adp <- oceSetMetadata(adp, 'firmware_version', firmware_version, note = NULL)
+  adp <- oceSetMetadata(adp, 'frequency', frequency, note = NULL)
+  adp <- oceSetMetadata(adp, 'beam_pattern' , beam_pattern, note = NULL)
+  adp <- oceSetMetadata(adp, 'orientation', orientation, note = NULL)
+  adp <- oceSetMetadata(adp, 'beam_angle', beam_angle, note = NULL)
+  adp <- oceSetMetadata(adp, 'janus', janus, note = NULL)
+  adp <- oceSetMetadata(adp, 'pings_per_ensemble', pings_per_ensemble, note = NULL)
+  adp <- oceSetMetadata(adp, 'pred_accuracy', pred_accuracy, note = NULL)
+  adp <- oceSetMetadata(adp, 'valid_correlation_range', valid_correlation_range, note = NULL)
+  adp <- oceSetMetadata(adp, 'minmax_percent_good', minmax_percent_good, note = NULL)
+  adp <- oceSetMetadata(adp, 'error_velocity_threshold', error_velocity_threshold, note = NULL)
+  #adp <- oceSetMetadata(adp, 'time_between_ping_groups', , note = NULL)
+  adp <- oceSetMetadata(adp, 'transmit_pulse_length_cm', transmit_pulse_length_cm, note = NULL)
+  adp <- oceSetMetadata(adp, 'false_target_reject_values', false_target_reject_values, note = NULL)
+  adp <- oceSetMetadata(adp, 'serial_number', serial_number, note = NULL)
+  adp <- oceSetMetadata(adp, 'data_type', data_type, note = NULL)
+  adp <- oceSetMetadata(adp, 'bin1Distance', bin1Distance, note = NULL)
 
   #####pull metadata from archive NC####
 
@@ -1444,12 +1444,12 @@ adpCombine <- function(adp, raw, ncin = ''){
 
     nc_close(ni)
 
-    adp <- oceSetMetadata(adp, 'creation_date', creation_date$value)
-    adp <- oceSetMetadata(adp, 'data_origin', data_origin$value)
-    adp <- oceSetMetadata(adp, 'time_coverage_start', time_coverage_start$value)
-    adp <- oceSetMetadata(adp, 'time_coverage_end', time_coverage_end$value)
-    adp <- oceSetMetadata(adp, 'inst_type', inst_type$value)
-    adp <- oceSetMetadata(adp, 'history', historyadp$value)
+    adp <- oceSetMetadata(adp, 'creation_date', creation_date$value, note = NULL)
+    adp <- oceSetMetadata(adp, 'data_origin', data_origin$value, note = NULL)
+    adp <- oceSetMetadata(adp, 'time_coverage_start', time_coverage_start$value, note = NULL)
+    adp <- oceSetMetadata(adp, 'time_coverage_end', time_coverage_end$value, note = NULL)
+    adp <- oceSetMetadata(adp, 'inst_type', inst_type$value, note = NULL)
+    adp <- oceSetMetadata(adp, 'history', historyadp$value, note = NULL)
     #deprecated - diana cardoso June 15 2018
     #adp <- oceSetMetadata(adp, 'starting_water_layer', starting_water_layer$value)
     #adp <- oceSetMetadata(adp, 'ending_water_layer', ending_water_layer$value)
@@ -1458,27 +1458,27 @@ adpCombine <- function(adp, raw, ncin = ''){
     #     deprecated --- Diana Cardoso 06/01/2018
     #adp <- oceSetMetadata(adp, 'transform', transform$value)
 
-    adp <- oceSetMetadata(adp, 'data_subtype', data_subtype$value)
-    adp <- oceSetMetadata(adp, 'coord_system', coord_system$value)
-    adp <- oceSetMetadata(adp, 'water_mass', water_mass$value)
+    adp <- oceSetMetadata(adp, 'data_subtype', data_subtype$value, note = NULL)
+    adp <- oceSetMetadata(adp, 'coord_system', coord_system$value, note = NULL)
+    adp <- oceSetMetadata(adp, 'water_mass', water_mass$value, note = NULL)
     #deprecated Diana Cardoso - June 15 2018
     #adp <- oceSetMetadata(adp, 'pos_const', pos_const$value)
     #adp <- oceSetMetadata(adp, 'depth_const', depth_const$value)
     #adp <- oceSetMetadata(adp, 'drifter', drifter$value)
     #adp <- oceSetMetadata(adp, 'composite', composite$value)
 
-    adp <- oceSetMetadata(adp, 'FillValue', FillValue$value)
-    adp <- oceSetMetadata(adp, 'experiment', experiment$value)
-    adp <- oceSetMetadata(adp, 'project', project$value)
-    adp <- oceSetMetadata(adp, 'description', description$value)
-    adp <- oceSetMetadata(adp, 'data_comment', data_comment$value)
-    adp <- oceSetMetadata(adp, 'fill_flag', fill_flag$value)
-    adp <- oceSetMetadata(adp, 'magnetic_variation', magnetic_variation$value)
-    adp <- oceSetMetadata(adp, 'delta_t_sec', delta_t_sec$value)
-    adp <- oceSetMetadata(adp, 'xducer_offset_from_bottom', xducer_offset_from_bottom$value)
-    adp <- oceSetMetadata(adp, 'bin_size', bin_size$value)
-    adp <- oceSetMetadata(adp, 'ping_interval', ping_interval$value)
-    adp <- oceSetMetadata(adp, 'sample_interval', pings_per_ensemble * ping_interval$value)
+    adp <- oceSetMetadata(adp, 'FillValue', FillValue$value, note = NULL)
+    adp <- oceSetMetadata(adp, 'experiment', experiment$value, note = NULL)
+    adp <- oceSetMetadata(adp, 'project', project$value, note = NULL)
+    adp <- oceSetMetadata(adp, 'description', description$value, note = NULL)
+    adp <- oceSetMetadata(adp, 'data_comment', data_comment$value, note = NULL)
+    adp <- oceSetMetadata(adp, 'fill_flag', fill_flag$value, note = NULL)
+    adp <- oceSetMetadata(adp, 'magnetic_variation', magnetic_variation$value, note = NULL)
+    adp <- oceSetMetadata(adp, 'delta_t_sec', delta_t_sec$value, note = NULL)
+    adp <- oceSetMetadata(adp, 'xducer_offset_from_bottom', xducer_offset_from_bottom$value, note = NULL)
+    adp <- oceSetMetadata(adp, 'bin_size', bin_size$value, note = NULL)
+    adp <- oceSetMetadata(adp, 'ping_interval', ping_interval$value, note = NULL)
+    adp <- oceSetMetadata(adp, 'sample_interval', pings_per_ensemble * ping_interval$value, note = NULL)
 
 
 
@@ -1587,7 +1587,7 @@ adpCombine <- function(adp, raw, ncin = ''){
   aa[,,4] <- na.omit(BEAM_04[, 1:length(adp[['distance']])])
 
   #put array into adp object
-  adp <- oceSetData(adp, 'a', aa)
+  adp <- oceSetData(adp, 'a', aa, note = NULL)
 
   #create a array
   l <- nrow(adp[['q']])
@@ -1602,7 +1602,7 @@ adpCombine <- function(adp, raw, ncin = ''){
   gg[,,4] <- adp[['q', 'numeric']]
 
   #put array into adp object
-  adp <- oceSetData(adp, 'g', gg)
+  adp <- oceSetData(adp, 'g', gg, note = NULL)
 
   #add correlation magnitude array
   qq <- array(dim = c(l, m, n))
@@ -1612,24 +1612,28 @@ adpCombine <- function(adp, raw, ncin = ''){
   qq[,,3] <- na.omit(CMAG_03[, 1:length(adp[['distance']])])
   qq[,,4] <- na.omit(CMAG_04[, 1:length(adp[['distance']])])
 
-  adp <- oceSetData(adp, 'q', qq)
+  adp <- oceSetData(adp, 'q', qq, note = NULL)
 
   #insert other data
 
-  adp <- oceSetData(adp, 'pitch', na.omit(PTCH))
-  adp <- oceSetData(adp, 'roll', na.omit(ROLL))
-  adp <- oceSetData(adp, 'hght', (HGHT[ 1:length(adp[['distance']])]))
-  adp <- oceSetData(adp, 'temperature', na.omit(Tx))
-  adp <- oceSetData(adp, 'depth', na.omit(D))
-  adp <- oceSetData(adp, 'heading', na.omit(HEAD))
-  adp <- oceSetData(adp, 'pressure', na.omit(PRES))
-  adp <- oceSetData(adp, 'soundSpeed', na.omit(SVEL))
+  adp <- oceSetData(adp, 'pitch', na.omit(PTCH), note = NULL)
+  adp <- oceSetData(adp, 'roll', na.omit(ROLL), note = NULL)
+  adp <- oceSetData(adp, 'hght', (HGHT[ 1:length(adp[['distance']])]), note = NULL)
+  adp <- oceSetData(adp, 'temperature', na.omit(Tx), note = NULL)
+  adp <- oceSetData(adp, 'depth', na.omit(D), note = NULL)
+  adp <- oceSetData(adp, 'heading', na.omit(HEAD), note = NULL)
+  adp <- oceSetData(adp, 'pressure', na.omit(PRES), note = NULL)
+  adp <- oceSetData(adp, 'soundSpeed', na.omit(SVEL), note = NULL)
 
   ####set sensor_depth
-  adp <- oceSetMetadata(adp, 'sensor_depth', mean(adp[['depth']]))
+  adp <- oceSetMetadata(adp, 'sensor_depth', mean(adp[['depth']]), note = NULL)
 
   ###fix event qualifier pulled from odf
-  adp <- oceSetMetadata(adp, 'eventQualifier', adp[['serialNumber']])
+  adp <- oceSetMetadata(adp, 'eventQualifier', adp[['serialNumber']], note = NULL)
+
+  ##update processingLog
+  adp@processingLog <- processingLogAppend(adp@processingLog, 'adp object combined from raw file, odf files and netCDF file, metadata and varibale data pulled from various sources')
+
   return(adp)
 
 }
