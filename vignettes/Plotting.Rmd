@@ -52,7 +52,7 @@ This function produces a series of plots with each plot representing an individu
 
 ###Average Echo Intensity
 
-This plot will show time averaged echo intensity plotted against bin. Any significant deviations between beam lines may indicate side lobe(*describe*) or a more serious error within the instrument. 
+This plot will show time averaged echo intensity plotted against bin. Any significant deviations between beam lines may indicate side lobe(The effect of accoustic beams bouncing off instruments which are tethered to a mooring directly above an ADCP, they can interfere with signals and cause small bumbs in intensity around the lower or middle bins) or a more serious error within the instrument. 
 
 *function*
 ```{r eval = FALSE}
@@ -86,4 +86,4 @@ echoint <- adp[['a', 'numeric']]
   legend('topright' , legend = c('Beam 1', 'Beam 2', 'Beam 3', 'Beam 4'), col = c('black', 'red', 'green', 'blue'), lty = 1, cex = 0.6)
 ```
 
-This is an example of a quality controlled data set with little to no error, most data sets will have some curve to the lines as the bin number increases the echo intensity will decrease. 
+This is an example of a data set which is quite high quality however you can still see some deviation at the surface where beams begin to be contaminated and intensity suddenly spikes. Th enormal pattern would be for echo intensity to continuously decrease with increasing bin number. As beams are travelling further, the intensity of the return signal becomes dimmer. The sudden spike can often indicate contamination or interference from the surface of the water. It can also be common to see small bumps or spike along the beams in the centre of the water column which can be due to side lobe.
