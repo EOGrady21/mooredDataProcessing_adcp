@@ -2302,3 +2302,41 @@ plotBin <- function(v){
   for(i in 1:length(v[1, ]))
     plot(v[,i], xlab = "time", ylab = "m/sec", main = (paste( "Bin", i)), type = 'l')
 }
+
+
+####echo intensity plot####
+
+
+#' Plot echo intensity
+#'
+#' Creates a time average echo intensity plot by bin number to analyze adcp data.
+#'
+#' @param adp an oce object with adcp data
+#'
+#' @return plot of time average echo intensity values by bin with separate beams
+#' @export
+#'
+#' @examples
+plot_ei <- function(adp){
+  #pull echo intensity from adp object
+  echoint <- adp[['a', 'numeric']]
+  a1 <- echoint[,,1]
+  a2 <- echoint[,,2]
+  a3 <- echoint[,,3]
+  a4 <- echoint[,,4]
+  #create time averaged mean values for each bin and beam
+  a1m <- rowMeans(a1, na.rm = TRUE)
+  a2m <- rowMeans(a2, na.rm = TRUE)
+  a3m <- rowMeans(a3, na.rm = TRUE)
+  a4m <- rowMeans(a4, na.rm = TRUE)
+  #number of bins calculated
+  bins <- c(1:length(a1m))
+  #plot means by bin
+  plot(a1m, bins, xlim = c(0, 255) , type = 'l', xlab = 'Echo Intensity', ylab = 'Bin Number')
+  lines(a2m, bins, xlim = c(0,255) , type = 'l', col = 'red', xlab= '', ylab = '' )
+  lines(a3m, bins, xlim = c(0, 255), type = 'l', col = 'green', xlab = '', ylab = '')
+  lines(a4m, bins, xlim = c(0, 255), type = 'l', col = 'blue', xlab = '', ylab = '')
+  legend('topright' , legend = c('Beam 1', 'Beam 2', 'Beam 3', 'Beam 4'), col = c('black', 'red', 'green', 'blue'), lty = 1, cex = 0.6)
+
+
+}

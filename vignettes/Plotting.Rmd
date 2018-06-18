@@ -50,10 +50,12 @@ This function produces a series of plots with each plot representing an individu
 
 ###Average Echo Intensity
 
-This plot will show time averaged echo intensity plotted against bin. Any significant deviations between beam lines may indicate side lobe(*describe*) or a more serious error within the instrument
+This plot will show time averaged echo intensity plotted against bin. Any significant deviations between beam lines may indicate side lobe(*describe*) or a more serious error within the instrument. 
 
 *function*
 ```{r eval = FALSE}
+
+plot_ei(adp)
 
 ```
 
