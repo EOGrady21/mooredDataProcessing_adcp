@@ -41,10 +41,12 @@ Bin by bin plotting can be useful in analyzing individual depths of adcp variabl
 This can be achieved with the function `plotBin()`, see help file for more information.
 
 ```{r eval = FALSE}
-
+pdf(paste('binbybinplot', adp[['mooring_number']], sep = '_'), width = 7, height = 3)
 plotBin(adp@data$v[,,1])
+dev.off()
 ```
 
+This example saves the bin plots to a pdf which can then be printed with multiple plots per page (using print settings from pdf viewer). This is ideal for directly comparing each bin plot. 
 
 This function produces a series of plots with each plot representing an individual depth bin within the chosen variable. It may be most useful to use this function when anylyzing velocity components, echo intensity and error indicators such as percent good. 
 
