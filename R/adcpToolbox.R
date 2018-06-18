@@ -738,7 +738,7 @@ oceNc_create <- function(adp, name,  metadata){
 
   }
 
-  ###metadata###
+  ####metadata####
 
   ncatt_put(ncout, 'station', attname = 'cf_role',attval =  'timeseries_id')
   ncatt_put(ncout, 'time', attname = 'cf_role', attval = 'profile_id')
@@ -753,7 +753,7 @@ oceNc_create <- function(adp, name,  metadata){
   ncatt_put(ncout, 0, "alternate_pressure_values", adp[['alternate_pressure_values']])
   ncatt_put(ncout, 0, "alternate_pressure_file", adp[['alternate_pressure_file']])
   ncatt_put(ncout, 0, "vertical_seperation", adp[['vertical_seperation']])
-
+  ncatt_put(ncout, 0, "title", adp[['title']])
 
   if (adp@metadata$source == 'raw'){
     ####pulled from adp object####
@@ -897,7 +897,7 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "geospatial_vertical_positive", 'down')
     ncatt_put(ncout, 0, "institution", adp[['institution']])
     ncatt_put(ncout, 0, "project", adp[['project']])
-    ncatt_put(ncout, 0, "processing_history", adp[['processing_history']])
+    ncatt_put(ncout, 0, "history", adp[['processing_history']])
     ncatt_put(ncout, 0 , "flag_meanings", adp[['flag_meaning']])
     ncatt_put(ncout, 0 , "flag_values", c(1:9))
     ncatt_put(ncout, 0, "source", "R code: adcpProcess, github:")
@@ -1406,7 +1406,7 @@ adpCombine <- function(adp, raw, ncin = ''){
   if(!missing(ncin)){
     ni <- nc_open(ncin)
     #pull log sheet metadata from incoming netCDF
-
+    title <- ncatt_get(ni, 0, "title")
     creation_date <- ncatt_get(ni, 0, 'CREATION_DATE')
     time_coverage_start <- ncatt_get(ni, 0,   'start_time')
     time_coverage_end <- ncatt_get(ni, 0,  'stop_time')
@@ -1479,6 +1479,7 @@ adpCombine <- function(adp, raw, ncin = ''){
     adp <- oceSetMetadata(adp, 'bin_size', bin_size$value, note = NULL)
     adp <- oceSetMetadata(adp, 'ping_interval', ping_interval$value, note = NULL)
     adp <- oceSetMetadata(adp, 'sample_interval', pings_per_ensemble * ping_interval$value, note = NULL)
+    adp <- oceSetMetadata(adp, 'title', title$value, note = NULL)
 
 
 
