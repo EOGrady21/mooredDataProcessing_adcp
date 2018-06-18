@@ -1978,24 +1978,12 @@ adpNC <- function(adp, name){
   if(!is.null(adp[['sea_name']])){
     ncatt_put(ncout, 0, "sea_name", adp[['sea_name']])
   }
-  if(!is.null(adp[['creator_name']])){
-    ncatt_put(ncout, 0, "creator_name", adp[['creator_name']])
-  }
-  if( !is.null(adp[['creator_url']])){
-    ncatt_put(ncout, 0, "creator_url", adp[['creator_url']])
-  }
-  if(!is.null(adp[['creator_email']])){
-    ncatt_put(ncout, 0, "creator_email", adp[['creator_email']])
-  }
   if(!is.null(adp[['processing_history']])){
     ncatt_put(ncout, 0, "processing_history", adp[['processing_history']])
   }
   ncatt_put(ncout, 0, "source", "R code: adcpProcess, github:") ##update with link to code
   if(!is.null(adp[['publisher_name']])){
     ncatt_put(ncout, 0, "publisher_name", adp[['publisher_name']])
-  }
-  if(!is.null(adp[['publisher_url']])){
-    ncatt_put(ncout, 0, "publisher_url", adp[['publisher_url']])
   }
   if(!is.null(adp[['publisher_email']])){
     ncatt_put(ncout, 0, "publisher_email", adp[['publisher_email']])
