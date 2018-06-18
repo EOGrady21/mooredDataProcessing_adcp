@@ -747,9 +747,12 @@ oceNc_create <- function(adp, name,  metadata){
   ncatt_put(ncout, 'time_string', 'note', 'time values as ISO8601 string, YY-MM-DD hh:mm:ss')
   ncatt_put(ncout, 'time_string', 'time_zone', 'UTC')
   ncatt_put(ncout, 0, 'processing_level',adp[['processing_level']])
-  ncatt_put(ncout, 0, "time_coverage_duration", (tail(adp[['time']], n = 1) - adp[['time']][[1]])/ 86400)
+  ncatt_put(ncout, 0, "time_coverage_duration", (tail(adp[['time']], n = 1) - adp[['time']][[1]]))
   ncatt_put(ncout, 0, "time_coverage_duration_units", "days")
   ncatt_put(ncout, 0, "cdm_data_type", "station")
+  ncatt_put(ncout, 0, "alternate_pressure_values", adp[['alternate_pressure_values']])
+  ncatt_put(ncout, 0, "alternate_pressure_file", adp[['alternate_pressure_file']])
+  ncatt_put(ncout, 0, "vertical_seperation", adp[['vertical_seperation']])
 
 
   if (adp@metadata$source == 'raw'){
