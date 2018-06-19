@@ -2338,6 +2338,42 @@ adjustDepths <- function(adp){
   }
 
 }
+
+
+
+
+####bin map####
+
+
+#'Bin Map
+#'
+#'
+#'
+#'   a function to create a bin variable within the adp object which can be mapped onto plots
+#' variable contains list of distance from adp to each bin named by bin number
+#'
+#'
+#'
+#'
+#' @param obj adp object from oce package
+
+
+
+binMap <- function(obj){
+  bin <- list()
+  bin[[1]] <- obj[['bin1Distance']]
+  counter <- 1
+  for (i in 2: length(obj[['distance']])){
+
+    bin[[i]] <- bin[[1]] + obj[['cellSize']] * counter
+    counter <- counter +1
+  }
+  names(bin) <- c(1:length(bin))
+  obj <- oceSetData(obj, 'bin', bin)
+  return(obj)
+}
+
+
 ####plotting functions####
 ####bin by bin plot###
 #'
