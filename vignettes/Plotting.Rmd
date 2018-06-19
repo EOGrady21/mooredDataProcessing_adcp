@@ -52,7 +52,7 @@ This function produces a series of plots with each plot representing an individu
 
 ###Average Echo Intensity
 
-This plot will show time averaged echo intensity plotted against bin. Any significant deviations between beam lines may indicate side lobe(The effect of accoustic beams bouncing off instruments which are tethered to a mooring directly above an ADCP, they can interfere with signals and cause small bumbs in intensity around the lower or middle bins) or a more serious error within the instrument. 
+This plot will show record averaged echo intensity plotted against bin. Any significant deviations between beam lines may indicate side lobe(The effect of accoustic beams bouncing off instruments which are tethered to a mooring directly above an ADCP, they can interfere with signals and cause small bumbs in intensity around the lower or middle bins) or a more serious error within the instrument. Each bin is represented by a single value so this plot may indicate which bins are overall erroneous.
 
 *function*
 ```{r eval = FALSE}

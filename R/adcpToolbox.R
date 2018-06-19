@@ -1803,7 +1803,8 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 'time_string', 'time_zone', 'UTC')
   ####global####
   ncatt_put(ncout, 0, "mooring_number", adp[['station']])
-
+  ncatt_put(ncout, 0, "naming_authority", adp[['naming_authority']])
+  ncatt_put(ncout, 0, "comment", adp[['comment']])
   ncatt_put(ncout, 0, "time_coverage_duration", (tail(adp[['time']], n = 1) - adp[['time']][[1]]))
   ncatt_put(ncout, 0, "time_coverage_duration_units", "days")
   ncatt_put(ncout, 0, "cdm_data_type", "station")
