@@ -2352,7 +2352,9 @@ adjustDepths <- function(adp){
 #'   a function to create a bin variable within the adp object which can be mapped onto plots
 #' variable contains list of distance from adp to each bin named by bin number
 #'
-#'
+#'Once bin variable has been created use
+#'```abline(h = obj[['bin']])```
+#'to create horizontal line denoting bins
 #'
 #'
 #' @param obj adp object from oce package
