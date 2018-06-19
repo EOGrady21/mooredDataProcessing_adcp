@@ -623,28 +623,28 @@ oceNc_create <- function(adp, name,  metadata){
 
 
     dlname <- "percent_good_beam_1"
-    pg1_def <- ncvar_def("PGDP_01", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+    pg1_def <- ncvar_def("PGDP_01", "percent", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "percent_good_beam_2"
-    pg2_def <- ncvar_def("PGDP_02", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+    pg2_def <- ncvar_def("PGDP_02", "percent", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "percent_good_beam_3"
-    pg3_def <- ncvar_def("PGDP_03", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+    pg3_def <- ncvar_def("PGDP_03", "percent", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "percent_good_beam_4"
-    pg4_def <- ncvar_def("PGDP_04", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+    pg4_def <- ncvar_def("PGDP_04", "percent", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "pitch"
-    p_def <- ncvar_def("PTCH", "degrees", list( stationdim, timedim), FillValue, dlname, prec = "float")
+    p_def <- ncvar_def("PTCH", "degrees", list( timedim,  stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "roll"
-    r_def <- ncvar_def("ROLL", "degrees", list( stationdim, timedim ), FillValue, dlname, prec = "float")
+    r_def <- ncvar_def("ROLL", "degrees", list(  timedim, stationdim ), FillValue, dlname, prec = "float")
 
     dlname <- "height of sea surface"
-    hght_def <- ncvar_def("hght", "m", list( stationdim, distdim ), FillValue, dlname, prec = "float")
+    hght_def <- ncvar_def("hght", "m", list(  distdim, stationdim ), FillValue, dlname, prec = "float")
 
     dlname <- "ADCP Transducer Temp."
-    Tx_def <- ncvar_def("Tx", "degrees", list(stationdim, timedim), FillValue, dlname, prec = "float")
+    Tx_def <- ncvar_def("Tx", "degrees celsius", list( timedim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "instrument depth"
     D_def <- ncvar_def("DEPH", "m", list(timedim, stationdim), FillValue, dlname, prec = "float")
@@ -665,13 +665,13 @@ oceNc_create <- function(adp, name,  metadata){
     FillValue <- 0
 
     dlname <- "quality_flag u"
-    qc_u_def <- ncvar_def("QC_flag_u", "", list(timedim, distdim, stationdim), FillValue, dlname, prec = "integer")
+    qc_u_def <- ncvar_def("EWCT_QC", "", list(timedim, distdim, stationdim), FillValue, dlname, prec = "integer")
 
     dlname <- "quality_flag v"
-    qc_v_def <- ncvar_def("QC_flag_v", "", list(timedim, distdim, stationdim), FillValue, dlname, prec = "integer")
+    qc_v_def <- ncvar_def("NSCT_QC", "", list(timedim, distdim, stationdim), FillValue, dlname, prec = "integer")
 
     dlname <- "quality_flag w"
-    qc_w_def <- ncvar_def("QC_flag_w", "", list(timedim, distdim, stationdim), FillValue, dlname, prec = "integer")
+    qc_w_def <- ncvar_def("VCSP_QC", "", list(timedim, distdim, stationdim), FillValue, dlname, prec = "integer")
 
     ####writing net CDF####
     #write out definitions to new nc file
@@ -708,7 +708,7 @@ oceNc_create <- function(adp, name,  metadata){
 
 
     dlname <- "percent_good_beam_1"
-    pg1_def <- ncvar_def("PGDP_01", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+    pg1_def <- ncvar_def("PGDP_01", "percent", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "time_string"
     ts_def <- ncvar_def("DTUT8601", units = "",dim =  list(dimnchar, timedim), missval = NULL, name =  dlname, prec = "char")
@@ -777,6 +777,12 @@ oceNc_create <- function(adp, name,  metadata){
   ncatt_put(ncout, 0, "title", adp[['title']])
 
   if (adp@metadata$source == 'raw'){
+
+    ##QC VARIABLE
+    ncatt_put(ncout, 'EWCT', 'ancillary_variables', 'EWCT_QC')
+    ncatt_put(ncout, 'NSCT', 'ancillary_variables', 'NSCT_QC')
+    ncatt_put(ncout, 'VCSP', 'ancillary_variables', 'VCSP_QC')
+
     ####pulled from adp object####
     ncatt_put(ncout, 0, "mooring_number", adp[['mooring_number']])
 
@@ -815,6 +821,8 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "water_depth", adp[['sounding']])
     ncatt_put(ncout, 0, "delta_t_sec",adp[['sampling_interval']])
     ncatt_put(ncout, 0, "pred_accuracy", adp[['velocityResolution']]*1000)
+    ncatt_put(ncout, "station", 'longitude', adp[['longitude']])
+    ncatt_put(ncout, "station", 'latitude', adp[['latitude']])
     ncatt_put(ncout, "DEPH", "xducer_offset_from_bottom", as.numeric(adp[['sounding']]) - adp[['sensor_depth']])
     ncatt_put(ncout, "DEPH", "bin_size", adp[['cellSize']])
     ncatt_put(ncout, "EWCT", "sensor_type", adp[['instrumentType']])
@@ -853,6 +861,15 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, "PGDP_04", "sensor_type", adp[['instrumentType']])
     ncatt_put(ncout, "PGDP_04", "sensor_depth", adp[['sensor_depth']])
     ncatt_put(ncout, "PGDP_04", "serial_number", adp[['serialNumber']])
+    ncatt_put(ncout, "HEAD", "sensor_type", adp[['instrumentType']])
+    ncatt_put(ncout, "HEAD", "sensor_depth", adp[['sensor_depth']])
+    ncatt_put(ncout, "HEAD", "serial_number", adp[['serialNumber']])
+    ncatt_put(ncout, "PRES", "sensor_type", adp[['instrumentType']])
+    ncatt_put(ncout, "PRES", "sensor_depth", adp[['sensor_depth']])
+    ncatt_put(ncout, "PRES", "serial_number", adp[['serialNumber']])
+    ncatt_put(ncout, "SVEL", "sensor_type", adp[['instrumentType']])
+    ncatt_put(ncout, "SVEL", "sensor_depth", adp[['sensor_depth']])
+    ncatt_put(ncout, "SVEL", "serial_number", adp[['serialNumber']])
     ncatt_put(ncout, "EWCT", "generic_name", "u")
     ncatt_put(ncout, "NSCT", "generic_name", "v")
     ncatt_put(ncout, "VCSP", "generic_name", "w")
@@ -877,18 +894,18 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, "Tx", "sensor_type", adp[['instrumentType']])
     ncatt_put(ncout, "Tx", "sensor_depth", adp[['sensor_depth']])
     ncatt_put(ncout, "Tx", "serial_number", adp[['serialNumber']])
-    ncatt_put(ncout, "QC_flag_u", "comment", "Quality flag resulting from quality control")
-    ncatt_put(ncout, "QC_flag_u", "flag_meanings",adp[['flag_meaning']])
-    ncatt_put(ncout, "QC_flag_u", "flag_values",c(1:9))
-    ncatt_put(ncout, "QC_flag_u", "References", adp[['flag_references']])
-    ncatt_put(ncout, "QC_flag_v", "comment", "Quality flag resulting from quality control")
-    ncatt_put(ncout, "QC_flag_v", "flag_meanings", adp[['flag_meaning']])
-    ncatt_put(ncout, "QC_flag_v", "flag_values",c(1:9))
-    ncatt_put(ncout, "QC_flag_v", "References", adp[['flag_references']])
-    ncatt_put(ncout, "QC_flag_w", "comment", "Quality flag resulting from quality control")
-    ncatt_put(ncout, "QC_flag_w", "flag_meanings", adp[['flag_meaning']])
-    ncatt_put(ncout, "QC_flag_w", "flag_values",c(1:9))
-    ncatt_put(ncout, "QC_flag_w", "References", adp[['flag_references']])
+    ncatt_put(ncout, "EWCT_QC", "comment", "Quality flag resulting from quality control")
+    ncatt_put(ncout, "EWCT_QC", "flag_meanings",adp[['flag_meaning']])
+    ncatt_put(ncout, "EWCT_QC", "flag_values",c(1:9))
+    ncatt_put(ncout, "EWCT_QC", "References", adp[['flag_references']])
+    ncatt_put(ncout, "NSCT_QC", "comment", "Quality flag resulting from quality control")
+    ncatt_put(ncout, "NSCT_QC", "flag_meanings", adp[['flag_meaning']])
+    ncatt_put(ncout, "NSCT_QC", "flag_values",c(1:9))
+    ncatt_put(ncout, "NSCT_QC", "References", adp[['flag_references']])
+    ncatt_put(ncout, "VCSP_QC", "comment", "Quality flag resulting from quality control")
+    ncatt_put(ncout, "VCSP_QC", "flag_meanings", adp[['flag_meaning']])
+    ncatt_put(ncout, "VCSP_QC", "flag_values",c(1:9))
+    ncatt_put(ncout, "VCSP_QC", "References", adp[['flag_references']])
 
     #CF conventions
 
@@ -918,7 +935,7 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "geospatial_vertical_positive", 'down')
     ncatt_put(ncout, 0, "institution", adp[['institution']])
     ncatt_put(ncout, 0, "project", adp[['project']])
-    ncatt_put(ncout, 0, "history", adp[['processing_history']])
+    ncatt_put(ncout, 0, "history", adp[['history']])
     ncatt_put(ncout, 0 , "flag_meanings", adp[['flag_meaning']])
     ncatt_put(ncout, 0 , "flag_values", c(1:9))
     ncatt_put(ncout, 0, "source", "R code: adcpProcess, github:")
@@ -951,6 +968,7 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, "HEAD", "sdn_parameter_urn", "SDN:P01::HEADCM01")
     ncatt_put(ncout, "PRES", "sdn_parameter_urn", "SDN:P01::PRESPR01")
     ncatt_put(ncout, "SVEL", "sdn_parameter_urn", "SDN:P01::SVELCV01")
+    ncatt_put(ncout, "ELTMEP01", "sdn_parameter_urn", "SDN:P01::ELTMEP01")
     ncatt_put(ncout, "time_string", "sdn_parameter_urn", "SDN:P01::DTUT8601")
 
 
@@ -1746,16 +1764,16 @@ adpNC <- function(adp, name){
 
 
   dlname <- "percent_good_beam_1"
-  pg1_def <- ncvar_def("PGDP_01", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+  pg1_def <- ncvar_def("PGDP_01", "percent", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
   dlname <- "percent_good_beam_2"
-  pg2_def <- ncvar_def("PGDP_02", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+  pg2_def <- ncvar_def("PGDP_02", "percent", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
   dlname <- "percent_good_beam_3"
-  pg3_def <- ncvar_def("PGDP_03", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+  pg3_def <- ncvar_def("PGDP_03", "percent", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
   dlname <- "percent_good_beam_4"
-  pg4_def <- ncvar_def("PGDP_04", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+  pg4_def <- ncvar_def("PGDP_04", "percent", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
   dlname <- "pitch"
   p_def <- ncvar_def("PTCH", "degrees", list(  timedim, stationdim), FillValue, dlname, prec = "float")
@@ -1822,7 +1840,22 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 'time' , 'calendar', 'gregorian')
   ncatt_put(ncout, 'time_string', 'note', 'time values as ISO8601 string, YY-MM-DD hh:mm:ss')
   ncatt_put(ncout, 'time_string', 'time_zone', 'UTC')
+
   ####global####
+  ncatt_put(ncout, 0, 'acknowledgment', adp[['acknowledgement']] )
+  ncatt_put(ncout, 0, 'comment', adp[['comment']])
+  ncatt_put(ncout, 0, 'cruise_description', adp[['cruise_description']])
+  ncatt_put(ncout, 0, 'date_created', adp[['date_created']])
+  ncatt_put(ncout, 0, 'keywords', 'Oceans > Ocean Circulation > Ocean Currents')
+  ncatt_put(ncout, 0, 'keywords_vocabulary', 'GCMD Science Keywords')
+  ncatt_put(ncout, 0, 'model', adp[['model']])
+  ncatt_put(ncout, 0, 'sampling_interval', adp[['sampling_interval']])
+  ncatt_put(ncout, 0, 'standard_name_vocabulary', adp[['standard_name_vocabulary']])
+  ncatt_put(ncout, 0, 'title', adp[['title']])
+  ncatt_put(ncout, 0, 'blanking_distance', adp[['blanking_distance']])
+  ncatt_put(ncout, 0, 'country_code', adp[['country_code']])
+  ncatt_put(ncout, 0, 'cruise_number', adp[['cruise_number']])
+  ncatt_put(ncout, 0, 'summary', adp[['summary']])
   ncatt_put(ncout, 0, "mooring_number", adp[['station']])
   ncatt_put(ncout, 0, "naming_authority", adp[['naming_authority']])
   ncatt_put(ncout, 0, "comment", adp[['comment']])
@@ -1832,9 +1865,6 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 0, "sea_name", adp[['sea_name']])
   ncatt_put(ncout, 0, "publisher_name", adp[['publisher_name']])
   ncatt_put(ncout, 0, "publisher_email", adp[['publisher_email']])
-  ncatt_put(ncout, 0, "keywords_vocabulary", adp[['keywords_vocabulary']])
-  ncatt_put(ncout, 0, "keywords", adp[['keywords']])
-  ncatt_put(ncout, 0, "standard_name_vocabulary", adp[['standard_name_vocabulary']])
   ncatt_put(ncout, 0, "processing_history", adp[['processing_history']])
 
   #     deprecated --- Diana Cardoso 06/01/2018
