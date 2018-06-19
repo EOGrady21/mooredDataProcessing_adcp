@@ -148,7 +148,28 @@ applyMagneticDeclinationAdp <- function(x, lat = x[['latitude']], lon = x[['long
       x@processingLog <- processingLogAppend(x@processingLog, value = paste0('magnetic variation applied; declination =', c, 'degrees') )
     }
     if (type == 'interpolate'){
-      ;
+      t <- x[['time']]
+      coord <- x@metadata$oceCoordinate
+      mf <- NULL
+      for (i in 1: length(t)){
+        mf[[i]] <- magneticField(lon, lat, t[[i]])
+      }
+      dec <- NULL
+      for( i in 1: length(mf)){
+        dec[[i]] <- mf[[i]]$declination
+      }
+      f <- approx(x = dec, y = t, method = 'linear')
+
+      if (coord != 'enu'){
+        warning('Function cannot handle objects in ', coord, 'Object returned as is ; please convert to enu first')
+
+      }
+      if(coord == 'enu'){
+        x <- enuToOther(x, heading = f$x)
+        x@metadata$magnetic_variation <- avg(f$x)
+        x@metadata$oceCoordinate <- 'enu'
+        x@processingLog <- processingLogAppend(x@processingLog, value = paste0('magnetic variation applied; using interpolation. Declination average =', avg(f$x), 'degrees') )
+      }
     }
     return(x)
 
