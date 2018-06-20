@@ -87,3 +87,29 @@ echoint <- adp[['a', 'numeric']]
 ```
 
 This is an example of a data set which is quite high quality however you can still see some deviation at the surface where beams begin to be contaminated and intensity suddenly spikes. Th enormal pattern would be for echo intensity to continuously decrease with increasing bin number. As beams are travelling further, the intensity of the return signal becomes dimmer. The sudden spike can often indicate contamination or interference from the surface of the water. It can also be common to see small bumps or spike along the beams in the centre of the water column which can be due to side lobe.
+
+###Progressive Vector
+
+Another useful plot for ADCP processing can be the progressive vector plot. This is a base plot within oce. 
+
+Using
+```{ r}
+library(oce)
+data(adp)
+plot(adp, which = 23)
+```
+Yields a progressive vector plot of depth averaged velocity. 
+
+This plot can also be used to plot individual bins
+```{r eval = FALSE}
+
+plot(adp, which = 23, control = list('bin' = 1))
+
+```
+Where you can specify any individual bin to be plotted
+
+You can also plot multiple bins on the same graph using
+`par(new = TRUE)`
+in between plots
+
+
