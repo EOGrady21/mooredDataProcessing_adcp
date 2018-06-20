@@ -2472,6 +2472,9 @@ plot_ei <- function(adp){
 #'
 #' @param x adp object from oce
 #' @param control list() with optional object 'bin' which can be used to specify the bins you wish to plot
+#'@param xlim limiting values for x axis
+#'@param ylim limiting values for y axis
+#'
 #'
 #' @return plot of progressive vectors,
 #' @export
@@ -2481,7 +2484,7 @@ plot_ei <- function(adp){
 #' pvPlot(adp, control = list('bin' = c(1:length(adp[['distance']]))))
 
 
-pvPlot <- function(x, control){
+pvPlot <- function(x, control, xlim = c(range(x[['distance']])), ylim = c(range(x[['distance']]))){
 
   ##oce code
   mgp=getOption("oceMgp")
@@ -2544,8 +2547,8 @@ pvPlot <- function(x, control){
       type = 'l',
       asp = 1,
       col = 'blue',
-      xlim = c(-20, 20),
-      ylim = c(-20, 20)
+      xlim = xlim,
+      ylim = ylim
     )
   }
 
@@ -2557,7 +2560,8 @@ pvPlot <- function(x, control){
     for ( i in 1:length(control$bin)){
       xDist[[i]] <- integrateTrapezoid(ttt, u[[i]], 'cA') / mPerKm
       yDist[[i]] <- integrateTrapezoid(ttt, v[[i]], 'cA') / mPerKm
-
+    }
+    for ( i in 1:length(control$bin)){
       plot(
         xDist[[i]],
         yDist[[i]],
@@ -2566,13 +2570,15 @@ pvPlot <- function(x, control){
         type = 'l',
         asp = 1,
         col = listcol[[i]],
-        xlim = c(-20, 20),
-        ylim = c(-20, 20)
+        xlim = xlim,
+        ylim = ylim
 
       )
       par(new = TRUE)
-
     }
+
+
+    legend('topleft', legend = paste('Bin', control$bin, sep = '  '), col = listcol, lty = 1)
   }
 
 }
