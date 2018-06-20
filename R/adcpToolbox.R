@@ -817,7 +817,6 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "platform", adp[['platform']])
     ncatt_put(ncout, 0, "sounding", adp[['sounding']])
     ncatt_put(ncout, 0, "chief_scientist", adp[['chief_scientist']])
-    ncatt_put(ncout, 0, "data_origin", adp[['institution']])
     ncatt_put(ncout, 0, "water_depth", adp[['sounding']])
     ncatt_put(ncout, 0, "delta_t_sec",adp[['sampling_interval']])
     ncatt_put(ncout, 0, "pred_accuracy", adp[['velocityResolution']]*1000)
@@ -911,7 +910,6 @@ oceNc_create <- function(adp, name,  metadata){
 
     ncatt_put(ncout, 0, 'Conventions', 'CF-1.7')
     ncatt_put(ncout, 0, "creator_type", "person")
-    ncatt_put(ncout, 0, "creator_institution", adp[['institution']])
     ncatt_put(ncout, 0, "program", adp[['program']])
     ncatt_put(ncout, 0, "sea_name", adp[['sea_name']])
     ncatt_put(ncout, 0, "time_coverage_start", adp[['time_coverage_start']])
@@ -1100,7 +1098,8 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "platform", adp[['platform']])
     ncatt_put(ncout, 0, "sounding", adp[['sounding']])
     ncatt_put(ncout, 0, "chief_scientist", adp[['chief_scientist']])
-    ncatt_put(ncout, 0, "data_origin", adp[['institution']])
+    #deprecated Mathieu Ouillet June 20 2018
+    #ncatt_put(ncout, 0, "data_origin", adp[['institution']])
     ncatt_put(ncout, 0, "water_depth", adp[['water_depth']])
     ncatt_put(ncout, 0, "delta_t_sec",adp[['sampling_interval']])
     ncatt_put(ncout, 0, "pred_accuracy", adp[['velocityResolution']])
@@ -1137,7 +1136,8 @@ oceNc_create <- function(adp, name,  metadata){
 
     ncatt_put(ncout, 0, 'Conventions', 'CF-1.7')
     ncatt_put(ncout, 0, "creator_type", "person")
-    ncatt_put(ncout, 0, "creator_institution", adp[['institution']])
+    #deprecated Mathieu Ouillet June 20 2018
+    #ncatt_put(ncout, 0, "creator_institution", adp[['institution']])
     ncatt_put(ncout, 0, "program", adp[['program']])
     ncatt_put(ncout, 0, "sea_name", adp[['sea_name']])
     ncatt_put(ncout, 0, "time_coverage_start", adp[['deployment_time']])
@@ -1388,7 +1388,7 @@ oceNc_create <- function(adp, name,  metadata){
 #'
 #'     \bold{ Metadata:}  units (v, distance), cellSize, numberOfBeams, orientation,
 #'      model, type, serialNumber, ship (platform), scientist
-#'      (chief_scientist), institute (data_origin), cruise (cruise_name), station (mooring),
+#'      (chief_scientist), institution (data_origin), cruise (cruise_name), station (mooring),
 #'      countryInstituteCode, cruiseNumber, startTime, latitude, longitude,
 #'      waterDepth, sounding
 
@@ -1484,7 +1484,7 @@ adpCombine <- function(adp, raw, ncin = ''){
     nc_close(ni)
 
     adp <- oceSetMetadata(adp, 'creation_date', creation_date$value, note = NULL)
-    adp <- oceSetMetadata(adp, 'data_origin', data_origin$value, note = NULL)
+    adp <- oceSetMetadata(adp, 'institution', data_origin$value, note = NULL)
     adp <- oceSetMetadata(adp, 'time_coverage_start', time_coverage_start$value, note = NULL)
     adp <- oceSetMetadata(adp, 'time_coverage_end', time_coverage_end$value, note = NULL)
     adp <- oceSetMetadata(adp, 'inst_type', inst_type$value, note = NULL)
@@ -2039,10 +2039,9 @@ adpNC <- function(adp, name){
     ncatt_put(ncout, 0, "publisher_email", adp[['publisher_email']])
   }
 
-  #redundant metadata to be condensed
-  ncatt_put(ncout, 0, "institution", adp[['data_origin']])
-  ncatt_put(ncout, 0, "creator_institution", adp[['data_origin']])
-  ncatt_put(ncout, 0, "data_origin", adp[['data_origin']])
+
+  ncatt_put(ncout, 0, "institution", adp[['institution']])
+
 
   ####BODC P01 names####
   ncatt_put(ncout, "EWCT", "sdn_parameter_urn", "SDN:P01::LCEWAP01")
