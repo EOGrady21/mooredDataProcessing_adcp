@@ -2460,3 +2460,119 @@ plot_ei <- function(adp){
 
 
 }
+
+
+
+####progressive vector bin plot####
+
+
+#' Progressive vector plot
+#'
+#' Default returns depth averaged plot but if specified in control can return plot of specific bin combinations
+#'
+#' @param x adp object from oce
+#' @param control list() with optional object 'bin' which can be used to specify the bins you wish to plot
+#'
+#' @return plot of progressive vectors,
+#' @export
+#'
+#' @examples
+#' pvPlot(adp, control = list('bin' = c(1, 5, 7)))
+#' pvPlot(adp, control = list('bin' = c(1:length(adp[['distance']]))))
+
+
+pvPlot <- function(x, control){
+
+  ##oce code
+  mgp=getOption("oceMgp")
+  par(mar = c(mgp[1] + 1, mgp[1] + 1, 1, 1))
+  dt <-
+    as.numeric(difftime(x@data$time[2], x@data$time[1], units = "sec")) # FIXME: should not assume all equal
+  mPerKm <- 1000
+
+  U <- x@data$v[, , 1]
+  V <- x@data$v[, , 2]
+  ttt <- x@data$time
+
+  if (!missing(control) && !is.null(control$bin)) {
+    # if (control$bin < 1)
+    #   stop("cannot have control$bin less than 1, but got ", control$bin)
+    # max.bin <- dim(x@data$v)[2]
+    # if (control$bin > max.bin)
+    #   stop("cannot have control$bin larger than ",
+    #        max.bin,
+    #        " but got ",
+    #        control$bin)
+    #throwing wearnings due to length of control$bin being >1
+    if( length(control$bin) == 1){
+      u <-
+        U[, control$bin] #EAC: bug fix, attempt to subset 2D matrix by 3 dimensions
+      v <- V[, control$bin]
+    }
+    ##inserted EAC
+    if (length(control$bin) >1){
+      u <- NULL
+      v <- NULL
+      for ( i in 1:length(control$bin)){
+        u[[i]] <- U[, control$bin[[i]]]
+        v[[i]] <- V[, control$bin[[i]]]
+        bins <- TRUE
+      }
+    }
+    ##
+  } else {
+    if (x@metadata$numberOfCells > 1) {
+      u <- apply(U, 1, mean, na.rm = TRUE)
+      v <- apply(V, 1, mean, na.rm = TRUE)
+    } else {
+      u <- U
+      v <- V
+      bins <- FALSE
+    }
+  }
+  u[is.na(u)] <- 0        # zero out missing
+  v[is.na(v)] <- 0
+  if (bins == FALSE){
+    xDist <- integrateTrapezoid(ttt, u, 'cA') / mPerKm
+    yDist <- integrateTrapezoid(ttt, v, 'cA') / mPerKm
+
+    plot(
+      xDist,
+      yDist,
+      xlab = "km",
+      ylab = "km",
+      type = 'l',
+      asp = 1,
+      col = 'blue',
+      xlim = c(-20, 20),
+      ylim = c(-20, 20)
+    )
+  }
+
+  if(bins == TRUE){
+    xDist <- NULL
+    yDist <- NULL
+    listcol <-  1:150
+
+    for ( i in 1:length(control$bin)){
+      xDist[[i]] <- integrateTrapezoid(ttt, u[[i]], 'cA') / mPerKm
+      yDist[[i]] <- integrateTrapezoid(ttt, v[[i]], 'cA') / mPerKm
+
+      plot(
+        xDist[[i]],
+        yDist[[i]],
+        xlab = "km",
+        ylab = "km",
+        type = 'l',
+        asp = 1,
+        col = listcol[[i]],
+        xlim = c(-20, 20),
+        ylim = c(-20, 20)
+
+      )
+      par(new = TRUE)
+
+    }
+  }
+
+}
