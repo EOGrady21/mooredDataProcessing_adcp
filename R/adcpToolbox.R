@@ -773,7 +773,7 @@ oceNc_create <- function(adp, name,  metadata){
   ncatt_put(ncout, 0, "cdm_data_type", "station")
   ncatt_put(ncout, 0, "alternate_pressure_values", adp[['alternate_pressure_values']])
   ncatt_put(ncout, 0, "alternate_pressure_file", adp[['alternate_pressure_file']])
-  ncatt_put(ncout, 0, "vertical_seperation", adp[['vertical_seperation']])
+  ncatt_put(ncout, 0, "vertical_separation", adp[['vertical_separation']])
   ncatt_put(ncout, 0, "title", adp[['title']])
 
   if (adp@metadata$source == 'raw'){
@@ -2288,7 +2288,7 @@ adpNC <- function(adp, name){
 
 
 
-insertInst <- function(adp, var, file = adp[['alternate_pressure_file']], offset = adp[['vertical_seperation']]){
+insertInst <- function(adp, var, file = adp[['alternate_pressure_file']], offset = adp[['vertical_separation']]){
   inst <- read.oce(file)
   vr <- inst[[var]]
   u <- inst@metadata$units[var]
@@ -2354,9 +2354,9 @@ exportPL <- function(adp){
 
 adjustDepths <- function(adp){
   if (!is.null(adp[['pressure_alternate']])){
-    vsep <- adp[['vertical_seperation']]
+    vsep <- adp[['vertical_separation']]
     if (is.null(vsep)){
-      warning('No vertical seperation provided!')
+      warning('No vertical separation provided!')
     }
     pres <- adp[['pressure_alternate']]
 
@@ -2364,7 +2364,7 @@ adjustDepths <- function(adp){
 
     adp[['depth']] <- swDepth(pressure = presadj, latitude = adp[['latitude']], eos = 'gsw')
 
-    adp@processingLog <- processingLogAppend(adp@processingLog, paste('Depths adjusted based on pressure data from', adp[['alternate_pressure_file']], 'with vertical seperation of', adp[['vertical_seperation']], sep = '  '))
+    adp@processingLog <- processingLogAppend(adp@processingLog, paste('Depths adjusted based on pressure data from', adp[['alternate_pressure_file']], 'with vertical separation of', adp[['vertical_separation']], sep = '  '))
   }
 
 }
