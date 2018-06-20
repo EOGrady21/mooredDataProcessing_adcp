@@ -25,6 +25,13 @@ The current state of the package is a function toolbox which can be sourced to p
 source('adcpToolbox.R')
 ```
 
+
+# Plotting
+
+A key part of ADCP data processing is visual and manual quality control, this is why plotting is very important throughout the processing. In the sample processing script at the bottom of this document you will see that plotting is used before and after almost every quality control function in order to confirm that the quality control is accurate and complete. 
+
+See the `Plotting` vignette of this package for more information. Another great source is the `?'plot,adp-method'` from the oce package. 
+
 # Reading adp files
 
 ADCP data can be easily read into r using the oce package. For more information see the adp vignette included in the oce package. 
@@ -155,8 +162,112 @@ However standards may change and there may be specific requirements for specific
 
 
 
+#Example
+
+This is a sample processing script utilizing some but not all of the functions included in this toolbox. Keep in mind that each data set and intrument will have unique processing challenges and you may need to use different configurations of plots, functions and quality control measures to produce the most accurate data. 
+
+
+```{r eval = FALSE}
+
+
+###input: RAW ADCP file (.000), plus any extra metadata from log sheets (.csv)
+###output: processed ADCP data in netCDF file
+
+library(oce)
+library(ncdf4)
+
+source('adcpToolbox.R')
+
+#       read in raw data and metadata
+adp <- read.adp.easy('R:/Shared/ChisholmE/sample ADP process/M1996000.000', 'R:/Shared/ChisholmE/sample ADP process/metadataTemplateM1996.csv')
+
+
+#general first look plots
+
+plot(adp, which = 1)  #u
+plot(adp, which = 2)  #v
+plot(adp, which = 3)  #w
+plot(adp, which = 4)  #error
+plot(adp, which = 15) #pressure
+plot(adp, which = 23) #progressive vector for u
+plot(adp, which = 28) #uv scatter plot
+
+
+#save bin plots to pdf
+pdf(paste('binbybinplot', adp[['mooring_number']], '.pdf', sep = ''), width = 7, height = 3)
+plotBin(adp@data$v[,,1])
+dev.off()
+
+#       adjust depth values based on pressure and latitude
+adp[['depth']] <- swDepth(adp[['pressure']], (adp[['latitude']]))
+
+#       apply magnetic declination
+adp <- applyMagneticDeclinationAdp(adp)
+
+
+#check plots
+#     looking for rotation compared to plots before magnetic declination applied
+plot(adp, which = 23) #progressive vector for u
+plot(adp, which = 28) #uv scatter plot
+
+#       limit depth by recovery/deployment times
+adp <- limit_depthbytime(adp)
+
+#check plots
+#     looking for any spikes on either end of dataset
+plot(adp[['depth']])
+
+#       limit time and other variables based on deployment/ recovery times
+adp <- limit_time(adp)
+
+#check plots
+#     looking for pressure spikes on either end
+plot(adp, which = 15) 
+
+
+#       add microcat pressure data if relevant
+#file <- list.files(path = '.', pattern = "MCTD*...*.ODF")
+#adp <- insertInst(adp, var = 'pressure', file = file)
+#compare pressure by plotting
+#plot(adp[['pressure_alternate']], lty = 2, col = 'red', ylim = c(0, 200), xlab = 'Time', ylab = 'Pressure dBar')
+#lines(adp[['pressure']], lty = 1, col = 'black', ylim = c(0,200), xlab = '', ylab = '')
 
 
 
+
+#       flag data outside percent good/ error bounds
+adp <- adpFlag(adp, adp[['percentgd_threshold']], adp[['error_threshold']]) 
+                              #use pgd = 25, errv = 0.46 as defaults
+
+#       set flags to NA:
+#       use adpClean to plot and check data quality, adp still maintains
+#       complete data set integrity
+adpClean <- handleFlags(adp, flags = 4, actions = list('NA'))
+
+#check plots
+#     plot velocity beams
+plot(adpClean, which = 1)
+plot(adpClean, which = 2)
+plot(adpClean, which = 3)
+plot(adpClean, which = 4)
+#     plot echo intensity
+plot_ei(adpClean)
+
+
+#     check any other relvant plots to confirm QC before exporting
+
+
+#       create standard name
+name <- name.file(adp)
+
+#       processingLog export
+adp <-exportPL(adp)
+adp <- oceSetMetadata(adp, 'history', 'INSERT SHORT SUMMARY OF HISTORY HERE')
+
+#       export to netCDF file
+oceNc_create(adp, name, metadata = 'R:/Shared/ChisholmE/sample ADP process/metadataTemplateM1996.csv')
+
+
+```
 
 
