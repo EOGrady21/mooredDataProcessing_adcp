@@ -112,4 +112,35 @@ You can also plot multiple bins on the same graph using
 `par(new = TRUE)`
 in between plots
 
+###plotQC
+
+This plot function is designed to help visually inspect data that has been flagged to ensure that flags are appropriate and complete. 
+
+This function takes a series of parameter arguments (see help file for `plotQC()`) including u, v, w, error velocity, echo intensity and percent good. Each parameter is plotted bin by bin to identify spikes or other problems. 
+
+The plots show flagged values in an alternate colour (red) so that processors may identify any inappropriately flagged data. 
+
+example:
+```{r eval = FALSE}
+plotQC(adp, QC = 'v')
+```
+
+
+###Saving Plots
+
+Many of these plots emmploy bin by bin techinques which make it difficult to sort through and compare from within RStudio's plotting window. The best way to save plots, expecially bin by bin plots is by using the `pdf()` function. This saves any plots produced to a pdf file. 
+
+After calling pdf the processor can then set the plotting settings using `par()` to specify the appropriate number of plots per page. 
+
+An example might look like this:
+``` {r eval = FALSE}
+
+pdf('fileName.pdf' , width = 8, height = 40 ) #save to pdf
+par(mfrow = c(15, 1)) #set number of plots per page (rows, columns)
+plotQC(adp, QC = 'v')
+dev.off() #close pdf
+
+```
+
+the width and height within the `pdf()` call may need to be adjusted based on the number of plots being produced. These settings define the size of the pdf file itself and not the specific plot margins, those are set by `par()`. 
 
