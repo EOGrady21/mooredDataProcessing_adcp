@@ -18,6 +18,8 @@ require(ncdf4)
 #'@param file raw ADCP file (.000 format)
 #'@param metadata csv metadata file from template
 #'
+#'@export
+#'
 
 
 read.adp.easy <- function(file, metadata){
@@ -61,7 +63,7 @@ read.adp.easy <- function(file, metadata){
 #' @param file csv file name
 #' @param obj adp oce object to assign metadata to
 #'
-#'
+#'@export
 #'
 
 
@@ -106,7 +108,7 @@ read.meta <- function(file, obj){
 #'   declinations and applied uniformly
 #'
 #'   If type == interpolated, the rate of declination is used over time series
-#'
+#'@export
 #'
 
 
@@ -189,6 +191,9 @@ applyMagneticDeclinationAdp <- function(x, lat = x[['latitude']], lon = x[['long
 #'@param x oce object of class adp to be limited
 #'@param lat latitude of instrument during sampling
 #'
+#'
+#'@export
+#'
 
 
 limit_depthbyrmax <- function(x, lat = x[['latitude']]){
@@ -245,6 +250,9 @@ limit_depthbyrmax <- function(x, lat = x[['latitude']]){
 #'  requires certain meta data features to compute including pressure, latitude,
 #'  time, time_coverage_start, time_coverage_end
 #'
+#'@export
+#'
+#'
 
 
 limit_depthbytime <- function(adp, tz = 'UTC'){
@@ -282,6 +290,7 @@ limit_depthbytime <- function(adp, tz = 'UTC'){
 #'@return adp object with velocities limited to active ADCP measurement times
 #'  (after deployment and before recovery)
 #'
+#'@export
 #'
 #'
 
@@ -389,8 +398,7 @@ limit_time <- function(x, tz = 'UTC', dt = x[['time_coverage_start']], rt = x[['
 #' @param er, Maximum error velocity for evaluating adcp data (BIO standard is
 #'   0.46)
 #'
-
-#
+#'@export
 #'
 
 ####adcp process function
@@ -457,8 +465,10 @@ adpFlag <- function(adp,  pg = adp[['percentgd_threshold']], er= adp[['error_thr
 #'   required metadata : cruise number, mooring number, serial number, sampling
 #'   interval!! Make sure all metadata is present when experiencing problems
 #'
+#'@export
 #'
-#'
+
+
 name.file <- function(adp){
 
   name <- paste('MADCP', adp[['experiment']], adp[['mooring_number']], adp[['serialNumber']], adp[['sampling_interval']], sep = '_')
@@ -477,6 +487,11 @@ name.file <- function(adp){
 #'
 #' @param files list of odf files
 #' @param metadata any extra metadata to be added to net cdf as list form
+#' @export
+#'
+#'
+
+
 odf2adp <- function(files, metadata) {
   require(oce)
   require(abind)
@@ -547,6 +562,8 @@ odf2adp <- function(files, metadata) {
 #'@param name name of the NetCDF file to be produced
 #'@param metadata csv file listing metadata names and values to be inserted into
 #'  global attributes of net CDF
+#'
+#'  @export
 
 
 
@@ -1398,6 +1415,9 @@ oceNc_create <- function(adp, name,  metadata){
 #'@param raw a raw ADCP file (.000)
 #'@param ncin an archived netCDF file (.nc)
 #'
+#'@export
+#'
+#'
 ####adpCombine####
 adpCombine <- function(adp, raw, ncin = ''){
 
@@ -1695,6 +1715,9 @@ adpCombine <- function(adp, raw, ncin = ''){
 #'
 #' @param adp an adp object
 #' @param name text string which will name netCDF file
+#'
+#' @export
+#'
 
 adpNC <- function(adp, name){
   if (!inherits(adp, "adp")){
@@ -2348,6 +2371,9 @@ exportPL <- function(adp){
 #'
 #'
 #' @param adp an oce object contasining adcp data as well as alternate pressure data from another instrument
+#'
+#' @export
+#'
 
 
 
@@ -2387,6 +2413,8 @@ adjustDepths <- function(adp){
 #'
 #'
 #' @param obj adp object from oce package
+#'
+#' @export
 
 
 
@@ -2409,13 +2437,16 @@ binMap <- function(obj){
 ####bin by bin plot###
 #'
 #'Bin by bin plot
-#'
+#'@family Plot
 #'
 #'use to plot each "bin" of any chosen variable (u, v, error, echo intensity)
 #'to use with adp object example:
 #'````plotBin(adp@data$v[,,1])````
 #'
 #' @param v variable matrix from adcp data, should be 2 dimensional (time, distance or bin)
+#'
+#'
+#'@export
 #'
 
 plotBin <- function(v){
@@ -2428,6 +2459,7 @@ plotBin <- function(v){
 
 
 #' Plot echo intensity
+#'@family Plot
 #'
 #' Creates a time average echo intensity plot by bin number to analyze adcp data.
 #'
@@ -2467,6 +2499,7 @@ plot_ei <- function(adp){
 
 
 #' Progressive vector plot
+#'@family Plot
 #'
 #' Default returns depth averaged plot but if specified in control can return plot of specific bin combinations
 #'
