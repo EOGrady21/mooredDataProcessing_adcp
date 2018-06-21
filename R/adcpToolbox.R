@@ -2654,7 +2654,7 @@ pvPlot <- function(x, control, xlim = c(range(x[['distance']])), ylim = c(range(
 #' @export
 #'
 #' @examples
-plotQC_U <- function(obj, QC ){
+plotQC <- function(obj, QC ){
   Bad <- handleFlags(object = adp, flags = 1, actions = list('NA'))
   Good <- handleFlags(object = adp, flags = 4, actions = list('NA'))
 
@@ -2664,9 +2664,9 @@ plotQC_U <- function(obj, QC ){
     uGood <- Good[['v']][,,1]
 
     for(i in 1:length(obj[['v']][1,,1])){
-      plot(uGood[,i], xlab = "time", ylab = "m/sec", main = (paste( "Bin", i, 'U')), type = 'l', ylim = c(-5, 5))
+      plot(uGood[,i], xlab = "time", ylab = "m/sec", main = (paste( "Bin", i, 'U')), type = 'l', ylim = c(-4, 4))
       par(new = TRUE)
-      plot(uBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(-5, 5))
+      plot(uBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(-4, 4))
     }
   }
   if( QC == 'v'){
@@ -2674,9 +2674,9 @@ plotQC_U <- function(obj, QC ){
     vGood <- Good[['v']][,,2]
 
     for(i in 1:length(obj[['v']][1,,1])){
-      plot(vGood[,i], xlab = "time", ylab = "m/sec", main = (paste( "Bin", i, 'V')), type = 'l', ylim = c(-5, 5))
+      plot(vGood[,i], xlab = "time", ylab = "m/sec", main = (paste( "Bin", i, 'V')), type = 'l', ylim = c(-4, 4))
       par(new = TRUE)
-      plot(vBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(-5, 5))
+      plot(vBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(-4, 4))
     }
 
   }
@@ -2685,9 +2685,9 @@ plotQC_U <- function(obj, QC ){
     wGood <- Good[['v']][,,3]
 
     for(i in 1:length(obj[['v']][1,,1])){
-      plot(wGood[,i], xlab = "time", ylab = "m/sec", main = (paste( "Bin", i, 'W')), type = 'l', ylim = c(-5, 5))
+      plot(wGood[,i], xlab = "time", ylab = "m/sec", main = (paste( "Bin", i, 'W')), type = 'l', ylim = c(-4, 4))
       par(new = TRUE)
-      plot(wBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(-5, 5))
+      plot(wBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(-4, 4))
     }
   }
 
@@ -2696,9 +2696,9 @@ plotQC_U <- function(obj, QC ){
     erGood <- Good[['v']][,,4]
 
     for(i in 1:length(obj[['v']][1,,1])){
-      plot(erGood[,i], xlab = "time", ylab = "m/sec", main = (paste( "Bin", i, 'ERRV')), type = 'l', ylim = c(-5, 5))
+      plot(erGood[,i], xlab = "time", ylab = "m/sec", main = (paste( "Bin", i, 'ERRV')), type = 'l', ylim = c(-4, 4))
       par(new = TRUE)
-      plot(erBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(-5, 5))
+      plot(erBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(-4, 4))
     }
   }
   if( QC == 'ei'){
