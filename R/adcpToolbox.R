@@ -2350,12 +2350,18 @@ insertInst <- function(adp, var, file = adp[['alternate_pressure_file']], offset
 #'This function can be used to export the processing log recorded in the adp
 #'object as a single text string to be included in a netCDF
 #'
-#'@param adp
+#'@param adp an oce adp object of ADCP data
 #'
-#' @return
+#' @return adp object with processingLog as separate character string in adp[['processing_history']]
 #' @export
 #'
 #' @examples
+#'
+#'
+#' adp <- exportPL(adp)
+#'
+
+
 exportPL <- function(adp){
   pl <- toString(adp@processingLog$value)
   adp@metadata$processing_history <- pl
@@ -2364,11 +2370,16 @@ exportPL <- function(adp){
 
 ####adjustDepths####
 #' Adjust Bin Depths
+#'
+#'
 #' if in processing you have inserted pressure from another instrument and
 #' choose to use these new pressure values to calculate bin depths then this
 #' function can be used to adjust bin depths based on more accurate pressure
 #' readings.
 #'
+#' Another similar function which can adjust bin depths based on existing
+#' pressure data is \code{\link[oce:binMapAdp]{binMapAdp}}
+#' which can map adp bins to be at consistent depths with pressure.
 #'
 #' @param adp an oce object contasining adcp data as well as alternate pressure data from another instrument
 #'
@@ -2443,7 +2454,7 @@ binMap <- function(obj){
 #'to use with adp object example:
 #'````plotBin(adp@data$v[,,1])````
 #'
-#' @param v variable matrix from adcp data, should be 2 dimensional (time, distance or bin)
+#'@param v variable matrix from adcp data, should be 2 dimensional (time, distance or bin)
 #'
 #'
 #'@export
@@ -2615,3 +2626,111 @@ pvPlot <- function(x, control, xlim = c(range(x[['distance']])), ylim = c(range(
   }
 
 }
+
+
+#' plotQC
+#'
+#' Plots which show flagged vs unflagged values of a variety of parameters, can
+#' be used to visually check quality control and confirm that flagged values are
+#' appropriate
+#'
+#' @param obj an adp object
+#' @param QC the paramater you wish to plot,
+#'
+#' options are u, v, w, er, ei, pg
+#'
+#' *u -> eastward velocity component
+#' *v -> northward velocity component
+#' *w -> upward velocity component
+#' *er -> error velocity
+#' *ei -> echo intensity (first beam only)
+#' *pg -> precent good, sum of 1st and 4th beams
+#'
+#'
+#'
+#' @return Plots which show obj (adp) data parameter with flagged values shown
+#'   in red and black lines showing good values
+#'
+#' @export
+#'
+#' @examples
+plotQC_U <- function(obj, QC ){
+  Bad <- handleFlags(object = adp, flags = 1, actions = list('NA'))
+  Good <- handleFlags(object = adp, flags = 4, actions = list('NA'))
+
+  if( QC == 'u'){
+
+    uBad <- Bad[['v']][,,1]
+    uGood <- Good[['v']][,,1]
+
+    for(i in 1:length(obj[['v']][1,,1])){
+      plot(uGood[,i], xlab = "time", ylab = "m/sec", main = (paste( "Bin", i, 'U')), type = 'l', ylim = c(-5, 5))
+      par(new = TRUE)
+      plot(uBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(-5, 5))
+    }
+  }
+  if( QC == 'v'){
+    vBad <- Bad[['v']][,,2]
+    vGood <- Good[['v']][,,2]
+
+    for(i in 1:length(obj[['v']][1,,1])){
+      plot(vGood[,i], xlab = "time", ylab = "m/sec", main = (paste( "Bin", i, 'V')), type = 'l', ylim = c(-5, 5))
+      par(new = TRUE)
+      plot(vBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(-5, 5))
+    }
+
+  }
+  if( QC == 'w'){
+    wBad <- Bad[['v']][,,3]
+    wGood <- Good[['v']][,,3]
+
+    for(i in 1:length(obj[['v']][1,,1])){
+      plot(wGood[,i], xlab = "time", ylab = "m/sec", main = (paste( "Bin", i, 'W')), type = 'l', ylim = c(-5, 5))
+      par(new = TRUE)
+      plot(wBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(-5, 5))
+    }
+  }
+
+  if( QC == 'er'){
+    erBad <- Bad[['v']][,,4]
+    erGood <- Good[['v']][,,4]
+
+    for(i in 1:length(obj[['v']][1,,1])){
+      plot(erGood[,i], xlab = "time", ylab = "m/sec", main = (paste( "Bin", i, 'ERRV')), type = 'l', ylim = c(-5, 5))
+      par(new = TRUE)
+      plot(erBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(-5, 5))
+    }
+  }
+  if( QC == 'ei'){
+
+    eiBad <- Bad[['a', 'numeric']][,,1]
+    eiBad[is.na(Bad[['v']][,,1])] <- NA
+
+
+    eiGood <- Good[['a', 'numeric']][,,1]
+    eiGood[is.na(Good[['v']][,,1])] <- NA
+
+    for(i in 1:length(obj[['a']][1,,1])){
+      plot(eiGood[,i], xlab = "time", ylab = "Intensity", main = (paste( "Bin", i, 'Echo Intensity (1)')), type = 'l', ylim = c(0, 255))
+      par(new = TRUE)
+      plot(eiBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(0, 255))
+    }
+  }
+
+  if( QC == 'pg'){
+    pgBad <- Bad[['g', 'numeric']][,,1] + Bad[['g', 'numeric']][,,4]
+    pgBad[is.na(Bad[['v']][,,1])] <- NA
+
+    pgGood <- Good[['g', 'numeric']][,,1] + Good[['g', 'numeric']][,,4]
+    pgGood[is.na(Good[['v']][,,1])] <- NA
+
+    for(i in 1:length(obj[['g']][1,,1])){
+      plot(pgGood[,i], xlab = "time", ylab = "%", main = (paste( "Bin", i, 'Perecnt Good (1)')), type = 'l', ylim = c(0, 100))
+      par(new = TRUE)
+      plot(pgBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(0, 100))
+    }
+  }
+
+}
+
+
