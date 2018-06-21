@@ -48,9 +48,9 @@ Contains:
 
 
 \bold{Metadata: }creation_date,  start_time, stop_time, inst_type, history,
-starting_water_layer, ending_water_layer, depth_note, transform,
-data_subtype, coord_system, water_mass, pos_const, depth_const, drifter,
-var_fill, experiment, project, descript, data_cmnt, fill_flag, composite,
+ ,  ,  , transform,
+data_subtype, coord_system, water_mass,  ,  ,  ,
+var_fill, experiment, project, descript, data_cmnt, fill_flag,  ,
 magnetic_variation, , delta_t_sec, time_between_ping_groups, depth:
 xducer_offset_from_bottom, depth: bin_size
 
@@ -66,7 +66,7 @@ Contains:
 
     \bold{ Metadata:}  units (v, distance), cellSize, numberOfBeams, orientation,
      model, type, serialNumber, ship (platform), scientist
-     (chief_scientist), institute (data_origin), cruise (cruise_name), station (mooring),
+     (chief_scientist), institution (data_origin), cruise (cruise_name), station (mooring),
      countryInstituteCode, cruiseNumber, startTime, latitude, longitude,
      waterDepth, sounding
 }

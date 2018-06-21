@@ -4,7 +4,8 @@
 \alias{insertInst}
 \title{Insert Pressure from alternate instrument}
 \usage{
-insertInst(adp, var, file, offset = 0)
+insertInst(adp, var, file = adp[["alternate_pressure_file"]],
+  offset = adp[["vertical_separation"]])
 }
 \arguments{
 \item{adp}{adp object into which to insert data}
@@ -23,6 +24,11 @@ Use the measured pressure from an alternate instrument positioned on the same
 moooring as the ADCP This has benefits of a more accurate pressure reading
 which can be translated to depth Note: If the pressure sensor is below the
 ADCP the mooring separation distance (offset) should be negative.
+}
+\details{
+Extreme caution should be used when applying this function to anything other
+than pressure as there may be significant differences in values despite only
+a few metres separation.
 }
 \examples{
 

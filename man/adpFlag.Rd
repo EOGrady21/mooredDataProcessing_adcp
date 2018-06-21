@@ -4,7 +4,8 @@
 \alias{adpFlag}
 \title{ADCP processing Step 3.5}
 \usage{
-adpFlag(adp, pg, er)
+adpFlag(adp, pg = adp[["percentgd_threshold"]],
+  er = adp[["error_threshold"]])
 }
 \arguments{
 \item{adp, }{an adp object, oce-class}
