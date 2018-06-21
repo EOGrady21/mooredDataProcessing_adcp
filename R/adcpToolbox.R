@@ -2444,6 +2444,63 @@ binMap <- function(obj){
 }
 
 
+####flagging specific data points within an adp data set####
+
+#' Flag
+#'
+#' Flag specific data points within an adp dataset
+#'
+#' @param adp an adp object from oce
+#' @param values a list of values indexing the adp object's velocity by time which you wish to flag
+#'
+#' @return adp object with complete flag array
+#' @export
+#'
+#' @examples
+#'
+#' adp <- flag(adp, values = list('time' = c(1, 2, 3, 4, 5, 6)))
+#'
+
+
+flag <- function(adp, values){
+
+  if( !is.null(values$time)){
+    # if ( !is.null( values$depth)){ #FIXME: add index by depth and beam as well?
+    #   if (!is.null (values$beam)){
+
+    for ( i in 1: length(values$time)){
+      f <- values$time[[i]]
+      # g <- values$depth[[i]]
+      # h <- values$beam[[i]]
+      adp[['vFlag']][f, ,] <- 4
+    }
+    #}
+    #     else{
+    #       for ( i in 1: length(values$time)){
+    #         f <- values$time[[i]]
+    #         g <- values$depth[[i]]
+    #
+    #         adp[['vFlag']][f, g, ] <- 4
+    #     }
+    # }
+  }
+
+  # else{
+  #   for ( i in 1: length(values$time)){
+  #     f <- values$time[[i]]
+  #
+  #
+  #     adp[['vFlag']][f, , ] <- 4
+  # }
+  # }
+
+  for( i in 1:length(values$time)){
+    adp@processingLog <- processingLogAppend(adp@processingLog, paste('Specific data points flagged based on visual inspection, index of flagged point was, adp[["v"]][', values$time[[i]], ', , ]' , sep = '  '))
+  }
+  return(adp)
+}
+
+
 ####plotting functions####
 ####bin by bin plot###
 #'
