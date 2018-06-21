@@ -2725,7 +2725,7 @@ plotQC_U <- function(obj, QC ){
     pgGood[is.na(Good[['v']][,,1])] <- NA
 
     for(i in 1:length(obj[['g']][1,,1])){
-      plot(pgGood[,i], xlab = "time", ylab = "%", main = (paste( "Bin", i, 'Perecnt Good (1)')), type = 'l', ylim = c(0, 100))
+      plot(pgGood[,i], xlab = "time", ylab = "%", main = (paste( "Bin", i, 'Percent Good (1)')), type = 'l', ylim = c(0, 100))
       par(new = TRUE)
       plot(pgBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(0, 100))
     }
