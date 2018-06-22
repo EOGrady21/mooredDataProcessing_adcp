@@ -478,18 +478,22 @@ name.file <- function(adp){
 
 
 ####odf2adp####
+####odf missing bin#####
 
 #' ADCP Processing ODF to NetCDF
 #'
+#' Reads in a set of odf files and compiles into adp object, is capable of
+#' recognizing missing bins or missing odf files and inserting NA's in
+#' appropriate slot of data varibales
+#'
 #'@family odf
-#'
 #' @description Converting individual odf bins to Net cdf standard format
-#'
 #' @param files list of odf files
 #' @param metadata any extra metadata to be added to net cdf as list form
 #' @export
-#'
-#'
+
+#list odf files
+files <- list.files(path = ".", pattern =  "*00.ODF")
 
 
 odf2adp <- function(files, metadata) {
@@ -499,30 +503,69 @@ odf2adp <- function(files, metadata) {
   files <- if (is.list(files)) unlist(files) else files
 
   nd <- length(files)
+
   ## read the first one to get length of time:
   d <- read.odf(files[1])
   nt <- length(d[['time']])
   vars <- names(d@data)
   vars <- vars[-which(vars == 'time')]
-  for (vr in vars) {
-    assign(vr, array(NA, dim=c(nt, nd)))
-  }
+
+  #read depths, may not be ordered properly
   depth <- NULL
   for (f in 1:length(files)) {
     d <- read.odf(files[f])
     t <- d[['time']]
     depth[f] <- d[['depthMin']]
-    for (vr in vars) {
-      eval(parse(text=paste0(vr, "[, f] <- d[['", vr, "']]")))
+  }
+  #risky if second bin is missing may be inaccurate cellSize
+  cellSize <- diff(depth)[[1]]
+  #find missing bins
+  od <- seq(from = max(depth), to = min(depth), by = -(cellSize))
+  missbindepth <- NULL
+  #if there are no missing bins
+  if (length(od) == length(depth)){
+    for(i in 1: length(od)){
+      if(abs(od[[i]] - depth[[i]]) < adp[['cellSize']]){
+        print('ODFs processed, no missing depth bins')
+      }
     }
+  }else{
+    missbindepth <- !(od %in% depth)
+  }
+  nd <- length(od)  #set distance dimension of variables to accurate number of bins
+  for (vr in vars) {
+    assign(vr, array(NA, dim=c(nt, nd)))
   }
 
+  #fill variable arrays
+  counter <- 1
+  for(f in 1:length(od)){
+    if(is.null(missbindepth)) {
+      d <- read.odf(files[f])
+      for (vr in vars) {
+        eval(parse(text=paste0(vr, "[, f] <- d[['", vr, "']]")))
+      }
+    } else if (!missbindepth[f]){
+      d <- read.odf(files[counter])
+      for (vr in vars) {
+        eval(parse(text=paste0(vr, "[, f] <- d[['", vr, "']]")))
+      }
+      counter <- counter +1
+    }else{
+      ; #skip column of data if missing bin
+    }
+
+  }
+
+  depth <- max(depth) - od
   ## need to sort the depths because of file sorting ...
   o <- order(depth, decreasing = TRUE)
   depth <- depth[o]
   for (vr in vars) {
     eval(parse(text=paste0(vr, "<- ", vr, "[, o]")))
   }
+
+  #put variables into adp object
 
   distance <- max(depth) - depth
   adp <- as.adp(t, distance, v=abind(u, v, w, error, along=3), a=a, q=unknown)
@@ -532,9 +575,11 @@ odf2adp <- function(files, metadata) {
     }
   }
 
+
   ## depthMinMax
   adp <- oceSetMetadata(adp, 'depthMin', min(depth))
   adp <- oceSetMetadata(adp, 'depthMax', max(depth))
+
 
   ## add in any extra supplied metadata items
   if (!missing(metadata)) {
@@ -542,6 +587,8 @@ odf2adp <- function(files, metadata) {
       adp <- oceSetMetadata(adp, names(metadata)[m], metadata[[m]], note = NULL)
     }
   }
+
+
   adp@metadata$source <- 'odf'
   adp@processingLog <- processingLogAppend(adp@processingLog, 'Creation : Data and metadata read into adp object from ODF file')
 
