@@ -1200,8 +1200,7 @@ oceNc_create <- function(adp, name,  metadata){
 
     ncatt_put(ncout, 0, 'Conventions', 'CF-1.7')
     ncatt_put(ncout, 0, "creator_type", "person")
-    #deprecated Mathieu Ouillet June 20 2018
-    #ncatt_put(ncout, 0, "creator_institution", adp[['institution']])
+    ncatt_put(ncout, 0, "creator_institution", adp[['institution']])
     ncatt_put(ncout, 0, "program", adp[['program']])
     ncatt_put(ncout, 0, "sea_name", adp[['sea_name']])
     ncatt_put(ncout, 0, "time_coverage_start", adp[['deployment_time']])
@@ -1912,6 +1911,7 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 'time_string', 'time_zone', 'UTC')
 
   ####global####
+  ncatt_put(ncout, 0, "creator_institution", adp[['institution']])
   ncatt_put(ncout, 0, 'acknowledgment', adp[['acknowledgement']] )
   ncatt_put(ncout, 0, 'comment', adp[['comment']])
   ncatt_put(ncout, 0, 'cruise_description', adp[['cruise_description']])
