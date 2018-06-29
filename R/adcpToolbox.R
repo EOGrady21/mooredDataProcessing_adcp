@@ -2564,9 +2564,9 @@ flag <- function(adp, values){
 #'@export
 #'
 
-plotBin <- function(v){
+plotBin <- function(v, ...){
   for(i in 1:length(v[1, ]))
-    plot(v[,i], xlab = "time", ylab = "m/sec", main = (paste( "Bin", i)), type = 'l')
+    plot(v[,i], xlab = "time (seconds)", ylab = "m/sec", main = (paste( "Bin", i, ": Depth", round(adp[['depthMean']] - adp[['distance']][i], digits= 0), 'm')), type = 'l', ...)
 }
 
 
@@ -2584,7 +2584,7 @@ plotBin <- function(v){
 #' @export
 #'
 #' @examples
-plot_ei <- function(adp){
+plot_ei <- function(adp, ...){
   #pull echo intensity from adp object
   echoint <- adp[['a', 'numeric']]
   a1 <- echoint[,,1]
@@ -2599,7 +2599,7 @@ plot_ei <- function(adp){
   #number of bins calculated
   bins <- c(1:length(a1m))
   #plot means by bin
-  plot(a1m, bins, xlim = c(0, 255) , type = 'l', xlab = 'Echo Intensity', ylab = 'Bin Number')
+  plot(a1m, bins, xlim = c(0, 255) , type = 'l', xlab = 'Echo Intensity, Counts', ylab = 'Bin Number', ...)
   lines(a2m, bins, xlim = c(0,255) , type = 'l', col = 'red', xlab= '', ylab = '' )
   lines(a3m, bins, xlim = c(0, 255), type = 'l', col = 'green', xlab = '', ylab = '')
   lines(a4m, bins, xlim = c(0, 255), type = 'l', col = 'blue', xlab = '', ylab = '')
@@ -2632,7 +2632,7 @@ plot_ei <- function(adp){
 #' pvPlot(adp, control = list('bin' = c(1:length(adp[['distance']]))))
 
 
-pvPlot <- function(x, control, xlim = c(range(x[['distance']])), ylim = c(range(x[['distance']]))){
+pvPlot <- function(x, control, xlim = c(range(x[['distance']])), ylim = c(range(x[['distance']])), ...){
 
   ##oce code
   mgp=getOption("oceMgp")
@@ -2667,10 +2667,12 @@ pvPlot <- function(x, control, xlim = c(range(x[['distance']])), ylim = c(range(
       for ( i in 1:length(control$bin)){
         u[[i]] <- U[, control$bin[[i]]]
         v[[i]] <- V[, control$bin[[i]]]
-        bins <- TRUE
       }
+        bins <- TRUE
+
     }
     ##
+    browser()
   } else {
     if (x@metadata$numberOfCells > 1) {
       u <- apply(U, 1, mean, na.rm = TRUE)
@@ -2683,6 +2685,8 @@ pvPlot <- function(x, control, xlim = c(range(x[['distance']])), ylim = c(range(
   }
   u[is.na(u)] <- 0        # zero out missing
   v[is.na(v)] <- 0
+
+
   if (bins == FALSE){
     xDist <- integrateTrapezoid(ttt, u, 'cA') / mPerKm
     yDist <- integrateTrapezoid(ttt, v, 'cA') / mPerKm
@@ -2696,7 +2700,8 @@ pvPlot <- function(x, control, xlim = c(range(x[['distance']])), ylim = c(range(
       asp = 1,
       col = 'blue',
       xlim = xlim,
-      ylim = ylim
+      ylim = ylim,
+      ...
     )
   }
 
@@ -2709,6 +2714,7 @@ pvPlot <- function(x, control, xlim = c(range(x[['distance']])), ylim = c(range(
       xDist[[i]] <- integrateTrapezoid(ttt, u[[i]], 'cA') / mPerKm
       yDist[[i]] <- integrateTrapezoid(ttt, v[[i]], 'cA') / mPerKm
     }
+
     for ( i in 1:length(control$bin)){
       plot(
         xDist[[i]],
@@ -2719,14 +2725,15 @@ pvPlot <- function(x, control, xlim = c(range(x[['distance']])), ylim = c(range(
         asp = 1,
         col = listcol[[i]],
         xlim = xlim,
-        ylim = ylim
+        ylim = ylim,
+        ...
 
       )
       par(new = TRUE)
     }
 
 
-    legend('topleft', legend = paste('Bin', control$bin, sep = '  '), col = listcol, lty = 1)
+    legend('topleft', legend = paste('Bin', control$bin, sep = '  '), col = listcol, lty = 1, cex = 0.5)
   }
 
 }
@@ -2758,7 +2765,7 @@ pvPlot <- function(x, control, xlim = c(range(x[['distance']])), ylim = c(range(
 #' @export
 #'
 #' @examples
-plotQC <- function(obj, QC ){
+plotQC <- function(obj, QC, ... ){
   Bad <- handleFlags(object = adp, flags = 1, actions = list('NA'))
   Good <- handleFlags(object = adp, flags = 4, actions = list('NA'))
 
@@ -2768,7 +2775,7 @@ plotQC <- function(obj, QC ){
     uGood <- Good[['v']][,,1]
 
     for(i in 1:length(obj[['v']][1,,1])){
-      plot(uGood[,i], xlab = "time", ylab = "m/sec", main = (paste( "Bin", i, 'U')), type = 'l', ylim = c(-4, 4))
+      plot(uGood[,i], xlab = "time", ylab = "m/sec",  main = (paste( "Bin", i, ": Depth", round(adp[['depthMean']] - adp[['distance']][i], digits= 0), 'm, of U')), type = 'l', ylim = c(-4, 4), ...)
       par(new = TRUE)
       plot(uBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(-4, 4))
     }
@@ -2778,7 +2785,7 @@ plotQC <- function(obj, QC ){
     vGood <- Good[['v']][,,2]
 
     for(i in 1:length(obj[['v']][1,,1])){
-      plot(vGood[,i], xlab = "time", ylab = "m/sec", main = (paste( "Bin", i, 'V')), type = 'l', ylim = c(-4, 4))
+      plot(vGood[,i], xlab = "time", ylab = "m/sec",  main = (paste( "Bin", i, ": Depth", round(adp[['depthMean']] - adp[['distance']][i], digits= 0), 'm, of V')), type = 'l', ylim = c(-4, 4), ...)
       par(new = TRUE)
       plot(vBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(-4, 4))
     }
@@ -2789,7 +2796,7 @@ plotQC <- function(obj, QC ){
     wGood <- Good[['v']][,,3]
 
     for(i in 1:length(obj[['v']][1,,1])){
-      plot(wGood[,i], xlab = "time", ylab = "m/sec", main = (paste( "Bin", i, 'W')), type = 'l', ylim = c(-4, 4))
+      plot(wGood[,i], xlab = "time", ylab = "m/sec",  main = (paste( "Bin", i, ": Depth", round(adp[['depthMean']] - adp[['distance']][i], digits= 0), 'm, of W')), type = 'l', ylim = c(-4, 4), ...)
       par(new = TRUE)
       plot(wBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(-4, 4))
     }
@@ -2800,7 +2807,7 @@ plotQC <- function(obj, QC ){
     erGood <- Good[['v']][,,4]
 
     for(i in 1:length(obj[['v']][1,,1])){
-      plot(erGood[,i], xlab = "time", ylab = "m/sec", main = (paste( "Bin", i, 'ERRV')), type = 'l', ylim = c(-4, 4))
+      plot(erGood[,i], xlab = "time", ylab = "m/sec",  main = (paste( "Bin", i, ": Depth", round(adp[['depthMean']] - adp[['distance']][i], digits= 0), 'm, of ERRV')), type = 'l', ylim = c(-4, 4), ...)
       par(new = TRUE)
       plot(erBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(-4, 4))
     }
@@ -2815,7 +2822,7 @@ plotQC <- function(obj, QC ){
     eiGood[is.na(Good[['v']][,,1])] <- NA
 
     for(i in 1:length(obj[['a']][1,,1])){
-      plot(eiGood[,i], xlab = "time", ylab = "Intensity", main = (paste( "Bin", i, 'Echo Intensity (1)')), type = 'l', ylim = c(0, 255))
+      plot(eiGood[,i], xlab = "time", ylab = "Intensity",  main = (paste( "Bin", i, ": Depth", round(adp[['depthMean']] - adp[['distance']][i], digits= 0), 'm, of Echo Intensity (Beam 1)')), type = 'l', ylim = c(0, 255),...)
       par(new = TRUE)
       plot(eiBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(0, 255))
     }
@@ -2829,7 +2836,7 @@ plotQC <- function(obj, QC ){
     pgGood[is.na(Good[['v']][,,1])] <- NA
 
     for(i in 1:length(obj[['g']][1,,1])){
-      plot(pgGood[,i], xlab = "time", ylab = "%", main = (paste( "Bin", i, 'Percent Good (1)')), type = 'l', ylim = c(0, 100))
+      plot(pgGood[,i], xlab = "time", ylab = "%",  main = (paste( "Bin", i, ": Depth", round(adp[['depthMean']] - adp[['distance']][i], digits= 0), 'm,  of Percent Good (Beam 1)')), type = 'l', ylim = c(0, 100), ...)
       par(new = TRUE)
       plot(pgBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(0, 100))
     }
