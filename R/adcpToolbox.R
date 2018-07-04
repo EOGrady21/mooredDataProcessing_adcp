@@ -2914,7 +2914,7 @@ startPlots <- function(adp){
   dev.off()
 }
 
-binPlot <- function(adp){
+binPlot <- function(adp, x){
 
   if (!is.null(adp[['mooring_number']])){
     mooring <- adp[['mooring_number']]
@@ -2940,7 +2940,7 @@ name <- paste('binbybinplot_V_', adp[['cruise_number']],'_', adp[['mooring_numbe
 pdf(paste0(plotpath,'/', name, '.pdf') , width = 8, height = 40 ) #save to pdf
 par(mfrow = c(15, 1)) #set number of plots per page (rows, columns)
 #cat(paste('Bin Plot of mooring', adp[['mooring_number']], 'from cruise', adp[['cruise_number']], 'with data from', adp[['time_coverage_start']], 'to', adp[['time_coverage_end']], sep = '  '))
-plotBin(adp@data$v[,,1])
+plotBin(adp@data[[x]])
 dev.off() #close pdf
 }
 
