@@ -471,7 +471,7 @@ adpFlag <- function(adp,  pg = adp[['percentgd_threshold']], er= adp[['error_thr
 
 name.file <- function(adp){
 
-  name <- paste('MADCP', adp[['experiment']], adp[['mooring_number']], adp[['serialNumber']], adp[['sampling_interval']], sep = '_')
+  name <- paste('MADCPS', adp[['experiment']], adp[['eventNumber']], adp[['serialNumber']], adp[['samplingInterval']], sep = '_')
 
   name
 }
@@ -491,9 +491,8 @@ name.file <- function(adp){
 #' @param files list of odf files
 #' @param metadata any extra metadata to be added to net cdf as list form
 #' @export
-
-#list odf files
-files <- list.files(path = ".", pattern =  "*00.ODF")
+#'
+#'
 
 
 odf2adp <- function(files, metadata) {
@@ -509,23 +508,32 @@ odf2adp <- function(files, metadata) {
   nt <- length(d[['time']])
   vars <- names(d@data)
   vars <- vars[-which(vars == 'time')]
+  for (vr in vars) {
+    assign(vr, array(NA, dim=c(nt, nd)))
+  }
+
 
   #read depths, may not be ordered properly
-  depth <- NULL
-  for (f in 1:length(files)) {
-    d <- read.odf(files[f])
-    t <- d[['time']]
-    depth[f] <- d[['depthMin']]
-  }
+   depth <- NULL
+   for (f in 1:length(files)) {
+     d <- read.odf(files[f])
+     t <- d[['time']]
+     depth[f] <- d[['depthMin']]
+   }
+
+
   #risky if second bin is missing may be inaccurate cellSize
   cellSize <- diff(depth)[[1]]
-  #find missing bins
   od <- seq(from = max(depth), to = min(depth), by = -(cellSize))
+
+
+  #find missing bins
+
   missbindepth <- NULL
   #if there are no missing bins
   if (length(od) == length(depth)){
     for(i in 1: length(od)){
-      if(abs(od[[i]] - depth[[i]]) < adp[['cellSize']]){
+      if(abs(od[[i]] - depth[[i]]) < cellSize){
         print('ODFs processed, no missing depth bins')
       }
     }
@@ -557,13 +565,14 @@ odf2adp <- function(files, metadata) {
 
   }
 
-  depth <- max(depth) - od
-  ## need to sort the depths because of file sorting ...
-  o <- order(depth, decreasing = TRUE)
-  depth <- depth[o]
-  for (vr in vars) {
-    eval(parse(text=paste0(vr, "<- ", vr, "[, o]")))
-  }
+
+
+## need to sort the depths because of file sorting ...
+o <- order(depth, decreasing = TRUE)
+depth <- depth[o]
+for (vr in vars) {
+  eval(parse(text=paste0(vr, "<- ", vr, "[, o]")))
+}
 
   #put variables into adp object
 
@@ -972,7 +981,7 @@ oceNc_create <- function(adp, name,  metadata){
 
     #CF conventions
 
-    ncatt_put(ncout, 0, 'Conventions', 'CF-1.7')
+    ncatt_put(ncout, 0, 'Conventions', 'CF-1.6')
     ncatt_put(ncout, 0, "creator_type", "person")
     ncatt_put(ncout, 0, "program", adp[['program']])
     ncatt_put(ncout, 0, "sea_name", adp[['sea_name']])
@@ -1198,7 +1207,7 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, "PGDP_01", "generic_name", "PGd")
     #CF
 
-    ncatt_put(ncout, 0, 'Conventions', 'CF-1.7')
+    ncatt_put(ncout, 0, 'Conventions', 'CF-1.6')
     ncatt_put(ncout, 0, "creator_type", "person")
     ncatt_put(ncout, 0, "creator_institution", adp[['institution']])
     ncatt_put(ncout, 0, "program", adp[['program']])
@@ -1911,18 +1920,19 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 'time_string', 'time_zone', 'UTC')
 
   ####global####
+  ncatt_put(ncout, 0, "Conventions", 'CF-1.6')
   ncatt_put(ncout, 0, "creator_institution", adp[['institution']])
-  ncatt_put(ncout, 0, 'acknowledgment', adp[['acknowledgement']] )
+  ncatt_put(ncout, 0, 'acknowledgement', adp[['acknowledgement']] )
   ncatt_put(ncout, 0, 'comment', adp[['comment']])
   ncatt_put(ncout, 0, 'cruise_description', adp[['cruise_description']])
-  ncatt_put(ncout, 0, 'date_created', adp[['date_created']])
+  ncatt_put(ncout, 0, 'date_created', Sys.Date())
   ncatt_put(ncout, 0, 'keywords', 'Oceans > Ocean Circulation > Ocean Currents')
   ncatt_put(ncout, 0, 'keywords_vocabulary', 'GCMD Science Keywords')
   ncatt_put(ncout, 0, 'model', adp[['model']])
-  ncatt_put(ncout, 0, 'sampling_interval', adp[['sampling_interval']])
+  ncatt_put(ncout, 0, 'sampling_interval', adp[['samplingInterval']])
   ncatt_put(ncout, 0, 'standard_name_vocabulary', adp[['standard_name_vocabulary']])
   ncatt_put(ncout, 0, 'title', adp[['title']])
-  ncatt_put(ncout, 0, 'blanking_distance', adp[['blanking_distance']])
+  #ncatt_put(ncout, 0, 'blanking_distance', adp[['blanking_distance']])
   ncatt_put(ncout, 0, 'country_code', adp[['countryInstituteCode']])
   ncatt_put(ncout, 0, 'cruise_number', adp[['cruiseNumber']])
   ncatt_put(ncout, 0, 'summary', adp[['summary']])
@@ -2064,7 +2074,7 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, "SVEL", "serial_number", adp[['serial_number']])
 
   ####CF conventions & BODC standards####
-  ncatt_put(ncout, 0, 'Conventions', 'CF-1.7')
+  ncatt_put(ncout, 0, 'Conventions', 'CF-1.6')
   ncatt_put(ncout, 0, "creator_type", "person")
 
   ncatt_put(ncout, 0, "program", adp[['description']])
@@ -2672,7 +2682,7 @@ pvPlot <- function(x, control, xlim = c(range(x[['distance']])), ylim = c(range(
 
     }
     ##
-    browser()
+
   } else {
     if (x@metadata$numberOfCells > 1) {
       u <- apply(U, 1, mean, na.rm = TRUE)
@@ -2775,9 +2785,11 @@ plotQC <- function(obj, QC, ... ){
     uGood <- Good[['v']][,,1]
 
     for(i in 1:length(obj[['v']][1,,1])){
-      plot(uGood[,i], xlab = "time", ylab = "m/sec",  main = (paste( "Bin", i, ": Depth", round(adp[['depthMean']] - adp[['distance']][i], digits= 0), 'm, of U')), type = 'l', ylim = c(-4, 4), ...)
+      plot(uGood[,i], xlab = "time", ylab = "m/sec",  main = (paste( "Bin", i, ": Depth", round(adp[['depthMean']] - adp[['distance']][i], digits= 0), 'm, of U')), type = 'l', ylim = c(-4, 4))
       par(new = TRUE)
       plot(uBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(-4, 4))
+      par(new = TRUE)
+      mtext(text =paste(round(length(na.omit(uBad[,i]))/ length(uBad[,i]) *100, digits = 2), "%  invalid data"), side = 1, cex = 0.8)
     }
   }
   if( QC == 'v'){
@@ -2788,6 +2800,9 @@ plotQC <- function(obj, QC, ... ){
       plot(vGood[,i], xlab = "time", ylab = "m/sec",  main = (paste( "Bin", i, ": Depth", round(adp[['depthMean']] - adp[['distance']][i], digits= 0), 'm, of V')), type = 'l', ylim = c(-4, 4), ...)
       par(new = TRUE)
       plot(vBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(-4, 4))
+      par(new = TRUE)
+      mtext(text =paste(round(length(na.omit(vBad[,i]))/ length(vBad[,i]) *100, digits = 2), "%  invalid data"), side = 1, cex = 0.8)
+
     }
 
   }
@@ -2799,6 +2814,9 @@ plotQC <- function(obj, QC, ... ){
       plot(wGood[,i], xlab = "time", ylab = "m/sec",  main = (paste( "Bin", i, ": Depth", round(adp[['depthMean']] - adp[['distance']][i], digits= 0), 'm, of W')), type = 'l', ylim = c(-4, 4), ...)
       par(new = TRUE)
       plot(wBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(-4, 4))
+      par(new = TRUE)
+      mtext(text =paste(round(length(na.omit(wBad[,i]))/ length(wBad[,i]) *100, digits = 2), "%  invalid data"), side = 1, cex = 0.8)
+
     }
   }
 
@@ -2810,6 +2828,9 @@ plotQC <- function(obj, QC, ... ){
       plot(erGood[,i], xlab = "time", ylab = "m/sec",  main = (paste( "Bin", i, ": Depth", round(adp[['depthMean']] - adp[['distance']][i], digits= 0), 'm, of ERRV')), type = 'l', ylim = c(-4, 4), ...)
       par(new = TRUE)
       plot(erBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(-4, 4))
+      par(new = TRUE)
+      mtext(text =paste(round(length(na.omit(erBad[,i]))/ length(erBad[,i]) *100, digits = 2), "%  invalid data"), side = 1, cex = 0.8)
+
     }
   }
   if( QC == 'ei'){
@@ -2825,6 +2846,9 @@ plotQC <- function(obj, QC, ... ){
       plot(eiGood[,i], xlab = "time", ylab = "Intensity",  main = (paste( "Bin", i, ": Depth", round(adp[['depthMean']] - adp[['distance']][i], digits= 0), 'm, of Echo Intensity (Beam 1)')), type = 'l', ylim = c(0, 255),...)
       par(new = TRUE)
       plot(eiBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(0, 255))
+      par(new = TRUE)
+      mtext(text =paste(round(length(na.omit(eiBad[,i]))/ length(eiBad[,i]) *100, digits = 2), "%  invalid data"), side = 1, cex = 0.8)
+
     }
   }
 
@@ -2839,9 +2863,180 @@ plotQC <- function(obj, QC, ... ){
       plot(pgGood[,i], xlab = "time", ylab = "%",  main = (paste( "Bin", i, ": Depth", round(adp[['depthMean']] - adp[['distance']][i], digits= 0), 'm,  of Percent Good (Beam 1)')), type = 'l', ylim = c(0, 100), ...)
       par(new = TRUE)
       plot(pgBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(0, 100))
+      par(new = TRUE)
+      mtext(text =paste(round(length(na.omit(pgBad[,i]))/ length(pgBad[,i]) *100, digits = 2), "%  invalid data"), side = 1, cex = 0.8)
+
     }
   }
 
 }
 
 
+####Plot combinations####
+
+
+startPlots <- function(adp){
+
+  #save all plots to folder
+
+  if (!is.null(adp[['mooring_number']])){
+    mooring <- adp[['mooring_number']]
+  }
+  if(!is.null(adp[['mooringNumber']])){
+    mooring <- adp[['mooringNumber']]
+  }
+  if(!is.null(adp[['station']])){
+    mooring <- adp[['station']]
+  }
+
+  plotpath <- paste0('C:/Users/ChisholmE/Documents/ADCP_Processing/Plots/M', mooring)
+
+  if (dir.exists(plotpath)){
+
+  }else{
+    dir.create(paste0('C:/Users/ChisholmE/Documents/ADCP_Processing/Plots/M', mooring))
+  }
+
+
+
+
+  #general first look plots
+  pdf( file = paste0(plotpath, '/PreProcessingPlots.pdf'))
+  plot(adp, which = 1, title = 'EWCT: PreProcessing')  #u
+  mtext('m/s', side = 4)
+  plot(adp, which = 2, title = 'NSCT: PreProcessing')  #v
+  mtext('m/s', side = 4)
+  plot(adp, which = 3, title = 'VCSP: PreProcessing')  #w
+  mtext('m/s', side = 4)
+  plot(adp, which = 4, title = 'ERRV: PreProcessing')  #error
+  mtext('m/s', side = 4)
+  plot(adp, which = 15, main = 'Pressure: PreProcessing') #pressure
+  dev.off()
+}
+
+binPlot <- function(adp){
+
+  if (!is.null(adp[['mooring_number']])){
+    mooring <- adp[['mooring_number']]
+  }
+  if(!is.null(adp[['mooringNumber']])){
+    mooring <- adp[['mooringNumber']]
+  }
+  if(!is.null(adp[['station']])){
+    mooring <- adp[['station']]
+  }
+
+  plotpath <- paste0('C:/Users/ChisholmE/Documents/ADCP_Processing/Plots/M', mooring)
+
+  if (dir.exists(plotpath)){
+
+  }else{
+    dir.create(paste0('C:/Users/ChisholmE/Documents/ADCP_Processing/Plots/M', mooring))
+  }
+
+
+#save bin plots to pdf
+name <- paste('binbybinplot_V_', adp[['cruise_number']],'_', adp[['mooring_number']], '_', '1-50', sep = '') #name pdf
+pdf(paste0(plotpath,'/', name, '.pdf') , width = 8, height = 40 ) #save to pdf
+par(mfrow = c(15, 1)) #set number of plots per page (rows, columns)
+#cat(paste('Bin Plot of mooring', adp[['mooring_number']], 'from cruise', adp[['cruise_number']], 'with data from', adp[['time_coverage_start']], 'to', adp[['time_coverage_end']], sep = '  '))
+plotBin(adp@data$v[,,1])
+dev.off() #close pdf
+}
+
+endPlots <- function(adpClean){
+  if (!is.null(adpClean[['mooring_number']])){
+    mooring <- adpClean[['mooring_number']]
+  }
+  if(!is.null(adpClean[['mooringNumber']])){
+    mooring <- adpClean[['mooringNumber']]
+  }
+  if(!is.null(adpClean[['station']])){
+    mooring <- adpClean[['station']]
+  }
+  plotpath <- paste0('C:/Users/ChisholmE/Documents/ADCP_Processing/Plots/M', mooring)
+
+  if (dir.exists(plotpath)){
+
+  }else{
+  dir.create(paste0('C:/Users/ChisholmE/Documents/ADCP_Processing/Plots/M', mooring))
+  }
+
+  #check plots
+  pdf(paste0(plotpath, '/PostProcessing.pdf'))
+  #     looking for any spikes on either end of dataset
+  plot(adp[['depth']], main = 'Depth: PostProcessing', xlab = 'time (seconds)', ylab = 'Depth (m)', lty = 2)
+
+  #     looking for pressure spikes on either end
+  plot(adp, which = 15, main = 'Pressure: PostProcessing')
+
+  #     plot velocity beams
+  plot(adpClean, which = 1, title = 'EWCT: PostProcessing')
+  mtext('m/s', side = 4)
+  plot(adpClean, which = 2, title = 'NSCT: PostProcessing')
+  mtext('m/s', side = 4)
+  plot(adpClean, which = 3, title = 'VCSP: PostProcessing')
+  mtext('m/s', side = 4)
+  plot(adpClean, which = 4, title = 'ERRV: PostProcessing')
+  mtext('m/s', side = 4)
+  #     plot echo intensity
+  plot_ei(adpClean, main = 'Echo Intensity')
+  dev.off()
+
+
+}
+
+#' Quality Control Plots
+#'
+#' @param adp an oce adp object
+#' @param QC the QC parameter you want to inspect, options are listed in details
+#'
+#' @details
+#' These quality control plots show a comparison between valid and invalid data.
+#' Invalid data is determined by the flags within the adp object (which will
+#' have been created based on processing procedures). The invalid data is
+#' higlighted in red for each bin and a total is shown at the bottom which gives
+#' the user a percentage of invalid data (or data flagged), this can allow a
+#' user to see if there are particular bins which should be ommitted from the
+#' final export data set.
+#'
+#' options for quality control parameters are u, v, w, er, ei, pg
+#'
+#' *u -> eastward velocity component
+#' *v -> northward velocity component
+#' *w -> upward velocity component
+#' *er -> error velocity
+#' *ei -> echo intensity (first beam only)
+#' *pg -> precent good, sum of 1st and 4th beams
+#'
+#' @return a pdf compilation of plots
+#' @export
+#'
+#' @examples
+qcPlots <- function(adp, QC){
+  if (!is.null(adp[['mooring_number']])){
+    mooring <- adp[['mooring_number']]
+  }
+  if(!is.null(adp[['mooringNumber']])){
+    mooring <- adp[['mooringNumber']]
+  }
+  if(!is.null(adp[['station']])){
+    mooring <- adp[['station']]
+  }
+  plotpath <- paste0('C:/Users/ChisholmE/Documents/ADCP_Processing/Plots/M', mooring)
+
+  if (dir.exists(plotpath)){
+
+  }else{
+    dir.create(paste0('C:/Users/ChisholmE/Documents/ADCP_Processing/Plots/M', mooring))
+  }
+
+  name <- paste('binbybinplot', QC, mooring, sep = '_')
+
+  #     check any other relvant plots to confirm QC before exporting
+  pdf(paste0(plotpath,'/', name, '_QC.pdf') , width = 8, height = 40 ) #save to pdf
+  par(mfrow = c(15, 1)) #set number of plots per page (rows, columns)
+  plotQC(adp, QC = QC)
+  dev.off() #close pdf
+
+}
