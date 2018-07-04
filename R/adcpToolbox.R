@@ -504,7 +504,7 @@ odf2adp <- function(files, metadata) {
   nd <- length(files)
 
   ## read the first one to get length of time:
-  d <- read.odf(files[1])
+  d <- read.odf(files[1], header = 'character')
   nt <- length(d[['time']])
   vars <- names(d@data)
   vars <- vars[-which(vars == 'time')]
@@ -549,12 +549,12 @@ odf2adp <- function(files, metadata) {
   counter <- 1
   for(f in 1:length(od)){
     if(is.null(missbindepth)) {
-      d <- read.odf(files[f])
+      d <- read.odf(files[f], header = 'list')
       for (vr in vars) {
         eval(parse(text=paste0(vr, "[, f] <- d[['", vr, "']]")))
       }
     } else if (!missbindepth[f]){
-      d <- read.odf(files[counter])
+      d <- read.odf(files[counter], header = 'list')
       for (vr in vars) {
         eval(parse(text=paste0(vr, "[, f] <- d[['", vr, "']]")))
       }
@@ -1644,9 +1644,12 @@ adpCombine <- function(adp, raw, ncin = ''){
 
   ####apply time offset####
 
-
+if(length(adp[['sample_interval']]) != 0 ){
   t <-  ( a[['time']] + (adp[['sample_interval']]/2))
   a <- oceSetData(a, 'time', t)
+}else{
+  stop('Time offset not applied, please check sample interval!')
+}
 
   #limit by time
   limitmat <- matrix(0, nrow = length(a[['time']]), ncol = length(a[['distance']]))
@@ -1685,6 +1688,10 @@ adpCombine <- function(adp, raw, ncin = ''){
 
 
 
+  ####Check distances match####
+  if (length(a[['distance']]) != length(adp[['distance']])){
+    warning('ADP DISTANCE VECTORS DO NOT MATCH, DOUBLE CHECK FOR MISSING BINS!')
+  }
 
   #####insert into adp####
 
