@@ -144,3 +144,28 @@ dev.off() #close pdf
 
 the width and height within the `pdf()` call may need to be adjusted based on the number of plots being produced. These settings define the size of the pdf file itself and not the specific plot margins, those are set by `par()`. 
 
+
+###Combining plots
+
+In some instances of processing it may be helpful to quickly produce a series of common plots. 
+
+There are a few functions in ADCP Toolbox which currently work towards this goal. 
+
+`startPlots()`, `binPlot()`, `qcPlot()`, and `endPlots()`
+
+Each of these functions saves plots to a pdf in a pre determined folder named by the mooring number of the ADCP in a folder "plots" inside your working directory.
+
+##### Start Plots
+This function produces a pdf of a series of plots including each velocity pane (east, north, upwards and error) as well as a pressure plot. This can be a helpful starting point for visualizing ADCP data
+
+#####Bin Plot
+This function plots a series of bins to a pdf file, it can be used to plot any matrix of data which can be specified in the objects of the function. Keep in mind this function is meant to plot a single slice of data over distance and time and cannot handle 3 dimensional data arrays. 
+
+##### QC Plot
+This function plots the quality control of a particular variable over a series of bins, highlighting the flagged or invalid data based on processing methods. It also summarizes the percent of invalid data in each bin. 
+
+##### End Plots
+This provides a summary of plots to be run after processing. This function gives a similar suite of plots as `startPlots()` with pressure, east/north/upward/error velocities but also includes echo intensity. 
+
+
+
