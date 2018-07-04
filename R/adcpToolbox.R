@@ -2875,6 +2875,19 @@ plotQC <- function(obj, QC, ... ){
 ####Plot combinations####
 
 
+#' Start Plots
+#'
+#' Plots give a first visualization of ADCP data set
+#'
+#' @param adp an oce adp object
+#'
+#'@details
+#'Includes each velocity component as well as pressure over time
+#'
+#' @return a pdf series of plots
+#' @export
+#'
+#' @examples
 startPlots <- function(adp){
 
   #save all plots to folder
@@ -2912,8 +2925,25 @@ startPlots <- function(adp){
   mtext('m/s', side = 4)
   plot(adp, which = 15, main = 'Pressure: PreProcessing') #pressure
   dev.off()
+  print(paste("PreProcessingPlots.pdf created in", plotpath))
 }
 
+#' Bin Plot
+#'
+#' @param adp an oce adp object
+#' @param x the matrix of data to be plotted
+#'
+#'
+#'@details
+#' Series of plots, separated by depth (bins) of a particular parameter in ADCP data
+#'
+#'
+#' @return a pdf with a series of plots
+#' @export
+#'
+#' @examples
+#'
+#' binPlot(adp, x = adp[['v']][,,1])
 binPlot <- function(adp, x){
 
   if (!is.null(adp[['mooring_number']])){
@@ -2940,10 +2970,21 @@ name <- paste('binbybinplot_V_', adp[['cruise_number']],'_', adp[['mooring_numbe
 pdf(paste0(plotpath,'/', name, '.pdf') , width = 8, height = 40 ) #save to pdf
 par(mfrow = c(15, 1)) #set number of plots per page (rows, columns)
 #cat(paste('Bin Plot of mooring', adp[['mooring_number']], 'from cruise', adp[['cruise_number']], 'with data from', adp[['time_coverage_start']], 'to', adp[['time_coverage_end']], sep = '  '))
-plotBin(adp@data[[x]])
+plotBin(x)
 dev.off() #close pdf
+print(paste("PreProcessingPlots.pdf created in", plotpath))
 }
 
+#' End Plots
+#'
+#' Post Processing summary plots for ADCP data
+#'
+#' @param adpClean an adp object with flags set to NA
+#'
+#' @return a pdf series of plots including velocity components, pressure and echo intensity
+#' @export
+#'
+#' @examples
 endPlots <- function(adpClean){
   if (!is.null(adpClean[['mooring_number']])){
     mooring <- adpClean[['mooring_number']]
@@ -2982,7 +3023,7 @@ endPlots <- function(adpClean){
   #     plot echo intensity
   plot_ei(adpClean, main = 'Echo Intensity')
   dev.off()
-
+  print(paste("PreProcessingPlots.pdf created in", plotpath))
 
 }
 
@@ -3038,5 +3079,6 @@ qcPlots <- function(adp, QC){
   par(mfrow = c(15, 1)) #set number of plots per page (rows, columns)
   plotQC(adp, QC = QC)
   dev.off() #close pdf
+  print(paste("PreProcessingPlots.pdf created in", plotpath))
 
 }
