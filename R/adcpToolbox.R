@@ -525,7 +525,7 @@ odf2adp <- function(files, metadata) {
 
 
   #risky if second bin is missing may be inaccurate cellSize
-  cellSize <- diff(depth)[[1]]
+  cellSize <- abs(diff(depth)[[1]])
   od <- seq(from = max(depth), to = min(depth), by = -(cellSize))
 
 
@@ -576,10 +576,18 @@ for (vr in vars) {
   eval(parse(text=paste0(vr, "<- ", vr, "[, o]")))
 }
 
-  #put variables into adp object
-
+##naming difference in old odfs
   distance <- max(depth) - depth
-  adp <- as.adp(t, distance, v=abind(u, v, w, error, along=3), a=a, q=unknown)
+  if ('unknown' %in% vars){
+    q <- unknown
+  }
+  if ('PGDP' %in% vars){
+
+  q <- PGDP
+  }
+
+  #put variables into adp object
+  adp <- as.adp(t, distance, v=abind(u, v, w, error, along=3), a=a, q=q)
   for (m in names(d@metadata)) {
     if (m != 'units' & m != 'flags' & m != 'dataNamesOriginal') {
       adp <- oceSetMetadata(adp, m, d[[m]], note = NULL)
