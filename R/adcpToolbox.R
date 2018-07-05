@@ -210,6 +210,7 @@ limit_depthbyrmax <- function(x, lat = x[['latitude']]){
     d[d < rmax] <- NA
     mdt <- round(mean(d), digits = 2)
     x@metadata$sensor_depth <- mdt
+    x@metadata$depthMean <- mdt
     x@data$depth <- d
 
   }
@@ -221,6 +222,7 @@ limit_depthbyrmax <- function(x, lat = x[['latitude']]){
       d[d < rmax] <- NA
       mdt <- round(mean(x@data$depth, na.rm = TRUE), digits = 2)
       x@metadata$sensor_depth <- mdt
+      x@metadata$depthMean <- mdt
       x@data$depth <- d
     }
     if (is.na(x@metadata$latitude)){
@@ -265,7 +267,7 @@ limit_depthbytime <- function(adp, tz = 'UTC'){
 
   mdt <- round(mean(depth, na.rm = TRUE), digits = 2)
   adp@metadata$sensor_depth <- mdt
-
+  adp@metadata$depthMean <- mdt
   adp@data$depth <- depth
   adp@processingLog <- processingLogAppend(adp@processingLog, paste0('depth limited by deployment (', adp[['time_coverage_start']], ') and recovery  (', adp[['time_coverage_end']], ')  times'))
   adp@processingLog <- processingLogAppend(adp@processingLog, paste0('Sensor depth and mean depth set to  ', mdt , '  based on trimmed depth values'))
@@ -2583,7 +2585,7 @@ flag <- function(adp, values){
 
 plotBin <- function(v, ...){
   for(i in 1:length(v[1, ]))
-    plot(v[,i], xlab = "time (seconds)", ylab = "m/sec", main = (paste( "Bin", i, ": Depth", round(adp[['depthMean']] - adp[['distance']][i], digits= 0), 'm')), type = 'l', ...)
+    plot(v[,i], xlab = "time (s)", ylab = "m/s", main = (paste( "Bin", i, ": Depth", round(adp[['depthMean']]  - adp[['distance']][i], digits= 0), 'm')), type = 'l', ...)
 }
 
 
@@ -2792,9 +2794,9 @@ plotQC <- function(obj, QC, ... ){
     uGood <- Good[['v']][,,1]
 
     for(i in 1:length(obj[['v']][1,,1])){
-      plot(uGood[,i], xlab = "time", ylab = "m/sec",  main = (paste( "Bin", i, ": Depth", round(adp[['depthMean']] - adp[['distance']][i], digits= 0), 'm, of U')), type = 'l', ylim = c(-4, 4))
+      plot(uGood[,i], xlab = "time (s)", ylab = "m/s",  main = (paste( "Bin", i, ": Depth", round(adp[['depthMean']] - adp[['distance']][i], digits= 0), 'm, of U')), type = 'l', ylim = c(-1.5, 1.5))
       par(new = TRUE)
-      plot(uBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(-4, 4))
+      plot(uBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(-1.5, 1.5))
       par(new = TRUE)
       mtext(text =paste(round(length(na.omit(uBad[,i]))/ length(uBad[,i]) *100, digits = 2), "%  invalid data"), side = 1, cex = 0.8)
     }
@@ -2804,9 +2806,9 @@ plotQC <- function(obj, QC, ... ){
     vGood <- Good[['v']][,,2]
 
     for(i in 1:length(obj[['v']][1,,1])){
-      plot(vGood[,i], xlab = "time", ylab = "m/sec",  main = (paste( "Bin", i, ": Depth", round(adp[['depthMean']] - adp[['distance']][i], digits= 0), 'm, of V')), type = 'l', ylim = c(-4, 4), ...)
+      plot(vGood[,i], xlab = "time (s)", ylab = "m/s",  main = (paste( "Bin", i, ": Depth", round(adp[['depthMean']] - adp[['distance']][i], digits= 0), 'm, of V')), type = 'l', ylim = c(-1.5, 1.5), ...)
       par(new = TRUE)
-      plot(vBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(-4, 4))
+      plot(vBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(-1.5, 1.5))
       par(new = TRUE)
       mtext(text =paste(round(length(na.omit(vBad[,i]))/ length(vBad[,i]) *100, digits = 2), "%  invalid data"), side = 1, cex = 0.8)
 
@@ -2818,9 +2820,9 @@ plotQC <- function(obj, QC, ... ){
     wGood <- Good[['v']][,,3]
 
     for(i in 1:length(obj[['v']][1,,1])){
-      plot(wGood[,i], xlab = "time", ylab = "m/sec",  main = (paste( "Bin", i, ": Depth", round(adp[['depthMean']] - adp[['distance']][i], digits= 0), 'm, of W')), type = 'l', ylim = c(-4, 4), ...)
+      plot(wGood[,i], xlab = "time (s)", ylab = "m/s",  main = (paste( "Bin", i, ": Depth", round(adp[['depthMean']] - adp[['distance']][i], digits= 0), 'm, of W')), type = 'l', ylim = c(-1.5, 1.5), ...)
       par(new = TRUE)
-      plot(wBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(-4, 4))
+      plot(wBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(-1.5, 1.5))
       par(new = TRUE)
       mtext(text =paste(round(length(na.omit(wBad[,i]))/ length(wBad[,i]) *100, digits = 2), "%  invalid data"), side = 1, cex = 0.8)
 
@@ -2832,7 +2834,7 @@ plotQC <- function(obj, QC, ... ){
     erGood <- Good[['v']][,,4]
 
     for(i in 1:length(obj[['v']][1,,1])){
-      plot(erGood[,i], xlab = "time", ylab = "m/sec",  main = (paste( "Bin", i, ": Depth", round(adp[['depthMean']] - adp[['distance']][i], digits= 0), 'm, of ERRV')), type = 'l', ylim = c(-4, 4), ...)
+      plot(erGood[,i], xlab = "time (s)", ylab = "m/s",  main = (paste( "Bin", i, ": Depth", round(adp[['depthMean']] - adp[['distance']][i], digits= 0), 'm, of ERRV')), type = 'l', ylim = c(-4, 4), ...)
       par(new = TRUE)
       plot(erBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(-4, 4))
       par(new = TRUE)
@@ -2850,7 +2852,7 @@ plotQC <- function(obj, QC, ... ){
     eiGood[is.na(Good[['v']][,,1])] <- NA
 
     for(i in 1:length(obj[['a']][1,,1])){
-      plot(eiGood[,i], xlab = "time", ylab = "Intensity",  main = (paste( "Bin", i, ": Depth", round(adp[['depthMean']] - adp[['distance']][i], digits= 0), 'm, of Echo Intensity (Beam 1)')), type = 'l', ylim = c(0, 255),...)
+      plot(eiGood[,i], xlab = "time (s)", ylab = "Intensity (counts)",  main = (paste( "Bin", i, ": Depth", round(adp[['depthMean']] - adp[['distance']][i], digits= 0), 'm, of Echo Intensity (Beam 1)')), type = 'l', ylim = c(0, 255),...)
       par(new = TRUE)
       plot(eiBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(0, 255))
       par(new = TRUE)
@@ -2867,7 +2869,7 @@ plotQC <- function(obj, QC, ... ){
     pgGood[is.na(Good[['v']][,,1])] <- NA
 
     for(i in 1:length(obj[['g']][1,,1])){
-      plot(pgGood[,i], xlab = "time", ylab = "%",  main = (paste( "Bin", i, ": Depth", round(adp[['depthMean']] - adp[['distance']][i], digits= 0), 'm,  of Percent Good (Beam 1)')), type = 'l', ylim = c(0, 100), ...)
+      plot(pgGood[,i], xlab = "time (s)", ylab = "%",  main = (paste( "Bin", i, ": Depth", round(adp[['depthMean']] - adp[['distance']][i], digits= 0), 'm,  of Percent Good (Beam 1)')), type = 'l', ylim = c(0, 100), ...)
       par(new = TRUE)
       plot(pgBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(0, 100))
       par(new = TRUE)
@@ -2887,6 +2889,7 @@ plotQC <- function(obj, QC, ... ){
 #' Plots give a first visualization of ADCP data set
 #'
 #' @param adp an oce adp object
+#' @param path file path to which plots will be saved
 #'
 #'@details
 #'Includes each velocity component as well as pressure over time
@@ -2895,7 +2898,7 @@ plotQC <- function(obj, QC, ... ){
 #' @export
 #'
 #' @examples
-startPlots <- function(adp){
+startPlots <- function(adp, path){
 
   #save all plots to folder
 
@@ -2909,12 +2912,12 @@ startPlots <- function(adp){
     mooring <- adp[['station']]
   }
 
-  plotpath <- paste0('C:/Users/ChisholmE/Documents/ADCP_Processing/Plots/M', mooring)
+  plotpath <- paste0(path, '/Plots/M', mooring)
 
   if (dir.exists(plotpath)){
 
   }else{
-    dir.create(paste0('C:/Users/ChisholmE/Documents/ADCP_Processing/Plots/M', mooring))
+    dir.create(paste0(path, '/Plots/M', mooring))
   }
 
 
@@ -2939,7 +2942,7 @@ startPlots <- function(adp){
 #'
 #' @param adp an oce adp object
 #' @param x the matrix of data to be plotted
-#'
+#'@param path file path to which plots will be saved
 #'
 #'@details
 #' Series of plots, separated by depth (bins) of a particular parameter in ADCP data
@@ -2951,7 +2954,7 @@ startPlots <- function(adp){
 #' @examples
 #'
 #' binPlot(adp, x = adp[['v']][,,1])
-binPlot <- function(adp, x){
+binPlot <- function(adp, x, path){
 
   if (!is.null(adp[['mooring_number']])){
     mooring <- adp[['mooring_number']]
@@ -2963,12 +2966,12 @@ binPlot <- function(adp, x){
     mooring <- adp[['station']]
   }
 
-  plotpath <- paste0('C:/Users/ChisholmE/Documents/ADCP_Processing/Plots/M', mooring)
+  plotpath <- paste0(path, '/Plots/M', mooring)
 
   if (dir.exists(plotpath)){
 
   }else{
-    dir.create(paste0('C:/Users/ChisholmE/Documents/ADCP_Processing/Plots/M', mooring))
+    dir.create(paste0(path, '/Plots/M', mooring))
   }
 
 
@@ -2987,12 +2990,13 @@ print(paste("PreProcessingPlots.pdf created in", plotpath))
 #' Post Processing summary plots for ADCP data
 #'
 #' @param adpClean an adp object with flags set to NA
+#' @param path file path to which plots will be saved
 #'
 #' @return a pdf series of plots including velocity components, pressure and echo intensity
 #' @export
 #'
 #' @examples
-endPlots <- function(adpClean){
+endPlots <- function(adpClean, path){
   if (!is.null(adpClean[['mooring_number']])){
     mooring <- adpClean[['mooring_number']]
   }
@@ -3002,12 +3006,12 @@ endPlots <- function(adpClean){
   if(!is.null(adpClean[['station']])){
     mooring <- adpClean[['station']]
   }
-  plotpath <- paste0('C:/Users/ChisholmE/Documents/ADCP_Processing/Plots/M', mooring)
+  plotpath <- paste0(path, '/Plots/M', mooring)
 
   if (dir.exists(plotpath)){
 
   }else{
-  dir.create(paste0('C:/Users/ChisholmE/Documents/ADCP_Processing/Plots/M', mooring))
+  dir.create(paste0(path, '/Plots/M', mooring))
   }
 
   #check plots
@@ -3038,6 +3042,7 @@ endPlots <- function(adpClean){
 #'
 #' @param adp an oce adp object
 #' @param QC the QC parameter you want to inspect, options are listed in details
+#' @param path file path to which plots will be saved
 #'
 #' @details
 #' These quality control plots show a comparison between valid and invalid data.
@@ -3061,7 +3066,7 @@ endPlots <- function(adpClean){
 #' @export
 #'
 #' @examples
-qcPlots <- function(adp, QC){
+qcPlots <- function(adp, QC, path){
   if (!is.null(adp[['mooring_number']])){
     mooring <- adp[['mooring_number']]
   }
@@ -3071,12 +3076,12 @@ qcPlots <- function(adp, QC){
   if(!is.null(adp[['station']])){
     mooring <- adp[['station']]
   }
-  plotpath <- paste0('C:/Users/ChisholmE/Documents/ADCP_Processing/Plots/M', mooring)
+  plotpath <- paste0(path, '/Plots/M', mooring)
 
   if (dir.exists(plotpath)){
 
   }else{
-    dir.create(paste0('C:/Users/ChisholmE/Documents/ADCP_Processing/Plots/M', mooring))
+    dir.create(paste0(path, '/Plots/M', mooring))
   }
 
   name <- paste('binbybinplot', QC, mooring, sep = '_')
@@ -3088,4 +3093,67 @@ qcPlots <- function(adp, QC){
   dev.off() #close pdf
   print(paste("PreProcessingPlots.pdf created in", plotpath))
 
+}
+
+#mapPlot check
+
+#' Plot Map
+#'
+#' @param adp an oce adp object
+#'
+#' @return a plot of lat and lon from adp object
+#' @export
+#'
+#' @examples
+plotMap <- function(adp){
+  lat <- adp[['latitude']]
+  lon <- adp[['longitude']]
+  map(plot = TRUE, xlim = c(lon-20, lon+20), ylim = c(lat-20, lat+20), fill = TRUE, col = 'green')
+  par(new = TRUE)
+  points(lon, lat, col = 'red')
+}
+
+####GF3 2 P01####
+
+#' GF3 to P01
+#'
+#' Use this function to map gf3 codes to P01 codes for exporting to netCDF
+#'
+#' @param gf3 a gf3 standard code paramater
+#'
+#' @return a matching P01 value with units and standard name (if applicable)
+#' @export
+#'
+#' @examples
+as.P01 <- function(gf3){
+  gf32p01 <- read.csv('c:/Users/ChisholmE/Documents/sample files/GF3 Code Map.csv', header = TRUE)
+
+
+
+  line <- grep(gf32p01$GF3.code, pattern = gf3)
+
+  if (length(line) == 0){
+    yn <- list()
+    for (i in 1:length(gf32p01$GF3.code)){
+      yn[[i]] <- grep( pattern = gf32p01$GF3.code[[i]], x = gf3, value = TRUE)
+      if(length(yn[[i]] != 0)){
+        line <- i
+      }
+    }
+
+  }
+  if (length(line) == 0){
+    warning(paste(gf3, 'not recognized in list of GF3 codes!'))
+    stop()
+  }
+
+  gf3 <- list(gf3 = gf3)
+  gf3$P01 <- as.character(gf32p01$P01.code[[line]])
+  gf3$P01name <-as.character(gf32p01$P01..preferred.name[[line]])
+  gf3$P06 <- as.character(gf32p01$P06.unit.code[[line]])
+  gf3$P06name <- as.character(gf32p01$P06.unit.name[[line]])
+  gf3$units <- as.character(gf32p01$units[[line]])
+  gf3$std <- as.character(gf32p01$standard_name[[line]])
+
+  return(gf3)
 }
