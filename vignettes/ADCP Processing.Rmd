@@ -131,6 +131,7 @@ Where minimum PGd = 25, where PGd = beam 1 + beam 4, and maximum error velocity 
 Once the flags are set it is then possible to null data based on given flag values.This function currently uses L20 BODC flagging vocabulary but could be set to use a series of flag schemes if more were presented as necessary. 
 
 The oce function `handleFlags()` can then be used to set any bad flag data points to `NA`, the `adpFlag()` function uses "4" to represent bad data and "1" to represent good data but if processors were flagging data based on other qualities outside `adpFlag()` then `handleFlags()` could be used to deal with these other values as well. 
+Best practice is to use a separate adp object in which to handle flags so that you can have a ‘clean’ adp object to plot and ensure flagged data is invalid, while still preserving the entire dataset (with flags) in the adp object to be exported to netCDF. 
 
 Example:
 
