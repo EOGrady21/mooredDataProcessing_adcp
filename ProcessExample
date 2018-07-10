@@ -1,0 +1,94 @@
+###example processing procedure
+###input: RAW ADCP file (.000), plus any extra metadata from log sheets (.csv)
+###output: processed ADCP data in netCDF file
+
+library(oce)
+library(ncdf4)
+
+source('C:/Users/ChisholmE/Documents/ADCP/R/adcpToolbox.R')
+
+#       read in raw data and metadata
+adp <- read.adp.easy('R:/Shared/ChisholmE/sample ADP process/M1996000.000', 'R:/Shared/ChisholmE/sample ADP process/metadataTemplateM1996.csv')
+
+
+##plots
+
+startPlots(adp, path = 'C:/Users/ChisholmE/Documents/ADCP_process')
+
+plotMap(adp)
+
+binPlot(adp, path = 'C:/Users/ChisholmE/Documents/ADCP_process', x = adp[['v']][,,1])
+
+#       adjust depth values based on pressure and latitude
+adp[['depth']] <- swDepth(adp[['pressure']], (adp[['latitude']]))
+
+
+plot(adp, which = 23, col = 'red') 
+# par(new = TRUE)
+# mtext('Progressive Vector (U): PreProcessing', side = 3)#progressive vector for u
+#plot(adp, which = 28, main = 'UV Scatter: PreProcessing') #uv scatter plot
+
+#       apply magnetic declination
+adp <- applyMagneticDeclinationAdp(adp)
+
+
+#check plots
+#     looking for rotation compared to plots before magnetic declination applied
+par(new = TRUE)
+plot(adp, which = 23, axes = FALSE) #progressive vector for u
+legend('topleft', legend = list('PreProcessing', 'PostProcessing'), col = c('red', 'black'), lty = 1, cex = 0.8)
+
+
+#mtext('Progressive Vector (U): PostProcessing', side = 3)
+# par(new = TRUE)
+# plot(adp, which = 28) #uv scatter plot
+
+#       limit depth by recovery/deployment times
+adp <- limit_depthbytime(adp)
+
+
+#       limit time and other variables based on deployment/ recovery times
+adp <- limit_time(adp)
+
+
+
+#       add microcat pressure data if relevant
+#file <- list.files(path = '.', pattern = "MCTD*...*.ODF")
+#adp <- insertInst(adp, var = 'pressure', file = file)
+#compare pressure by plotting
+#plot(adp[['pressure_alternate']], lty = 2, col = 'red', ylim = c(0, 200), xlab = 'Time', ylab = 'Pressure dBar')
+#lines(adp[['pressure']], lty = 1, col = 'black', ylim = c(0,200), xlab = '', ylab = '')
+
+
+
+
+#       flag data outside percent good/ error bounds
+adp <- adpFlag(adp, 25, 0.46)
+
+#       set flags to NA:
+#       use adpClean to plot and check data quality, adp still maintains
+#       complete data set integrity
+adpClean <- handleFlags(adp, flags = 4, actions = list('NA'))
+
+#check plots
+
+#check data visually post processing
+endPlots(adpClean, path = 'C:/Users/ChisholmE/Documents/ADCP_process')
+
+
+#     check any other relvant plots to confirm QC before exporting
+qcPlots(adp, QC = 'v', path = 'C:/Users/ChisholmE/Documents/ADCP_process')
+
+
+#       create saved adp object ###fix me: file too big to open, recompress?
+save(adp, file =paste( 'adp', adp[['cruise_number']], adp[['mooring_number']], sep = '_'))
+
+#       create standard name
+ncname <- name.file(adp)
+
+#       processingLog export
+adp <-exportPL(adp)
+adp <- oceSetMetadata(adp, 'history', 'INSERT SHORT SUMMARY OF HISTORY HERE')
+
+#       export to netCDF file
+oceNc_create(adp, ncname , metadata = 'R:/Shared/ChisholmE/sample ADP process/metadataTemplateM1996.csv')
