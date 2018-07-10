@@ -1,0 +1,52 @@
+##processing example
+#showing how to take a series of odf files from MADCP archive and combine into 
+#standard netCDF file
+
+#source toolbox (change file path)
+source('C:/Users/ChisholmE/Documents/ADCP/R/adcpToolbox.R')
+
+
+#step1: odf2adp
+#       list odf files
+#       combine ODF files into adp object using odf2adp
+
+#list odf files
+files <- list.files(path = ".", pattern =  "MADCP*...*00.ODF")
+
+#read list of odf files into adp object
+adp <- odf2adp(files)
+
+
+#step 2: adpCombine
+#       add in raw and netCDF metadata and data to adp objecct
+
+adp <- adpCombine(adp, 'M1897000.000', 'MADCP_HUD2015006_1897_10220_1800.nc')
+
+# #added meta to meet conventions (not found in archive)
+  adp <- oceSetMetadata(adp, 'sea_name', 'North Atlantic', note = NULL)
+  adp <- oceSetMetadata(adp, "publisher_name",'E.Chisholm', note = NULL)
+  adp <- oceSetMetadata(adp, "publisher_email", ') BIO.Datashop@dfo-mpo.gc.ca', note = NULL)
+  adp <- oceSetMetadata(adp, "keywords_vocabulary", "GCMD Science Keywords")
+  adp <- oceSetMetadata(adp, "keywords", "Oceans > Ocean Circulation > Ocean Currents")
+# adp <- oceSetMetadata(adp, "source", '', note = NULL)
+  adp <- oceSetMetadata(adp, "standard_name_vocabulary", "CF v.52", note = NULL)
+  adp <- oceSetMetadata(adp, "naming_authority", "CF, MEDS, BODC:P01, BODC:P06", note = NULL)
+  adp <- oceSetMetadata(adp, "comment", "INSERT TEXT COMMENT HERE")
+  adp <- oceSetMetadata(adp, "title", "INSERT TITLE HERE")
+  adp <- oceSetMetadata(adp, "acknowledgement", "INSERT TEXT HERE")
+  adp <- oceSetMetadata(adp, "summary", "INSERT TEXT HERE")
+  adp <- oceSetMetadata(adp, "cruise_description", "INSERT TEXT HERE")
+  
+
+#       processingLog export
+adp <- exportPL(adp)
+
+#       create standard name
+ncname <- name.file(adp)
+
+#step 3: adpNC
+#       create NC file from commbined adp
+
+adpNC(adp, paste0(ncname, '_test'))
+
+
