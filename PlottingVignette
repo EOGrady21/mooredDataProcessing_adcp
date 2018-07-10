@@ -1,0 +1,171 @@
+---
+title: "Plotting"
+author: "E. Chisholm"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+#Plotting to ensure data viability in ADCP data processing
+##A guide on how to plot various elements and identify problems with a dataset
+
+
+This guide is intended to act as a reference for data processors when dealing with complex ADCP data. Alhtough processing scripts can simply quality control there is also a necessary human element in order to verify processing and ensure the highest quality of data. 
+
+###Plotting Pressure
+Plotting pressure can be an extremely useful tool for identifying edges of deployment within an ADCP data set. If there are pressure spikes on either side of the data set then it is likely required to trim more off the edges in order to isolate the highest quality data measured when the instrument was fully in position. This is especially true of moored data but can be used as a n indicator in other cases as well. ADCP pressure measurements can also sometimes be erroneous depending on the instrumentation. This can be a beneficial tool to check if the pressure values are reasonable and match with known depth of instrument from mooring logs or other experience. 
+
+In order to plot pressure from an adp object in oce use the following call:
+
+```{r eval = FALSE}
+data(adp) #read in sample data
+plot(adp, which = 15) #plot pressure values
+```
+
+It may be beneficial to make this plot multiple times, before and after trimming deployment edges. It may also be beneficial to plot and examine pressure data from nearby moored instruments to verify data. 
+
+
+###Bin by Bin plotting
+
+Bin by bin plotting can be useful in analyzing individual depths of adcp variables and comparing over a timeseries. *what are yyou looking for*
+
+This can be achieved with the function `plotBin()`, see help file for more information.
+
+```{r eval = FALSE}
+pdf(paste('binbybinplot', adp[['mooring_number']], sep = '_'), width = 7, height = 3)
+plotBin(adp@data$v[,,1])
+dev.off()
+```
+
+This example saves the bin plots to a pdf which can then be printed with multiple plots per page (using print settings from pdf viewer). This is ideal for directly comparing each bin plot. 
+
+This function produces a series of plots with each plot representing an individual depth bin within the chosen variable. It may be most useful to use this function when anylyzing velocity components, echo intensity and error indicators such as percent good. 
+
+###Average Echo Intensity
+
+This plot will show record averaged echo intensity plotted against bin. Any significant deviations between beam lines may indicate side lobe(The effect of accoustic beams bouncing off instruments which are tethered to a mooring directly above an ADCP, they can interfere with signals and cause small bumbs in intensity around the lower or middle bins) or a more serious error within the instrument. Each bin is represented by a single value so this plot may indicate which bins are overall erroneous.
+
+*function*
+```{r eval = FALSE}
+
+plot_ei(adp)
+
+```
+
+Example plot with oce sample datatset:
+
+```{r fig.width= 7}
+library(oce)
+data(adp)
+echoint <- adp[['a', 'numeric']]
+  a1 <- echoint[,,1]
+  a2 <- echoint[,,2]
+  a3 <- echoint[,,3]
+  a4 <- echoint[,,4]
+  #create time averaged mean values for each bin and beam
+  a1m <- colMeans(a1, na.rm = TRUE)
+  a2m <- colMeans(a2, na.rm = TRUE)
+  a3m <- colMeans(a3, na.rm = TRUE)
+  a4m <- colMeans(a4, na.rm = TRUE)
+  #number of bins calculated
+  bins <- c(1:length(a1m))
+  #plot means by bin
+  plot(a1m, bins, xlim = c(0, 255) , type = 'l', xlab = 'Echo Intensity', ylab = 'Bin Number')
+  lines(a2m, bins, xlim = c(0,255) , type = 'l', col = 'red', xlab= '', ylab = '' )
+  lines(a3m, bins, xlim = c(0, 255), type = 'l', col = 'green', xlab = '', ylab = '')
+  lines(a4m, bins, xlim = c(0, 255), type = 'l', col = 'blue', xlab = '', ylab = '')
+  legend('topright' , legend = c('Beam 1', 'Beam 2', 'Beam 3', 'Beam 4'), col = c('black', 'red', 'green', 'blue'), lty = 1, cex = 0.6)
+```
+
+This is an example of a data set which is quite high quality however you can still see some deviation at the surface where beams begin to be contaminated and intensity suddenly spikes. Th enormal pattern would be for echo intensity to continuously decrease with increasing bin number. As beams are travelling further, the intensity of the return signal becomes dimmer. The sudden spike can often indicate contamination or interference from the surface of the water. It can also be common to see small bumps or spike along the beams in the centre of the water column which can be due to side lobe.
+
+###Progressive Vector
+
+Another useful plot for ADCP processing can be the progressive vector plot. This is a base plot within oce. 
+
+Using
+```{ r}
+library(oce)
+data(adp)
+plot(adp, which = 23)
+```
+Yields a progressive vector plot of depth averaged velocity. 
+
+This plot can also be used to plot individual bins
+```{r eval = FALSE}
+
+plot(adp, which = 23, control = list('bin' = 1))
+
+```
+Where you can specify any individual bin to be plotted
+
+You can also plot multiple bins on the same graph using
+`par(new = TRUE)`
+in between plots
+
+###plotQC
+
+This plot function is designed to help visually inspect data that has been flagged to ensure that flags are appropriate and complete. 
+
+This function takes a series of parameter arguments (see help file for `plotQC()`) including u, v, w, error velocity, echo intensity and percent good. Each parameter is plotted bin by bin to identify spikes or other problems. 
+
+The plots show flagged values in an alternate colour (red) so that processors may identify any inappropriately flagged data. 
+
+example:
+```{r eval = FALSE}
+plotQC(adp, QC = 'v')
+```
+
+
+###Saving Plots
+
+Many of these plots emmploy bin by bin techinques which make it difficult to sort through and compare from within RStudio's plotting window. The best way to save plots, expecially bin by bin plots is by using the `pdf()` function. This saves any plots produced to a pdf file. 
+
+After calling pdf the processor can then set the plotting settings using `par()` to specify the appropriate number of plots per page. 
+
+An example might look like this:
+``` {r eval = FALSE}
+
+pdf('fileName.pdf' , width = 8, height = 40 ) #save to pdf
+par(mfrow = c(15, 1)) #set number of plots per page (rows, columns)
+plotQC(adp, QC = 'v')
+dev.off() #close pdf
+
+```
+
+the width and height within the `pdf()` call may need to be adjusted based on the number of plots being produced. These settings define the size of the pdf file itself and not the specific plot margins, those are set by `par()`. 
+
+
+###Combining plots
+
+In some instances of processing it may be helpful to quickly produce a series of common plots. 
+
+There are a few functions in ADCP Toolbox which currently work towards this goal. 
+
+`startPlots()`, `binPlot()`, `qcPlot()`, and `endPlots()`
+
+Each of these functions saves plots to a pdf in a pre determined folder named by the mooring number of the ADCP in a folder "plots" inside your working directory.
+
+##### Start Plots
+This function produces a pdf of a series of plots including each velocity pane (east, north, upwards and error) as well as a pressure plot. This can be a helpful starting point for visualizing ADCP data
+
+#####Bin Plot
+This function plots a series of bins to a pdf file, it can be used to plot any matrix of data which can be specified in the objects of the function. Keep in mind this function is meant to plot a single slice of data over distance and time and cannot handle 3 dimensional data arrays. 
+
+##### QC Plot
+This function plots the quality control of a particular variable over a series of bins, highlighting the flagged or invalid data based on processing methods. It also summarizes the percent of invalid data in each bin. 
+
+##### End Plots
+This provides a summary of plots to be run after processing. This function gives a similar suite of plots as `startPlots()` with pressure, east/north/upward/error velocities but also includes echo intensity. 
+
+
+
