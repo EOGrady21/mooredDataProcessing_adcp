@@ -14,6 +14,11 @@ odf2adp(files, metadata)
 \description{
 Converting individual odf bins to Net cdf standard format
 }
+\details{
+Reads in a set of odf files and compiles into adp object, is capable of
+recognizing missing bins or missing odf files and inserting NA's in
+appropriate slot of data varibales
+}
 \seealso{
 Other odf: \code{\link{adpCombine}}
 }

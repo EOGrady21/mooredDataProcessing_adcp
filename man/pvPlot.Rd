@@ -5,7 +5,7 @@
 \title{Progressive vector plot}
 \usage{
 pvPlot(x, control, xlim = c(range(x[["distance"]])),
-  ylim = c(range(x[["distance"]])))
+  ylim = c(range(x[["distance"]])), ...)
 }
 \arguments{
 \item{x}{adp object from oce}

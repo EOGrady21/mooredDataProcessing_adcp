@@ -4,7 +4,7 @@
 \alias{plot_ei}
 \title{Plot echo intensity}
 \usage{
-plot_ei(adp)
+plot_ei(adp, ...)
 }
 \arguments{
 \item{adp}{an oce object with adcp data}
