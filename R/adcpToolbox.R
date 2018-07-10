@@ -107,7 +107,7 @@ read.meta <- function(file, obj){
 #'   If type == average, an average is taken from start and end time
 #'   declinations and applied uniformly
 #'
-#'   If type == interpolated, the rate of declination is used over time series
+#'   If type == interpolate, the rate of declination is used over time series
 #'@export
 #'
 
@@ -147,7 +147,7 @@ applyMagneticDeclinationAdp <- function(x, lat = x[['latitude']], lon = x[['long
       else {
         warning('Missing required arguments! No processing performed!')
       }
-      x@processingLog <- processingLogAppend(x@processingLog, value = paste0('magnetic variation applied; declination =', c, 'degrees') )
+      x@processingLog <- processingLogAppend(x@processingLog, value = paste0('magnetic variation, using average applied; declination =', c, 'degrees') )
     }
     if (type == 'interpolate'){
       t <- x[['time']]
