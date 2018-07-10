@@ -1,0 +1,13 @@
+Package: ADCP
+Title: ADCP Processing
+Version: 0.0.0.9000
+Authors@R: person("emily", "chisholm", email = "emilyannechisholm@yahoo.com", role = c("aut", "cre"))
+Description: processes raw data from moored ADCP, converts into processed and standardized formats
+Depends: R (>= 3.4.4)
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.0.1
+Suggests: knitr,
+    rmarkdown, oce, ncdf4, abind
+VignetteBuilder: knitr
