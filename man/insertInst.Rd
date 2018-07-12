@@ -2,7 +2,7 @@
 % Please edit documentation in R/adcpToolbox.R
 \name{insertInst}
 \alias{insertInst}
-\title{Insert Pressure from alternate instrument}
+\title{Insert data from alternate instrument}
 \usage{
 insertInst(adp, var, file = adp[["alternate_pressure_file"]],
   offset = adp[["vertical_separation"]])
@@ -20,6 +20,7 @@ insertInst(adp, var, file = adp[["alternate_pressure_file"]],
 adp object with data set completed from alternate sources
 }
 \description{
+*PRESSURE
 Use the measured pressure from an alternate instrument positioned on the same
 moooring as the ADCP This has benefits of a more accurate pressure reading
 which can be translated to depth Note: If the pressure sensor is below the
@@ -29,6 +30,17 @@ ADCP the mooring separation distance (offset) should be negative.
 Extreme caution should be used when applying this function to anything other
 than pressure as there may be significant differences in values despite only
 a few metres separation.
+
+*COMPASS HEADING
+This function can be used to insert compass headings from an alternate source
+in extreme high latitude cases. Compass heading data with magnetic
+declination applied should be in .csv form. Use the argument var = 'heading'.
+Please double check data after using this function, best done by plotting UV
+scatter plots or progressive vector plots. Ensure that headings are correct
+and current directionality is logical.
+This function is designed to read a csv with columns ensemble number and heading.
+Please format csv in this way to avoid errors. Please see ADCP processing
+guide for instructions on how to calculate alternate headings.
 }
 \examples{
 
