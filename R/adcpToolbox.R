@@ -2423,8 +2423,9 @@ adpNC <- function(adp, name){
 
 ###inserting data from other instruments####
 
-#' Insert Pressure from alternate instrument
+#' Insert data from alternate instrument
 #'
+#'*PRESSURE
 #' Use the measured pressure from an alternate instrument positioned on the same
 #' moooring as the ADCP This has benefits of a more accurate pressure reading
 #' which can be translated to depth Note: If the pressure sensor is below the
@@ -2433,6 +2434,18 @@ adpNC <- function(adp, name){
 #' Extreme caution should be used when applying this function to anything other
 #' than pressure as there may be significant differences in values despite only
 #' a few metres separation.
+#'
+#' *COMPASS HEADING
+#' This function can be used to insert compass headings from an alternate source
+#' in extreme high latitude cases. Compass heading data with magnetic
+#' declination applied should be in .csv form. Use the argument var = 'heading'.
+#' Please double check data after using this function, best done by plotting UV
+#' scatter plots or progressive vector plots. Ensure that headings are correct
+#' and current directionality is logical.
+#' This function is designed to read a csv with columns ensemble number and heading.
+#' Please format csv in this way to avoid errors. Please see ADCP processing
+#' guide for instructions on how to calculate alternate headings.
+#'
 #'
 #' @param adp adp object into which to insert data
 #' @param var variable you wish to pull from other instrument
@@ -2467,7 +2480,29 @@ adpNC <- function(adp, name){
 
 
 insertInst <- function(adp, var, file = adp[['alternate_pressure_file']], offset = adp[['vertical_separation']]){
-  inst <- read.oce(file)
+  csv <- grep(file, pattern = ".csv")
+  if (csv > 0 ){
+    inst <- read.csv(file, header = TRUE)
+    if( var == 'heading'){
+      ensemble <- inst[[1]]
+      heading <- inst[[2]]
+
+      if (length(ensemble) != length(adp[['heading']])){
+        warning("Incorrect dimensions! Please confirm length of heading vector!")
+      }else{
+        adp[['heading']] <- heading
+        adp@processingLog <- processingLogAppend(adp@processingLog, value = paste("Instrument heading inserted from alternate file", file))
+              return(adp)
+        }
+    }
+    if (var != 'heading'){
+      warning("INVALID VAR INPUT!")
+      stop()
+    }
+
+  }else{
+    inst <- read.oce(file)
+
   vr <- inst[[var]]
   u <- inst@metadata$units[var]
   if (var == 'pressure'){
@@ -2493,6 +2528,7 @@ insertInst <- function(adp, var, file = adp[['alternate_pressure_file']], offset
   adp@processingLog <- processingLogAppend(adp@processingLog, paste(var, '_alternate', '  pulled from  ', file, '   with offset of  ', offset, 'm.'))
 
   return(adp)
+  }
 
 }
 
