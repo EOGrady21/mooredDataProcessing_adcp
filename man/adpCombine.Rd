@@ -4,7 +4,7 @@
 \alias{adpCombine}
 \title{ADCP Combine}
 \usage{
-adpCombine(adp, raw, ncin)
+adpCombine(adp, raw, ncin = "", dt = NULL)
 }
 \arguments{
 \item{adp}{an adp object sourced from ODF files using
