@@ -13,6 +13,12 @@ adpCombine(adp, raw, ncin)
 \item{raw}{a raw ADCP file (.000)}
 
 \item{ncin}{an archived netCDF file (.nc)}
+
+\item{dt}{The time offset to be applied to raw data in order to match times
+produced in ODF files. If left NULL the script will use the default action
+used in the program which wrote the ODF files which is to add 1/2 the
+sampling interval to each time value. Where sampling interval =
+pingsPerEnsemble * ensembleInterval}
 }
 \description{
 Combines archived data and metadata from raw, odf and netCDF
@@ -69,6 +75,13 @@ Contains:
      (chief_scientist), institution (data_origin), cruise (cruise_name), station (mooring),
      countryInstituteCode, cruiseNumber, startTime, latitude, longitude,
      waterDepth, sounding
+
+
+\bold{ Note:} The time offset is a major source of error, not all files were
+     produced in the same format some times may have no offset, some files
+     may have offset up to a few hours. Be careful when selecting a value for
+     dt, if NULL is not working please investigate within the ODF and raw
+     files to calculate or attempt to match the times.
 }
 \seealso{
 Other odf: \code{\link{odf2adp}}

@@ -1515,7 +1515,9 @@ oceNc_create <- function(adp, name,  metadata){
 #'      (chief_scientist), institution (data_origin), cruise (cruise_name), station (mooring),
 #'      countryInstituteCode, cruiseNumber, startTime, latitude, longitude,
 #'      waterDepth, sounding
-#' Note: The time offset is a major source of error, not all files were
+#'
+#'
+#'\bold{ Note:} The time offset is a major source of error, not all files were
 #'      produced in the same format some times may have no offset, some files
 #'      may have offset up to a few hours. Be careful when selecting a value for
 #'      dt, if NULL is not working please investigate within the ODF and raw
