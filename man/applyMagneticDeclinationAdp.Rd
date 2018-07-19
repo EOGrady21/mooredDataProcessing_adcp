@@ -27,7 +27,7 @@ adp object with magnetic declination applied given coordinates
   If type == average, an average is taken from start and end time
   declinations and applied uniformly
 
-  If type == interpolated, the rate of declination is used over time series
+  If type == interpolate, the rate of declination is used over time series
 }
 \description{
 ADCP Processing step 3.2
