@@ -1515,18 +1515,27 @@ oceNc_create <- function(adp, name,  metadata){
 #'      (chief_scientist), institution (data_origin), cruise (cruise_name), station (mooring),
 #'      countryInstituteCode, cruiseNumber, startTime, latitude, longitude,
 #'      waterDepth, sounding
-
+#' Note: The time offset is a major source of error, not all files were
+#'      produced in the same format some times may have no offset, some files
+#'      may have offset up to a few hours. Be careful when selecting a value for
+#'      dt, if NULL is not working please investigate within the ODF and raw
+#'      files to calculate or attempt to match the times.
 #'
 #'@param adp an adp object sourced from ODF files using
 #'  \code{\link[ADCP:odf2adp]{odf2adp}}
 #'@param raw a raw ADCP file (.000)
 #'@param ncin an archived netCDF file (.nc)
+#' @param dt The time offset to be applied to raw data in order to match times
+#'   produced in ODF files. If left NULL the script will use the default action
+#'   used in the program which wrote the ODF files which is to add 1/2 the
+#'   sampling interval to each time value. Where sampling interval =
+#'   pingsPerEnsemble * ensembleInterval
 #'
 #'@export
 #'
 #'
 ####adpCombine####
-adpCombine <- function(adp, raw, ncin = ''){
+adpCombine <- function(adp, raw, ncin = '', dt = NULL){
 
   a <- read.adp(raw)
   #####pull metadata from RAW####
@@ -1696,12 +1705,13 @@ adpCombine <- function(adp, raw, ncin = ''){
 
   ####apply time offset####
 
-if(length(adp[['sample_interval']]) != 0 ){
-  t <-  ( a[['time']] + (adp[['sample_interval']]/2))
-  a <- oceSetData(a, 'time', t)
-}else{
-  stop('Time offset not applied, please check sample interval!')
-}
+  if (is.null(dt)){
+    t <-  ( a[['time']] + (adp[['sample_interval']]/2))
+    a <- oceSetData(a, 'time', t)
+  }else{
+    t <- (a[['time']] + dt)
+    a <- oceSetData(a, 'time', t)
+  }
 
   #limit by time
   limitmat <- matrix(0, nrow = length(a[['time']]), ncol = length(a[['distance']]))
