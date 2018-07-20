@@ -27,27 +27,27 @@ read.adp.easy <- function(file, metadata){
     warning('no metadata supplied')
   }
   metad <- read.csv(metadata, header = TRUE)
-
+  
   mn <- as.character(metad[,1])
   mv <- as.character(metad[,2])
-
-
+  
+  
   md <- as.list(mv)
   names(md) <- mn
-
+  
   adp <- read.adp(file, latitude = as.numeric(md[['latitude']]), longitude = as.numeric(md[['longitude']]) ) #insert lat and lon from mooring logs
-
+  
   if (!missing(md)) {
     for (m in seq_along(md)) {
       adp <- oceSetMetadata(adp, names(md)[m], md[[m]], note = NULL)
     }
-
+    
     adp@metadata$source <- 'raw'
-
+    
     adp@metadata$latitude <- as.numeric(adp[['latitude']])
     adp@metadata$longitude <- as.numeric(adp[['longitude']])
     adp@processingLog <- processingLogAppend(adp@processingLog, 'metadata read in from log sheet')
-
+    
     return(adp)
   }
 }
@@ -74,7 +74,7 @@ read.meta <- function(file, obj){
   mv <- as.character(md[,2])
   meta <- as.list(mv)
   names(meta) <- mn
-
+  
   for (m in seq_along(meta)) {
     obj <- oceSetMetadata(obj, names(meta)[m], meta[[m]], note = NULL)
   }
@@ -132,8 +132,8 @@ applyMagneticDeclinationAdp <- function(x, lat = x[['latitude']], lon = x[['long
         b <- magneticField(lon, lat, e)
         c <- round(mean(c(a$declination, b$declination)),digits = 2)
         coord <- x@metadata$oceCoordinate
-
-
+        
+        
         if (coord == 'enu'){
           x <- enuToOther(x, heading = c)
           x@metadata$magnetic_variation <- c
@@ -141,7 +141,7 @@ applyMagneticDeclinationAdp <- function(x, lat = x[['latitude']], lon = x[['long
         }
         if (coord != 'enu'){
           warning('Function cannot handle objects in ', coord, 'Object returned as is ; please convert to enu first')
-
+          
         }
       }
       else {
@@ -161,10 +161,10 @@ applyMagneticDeclinationAdp <- function(x, lat = x[['latitude']], lon = x[['long
         dec[[i]] <- mf[[i]]$declination
       }
       f <- approx(x = dec, y = t, method = 'linear')
-
+      
       if (coord != 'enu'){
         warning('Function cannot handle objects in ', coord, 'Object returned as is ; please convert to enu first')
-
+        
       }
       if(coord == 'enu'){
         x <- enuToOther(x, heading = f$x)
@@ -174,8 +174,8 @@ applyMagneticDeclinationAdp <- function(x, lat = x[['latitude']], lon = x[['long
       }
     }
     return(x)
-
-
+    
+    
   }
 }
 
@@ -203,8 +203,8 @@ limit_depthbyrmax <- function(x, lat = x[['latitude']]){
   d <- x[['depth']]
   deg2rad <- function(deg) {(deg * pi) / (180)}
   rmax <- d *(cos(deg2rad(x@metadata$beamAngle)))
-
-
+  
+  
   if(!missing(lat)){
     d <- swDepth(x@data$pressure, latitude = lat, eos = getOption("oceEOS", default = "gsw"))
     d[d < rmax] <- NA
@@ -212,13 +212,13 @@ limit_depthbyrmax <- function(x, lat = x[['latitude']]){
     x@metadata$sensor_depth <- mdt
     x@metadata$depthMean <- mdt
     x@data$depth <- d
-
+    
   }
   if (missing(lat)){
     if(!is.na(x@metadata$latitude)){
       lat <- x@metadata$latitude
       d <- swDepth(x@data$pressure, latitude = lat, eos = getOption("oceEOS", default = "gsw"))
-
+      
       d[d < rmax] <- NA
       mdt <- round(mean(x@data$depth, na.rm = TRUE), digits = 2)
       x@metadata$sensor_depth <- mdt
@@ -227,13 +227,13 @@ limit_depthbyrmax <- function(x, lat = x[['latitude']]){
     }
     if (is.na(x@metadata$latitude)){
       warning('No latitude provided; returning object as is')
-
+      
       stop()
     }
     adp@processingLog <- processingLogAppend(adp@processingLog, paste0('depth values adjusted to sea water depth using pressure and latitude'))
     adp@processingLog <- processingLogAppend(adp@processingLog, paste0('depth limited by maximum acceptable distance, calulated with Rmax = Dcos(x)'))
     adp@processingLog <- processingLogAppend(adp@processingLog, paste0('Sensor depth and mean depth set to  ', mdt , '  based on trimmed depth values'))
-
+    
     return(x)
   }
 }
@@ -264,14 +264,14 @@ limit_depthbytime <- function(adp, tz = 'UTC'){
   adp[['depth']] <- swDepth(adp[['pressure']], latitude = adp[['latitude']], eos = getOption("oceEOS", default = "gsw"))
   depth <- adp[['depth']]
   depth[as.POSIXct(adp[['time']], tz) <= as.POSIXct(adp[['time_coverage_start']], tz) | as.POSIXct(adp[['time']], tz) >= as.POSIXct(adp[['time_coverage_end']], tz)] <- NA
-
+  
   mdt <- round(mean(depth, na.rm = TRUE), digits = 2)
   adp@metadata$sensor_depth <- mdt
   adp@metadata$depthMean <- mdt
   adp@data$depth <- depth
   adp@processingLog <- processingLogAppend(adp@processingLog, paste0('depth limited by deployment (', adp[['time_coverage_start']], ') and recovery  (', adp[['time_coverage_end']], ')  times'))
   adp@processingLog <- processingLogAppend(adp@processingLog, paste0('Sensor depth and mean depth set to  ', mdt , '  based on trimmed depth values'))
-
+  
   return(adp)
 }
 
@@ -298,18 +298,18 @@ limit_depthbytime <- function(adp, tz = 'UTC'){
 
 
 limit_time <- function(x, tz = 'UTC', dt = x[['time_coverage_start']], rt = x[['time_coverage_end']]){
-
+  
   if (!inherits(x, "adp")){
     stop("method is only for objects of class '", "adp", "'")
   }
   #FIX ME : if deployment or recovery time is out of bounds
-
+  
   if(!missing(dt)){
     t1 <- as.POSIXct(dt, tz = tz)
     t <- x[['time', "numeric"]]
     t <- as.POSIXct(t, tz = tz)
-
-
+    
+    
     x[['v']][t < t1] <- NA
     x[['pressure']][t < t1] <- NA
     x[['salinity']][t < t1] <- NA
@@ -335,8 +335,8 @@ limit_time <- function(x, tz = 'UTC', dt = x[['time_coverage_start']], rt = x[['
     if (is.null(x@metadata$time_coverage_start)){
       warning('No deployment Time provided!')
     }
-
-
+    
+    
     if(!missing(rt)){
       t2 <- as.POSIXct(rt, tz = tz)
       x[['v']][t > t2] <- NA
@@ -361,9 +361,9 @@ limit_time <- function(x, tz = 'UTC', dt = x[['time_coverage_start']], rt = x[['
     if (is.null(x@metadata$time_coverage_end)){
       warning('No recovery time provided!')
     }
-
+    
     adp@processingLog <- processingLogAppend(adp@processingLog, paste0('Data has been cut off before deployment at  ', dt, '  and after recovery at ', rt))
-
+    
     return(x)
   }
 }
@@ -413,41 +413,41 @@ adpFlag <- function(adp,  pg = adp[['percentgd_threshold']], er= adp[['error_thr
   }
   deg2rad <- function(deg) {(deg * pi) / (180)}
   rmax <- adp[['depth']] *(cos(deg2rad(adp[['beamAngle']])))
-
+  
   #create matrix of maximum acceptable depth
   r <- matrix(rmax, ncol=length(adp[['distance']]), nrow=length(rmax))
-
-
+  
+  
   #create matrix of distance (adp to surface)
   dist <- adp[['distance']]
   t <- adp[['time']]
   d <- t(matrix(dist, ncol = length(t), nrow = length(dist)))
-
+  
   #read in pg per beam
   g <- adp[['g', "numeric"]]
-
+  
   #combine beam 1 and 4
   lowpg <- g[,,1]+g[,,4]
-
+  
   #extract error velocities
   ERRV <- adp[['v']][,,4]
-
+  
   #create logical array of flagged values based on low percent good, high error velocity or surface contamination
   dim = dim(adp[['v']])
   flag <- array(FALSE, dim= dim)
   for (i in 1:3)
     flag[,,i] <- (lowpg< pg) | (abs(ERRV) > er) | r < d | adp[['time']] < adp[['time_coverage_start']] | adp[['time']] > adp[['time_coverage_end']]
-
+  
   #initialize and set flag scheme
   adp <- initializeFlags(adp, name = 'v', value = 0)
-
-
+  
+  
   #set adp flags where logical array = TRUE, flagged based on error, percent good or Rmax, value = 4 (see flag scheme, BODC)
   adp <- setFlags(adp, name = 'v', i= flag, value = 4)
   good <- adp[['flags']][['v']] == 0
   adp <- setFlags(adp, name = 'v', i = good, value = 1)
-
-
+  
+  
   adp@processingLog <- processingLogAppend(adp@processingLog, 'Quality control flags set based on flag scheme L20 from BODC')
   return(adp)
 }
@@ -472,9 +472,9 @@ adpFlag <- function(adp,  pg = adp[['percentgd_threshold']], er= adp[['error_thr
 
 
 name.file <- function(adp){
-
+  
   name <- paste('MADCPS', adp[['experiment']], adp[['event_number']], adp[['serialNumber']], adp[['sampling_interval']], sep = '_')
-
+  
   name
 }
 
@@ -585,14 +585,14 @@ oceNc_create <- function(adp, name,  metadata){
   ncpath <- "./"
   ncname <- name
   ncfname <- paste(ncpath, ncname, ".nc", sep = "")
-
+  
   ####setting dimensions and definitions####
   #dimension variables from adp object
   time <- as.POSIXct(adp[['time']], tz = 'UTC', origin = '1970-01-01 00:00:00')
   dist <- adp[['distance', 'numeric']]
   lon <- adp[['longitude']]
   lat <- adp[['latitude']]
-
+  
   #create dimensions
   timedim <- ncdim_def("time", "seconds since 1970-01-01T00:00:00Z", as.double(time))    #time formatting FIX
   distdim <- ncdim_def("distance", "metres", as.double(dist))
@@ -600,159 +600,159 @@ oceNc_create <- function(adp, name,  metadata){
   londim <- ncdim_def("lon", "degrees_east" , as.double(lon))
   latdim <- ncdim_def("lat", "degrees_north", as.double(lat))
   dimnchar <- ncdim_def('nchar', '', 1:23, create_dimvar = FALSE)
-
-
+  
+  
   #set fill value
   FillValue <- 1e35
-
+  
   if (adp@metadata$source == 'raw'){
-
+    
     #define variables
-
+    
     dlname <- 'lon'
     lon_def <- ncvar_def(longname= "longitude", units = 'degrees_east', dim = stationdim, name = dlname, prec = 'double')
-
+    
     dlname <- 'lat'
     lat_def <- ncvar_def( longname = 'latitude', units = 'degrees_north', dim =  stationdim, name = dlname, prec = 'double')
-
+    
     dlname <- "eastward_sea_water_velocity"
     u_def <- ncvar_def("EWCT", "m/sec", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
+    
     dlname <- "northward_sea_water_velocity"
     v_def <- ncvar_def("NSCT", "m/sec", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
+    
     dlname <- "upward_sea_water_velocity"
     w_def <- ncvar_def("VCSP", "m/sec", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
+    
     dlname <- "time_02"
     t_def <- ncvar_def("ELTMEP01", "seconds since 1970-01-01T00:00:00Z", list( stationdim, timedim), FillValue, dlname, prec = 'double')
-
+    
     dlname <- "error_velocity_in_sea_water"
     e_def <- ncvar_def("ERRV", "m/sec", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
+    
     dlname <- "ADCP_echo_intensity_beam_1"
     b1_def <- ncvar_def("BEAM_01", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
+    
     dlname <- "ADCP_echo_intensity_beam_2"
     b2_def <- ncvar_def("BEAM_02", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
+    
     dlname <- "ADCP_echo_intensity_beam_3"
     b3_def <- ncvar_def("BEAM_03", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
+    
     dlname <- "ADCP_echo_intensity_beam_4"
     b4_def <- ncvar_def("BEAM_04", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
+    
     dlname <- "ADCP_correlation_magnitude_beam_1"
     cm1_def <- ncvar_def("CMAG_01", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
+    
     dlname <- "ADCP_correlation_magnitude_beam_2"
     cm2_def <- ncvar_def("CMAG_02", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
+    
     dlname <- "ADCP_correlation_magnitude_beam_3"
     cm3_def <- ncvar_def("CMAG_03", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
+    
     dlname <- "ADCP_correlation_magnitude_beam_4"
     cm4_def <- ncvar_def("CMAG_04", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
+    
     dlname <- "percent_good_beam_1"
     pg1_def <- ncvar_def("PGDP_01", "percent", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
+    
     dlname <- "percent_good_beam_2"
     pg2_def <- ncvar_def("PGDP_02", "percent", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
+    
     dlname <- "percent_good_beam_3"
     pg3_def <- ncvar_def("PGDP_03", "percent", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
+    
     dlname <- "percent_good_beam_4"
     pg4_def <- ncvar_def("PGDP_04", "percent", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
+    
     dlname <- "pitch"
     p_def <- ncvar_def("PTCH", "degrees", list( timedim,  stationdim), FillValue, dlname, prec = "float")
-
+    
     dlname <- "roll"
     r_def <- ncvar_def("ROLL", "degrees", list(  timedim, stationdim ), FillValue, dlname, prec = "float")
-
+    
     dlname <- "height of sea surface"
     hght_def <- ncvar_def("hght", "m", list(  distdim, stationdim ), FillValue, dlname, prec = "float")
-
+    
     dlname <- "ADCP Transducer Temp."
     Tx_def <- ncvar_def("Tx", "degrees celsius", list( timedim, stationdim), FillValue, dlname, prec = "float")
-
+    
     dlname <- "instrument depth"
     D_def <- ncvar_def("DEPH", "m", list(timedim, stationdim), FillValue, dlname, prec = "float")
-
+    
     dlname <- "heading"
     head_def <- ncvar_def("HEAD", "degrees", list(timedim, stationdim), FillValue, dlname, prec = "float")
-
+    
     dlname <- "pressure"
     pres_def <- ncvar_def("PRES", "decibars", list(timedim, stationdim), FillValue, dlname, prec = "float")
-
+    
     dlname <- "speed of sound"
     svel_def <- ncvar_def("SVEL", "m/s", list(timedim, stationdim), FillValue, dlname, prec = "float")
-
+    
     dlname <- "time_string"
     ts_def <- ncvar_def("DTUT8601", units = "",dim =  list( dimnchar, timedim), missval = NULL, name =  dlname, prec = "char")
-
-
+    
+    
     FillValue <- 0
-
+    
     dlname <- "quality_flag u"
     qc_u_def <- ncvar_def("EWCT_QC", "", list(timedim, distdim, stationdim), FillValue, dlname, prec = "integer")
-
+    
     dlname <- "quality_flag v"
     qc_v_def <- ncvar_def("NSCT_QC", "", list(timedim, distdim, stationdim), FillValue, dlname, prec = "integer")
-
+    
     dlname <- "quality_flag w"
     qc_w_def <- ncvar_def("VCSP_QC", "", list(timedim, distdim, stationdim), FillValue, dlname, prec = "integer")
-
+    
     ####writing net CDF####
     #write out definitions to new nc file
     ncout <- nc_create(ncfname, list(u_def, v_def, w_def, e_def, t_def, b1_def, b2_def, b3_def, b4_def, cm1_def, cm2_def, cm3_def, cm4_def, pg1_def, pg2_def, pg3_def, pg4_def, p_def, r_def, hght_def, Tx_def, D_def, qc_u_def, qc_v_def, qc_w_def, lon_def, lat_def, head_def, pres_def, svel_def, ts_def), force_v4 = TRUE)
   }
-
+  
   if (adp@metadata$source == 'odf'){
     #define variables
-
+    
     dlname <- 'lon'
     lon_def <- ncvar_def(longname= "longitude", units = 'degrees_east', dim = stationdim, name = dlname, prec = 'double')
-
+    
     dlname <- 'lat'
     lat_def <- ncvar_def( longname = 'latitude', units = 'degrees_north', dim =  stationdim, name = dlname, prec = 'double')
-
+    
     dlname <- "eastward_sea_water_velocity"
     u_def <- ncvar_def("EWCT", "m/sec", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
+    
     dlname <- "northward_sea_water_velocity"
     v_def <- ncvar_def("NSCT", "m/sec", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
+    
     dlname <- "upward_sea_water_velocity"
     w_def <- ncvar_def("VCSP", "m/sec", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
+    
     dlname <- "time_02"
     t_def <- ncvar_def("ELTMEP01", "seconds since 1970-01-01T00:00:00Z", list( stationdim, timedim), FillValue, dlname, prec = "double")
-
+    
     dlname <- "error_velocity_in_sea_water"
     e_def <- ncvar_def("ERRV", "m/sec", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
+    
     dlname <- "ADCP_echo_intensity_beam_1"
-
+    
     b1_def <- ncvar_def("BEAM_01", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
-
+    
+    
     dlname <- "percent_good_beam_1"
     pg1_def <- ncvar_def("PGDP_01", "percent", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
+    
     dlname <- "time_string"
     ts_def <- ncvar_def("DTUT8601", units = "",dim =  list(dimnchar, timedim), missval = NULL, name =  dlname, prec = "char")
-
+    
     ####writing net CDF####
     #write out definitions to new nc file
     ncout <- nc_create(ncfname, list(u_def, v_def, w_def, e_def, t_def, b1_def,  pg1_def, lon_def, lat_def, ts_def), force_v4 = TRUE)
-
-
+    
+    
   }
-
-
+  
+  
   #insert variables into nc file
   ncvar_put(ncout, u_def, adp[['v']][,,1])
   ncvar_put(ncout, v_def, adp[['v']][,,2])
@@ -761,7 +761,7 @@ oceNc_create <- function(adp, name,  metadata){
   ncvar_put(ncout, t_def, as.POSIXct(adp[['time']], tz = 'UTC', origin = '1970-01-01 00:00:00'))
   ncvar_put(ncout, lon_def, adp[['longitude']])
   ncvar_put(ncout, lat_def, adp[['latitude']])
-
+  
   if (adp@metadata$source == 'raw'){
     ncvar_put(ncout, b1_def, adp[['a', 'numeric']][,,1])
     ncvar_put(ncout, b2_def, adp[['a', 'numeric']][,,2])
@@ -792,11 +792,11 @@ oceNc_create <- function(adp, name,  metadata){
     ncvar_put(ncout, b1_def, adp[['a', 'numeric']])
     ncvar_put(ncout, pg1_def, adp[['q', 'numeric']])
     ncvar_put(ncout, ts_def, adp[['time']])
-
+    
   }
-
+  
   ####metadata####
-
+  
   ncatt_put(ncout, 'station', attname = 'cf_role',attval =  'timeseries_id')
   ncatt_put(ncout, 'time', attname = 'cf_role', attval = 'profile_id')
   ncatt_put(ncout, 'station', 'standard_name', 'platform_name')
@@ -811,22 +811,22 @@ oceNc_create <- function(adp, name,  metadata){
   ncatt_put(ncout, 0, "alternate_pressure_file", adp[['alternate_pressure_file']])
   ncatt_put(ncout, 0, "vertical_separation", adp[['vertical_separation']])
   ncatt_put(ncout, 0, "title", adp[['title']])
-
+  
   if (adp@metadata$source == 'raw'){
-
+    
     ##QC VARIABLE
     ncatt_put(ncout, 'EWCT', 'ancillary_variables', 'EWCT_QC')
     ncatt_put(ncout, 'NSCT', 'ancillary_variables', 'NSCT_QC')
     ncatt_put(ncout, 'VCSP', 'ancillary_variables', 'VCSP_QC')
-
+    
     ####pulled from adp object####
     ncatt_put(ncout, 0, "mooring_number", adp[['mooring_number']])
-
+    
     #       deprecated --- Diana Cardoso 06/01/2018
     #ncatt_put(ncout, 0, "deployment_date", adp[['deployment_time']])
     #ncatt_put(ncout, 0, "recovery_date", adp[['recovery_time']])
-
-
+    
+    
     ncatt_put(ncout, 0, "firmware_version", adp[['firmwareVersion']])
     ncatt_put(ncout, 0, "frequency", adp[['frequency']])
     ncatt_put(ncout, 0, "beam_pattern", adp[['beamPattern']])
@@ -839,11 +839,11 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "transmit_pulse_length_cm", adp[['xmitPulseLength']]*100)
     ncatt_put(ncout, 0, "false_target_reject_values", adp[['falseTargetThresh']])
     ncatt_put(ncout, 0, "serial_number", adp[['serialNumber']])
-
+    
     #     deprecated --- Diana Cardoso 06/01/2018
     #ncatt_put(ncout, 0, "transform", adp[['oceCoordinate']])
-
-
+    
+    
     ncatt_put(ncout, 0, "data_type", adp[['instrumentType']])
     ncatt_put(ncout, 0, "data_subtype", adp[['data_subtype']])
     ncatt_put(ncout, 0, "coord_system", adp[['oceCoordinate']])
@@ -957,9 +957,9 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, "VCSP_QC", "flag_meanings", adp[['flag_meaning']])
     ncatt_put(ncout, "VCSP_QC", "flag_values",c(0:9))
     ncatt_put(ncout, "VCSP_QC", "References", adp[['flag_references']])
-
+    
     #CF conventions
-
+    
     ncatt_put(ncout, 0, 'Conventions', 'CF-1.6')
     ncatt_put(ncout, 0, "creator_type", "person")
     ncatt_put(ncout, 0, "program", adp[['program']])
@@ -972,7 +972,7 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "geospatial_lon_min", adp[['longitude']])
     ncatt_put(ncout, 0, "geospatial_lon_max", adp[['longitude']])
     ncatt_put(ncout, 0, "geospatial_lon_units", "degrees_east")
-
+    
     if (adp[['orientation']] == 'up'){
       ncatt_put(ncout, 0, "geospatial_vertical_min", adp[['sensor_depth']] + max(adp[['distance']], na.rm = TRUE))
       ncatt_put(ncout, 0, "geospatial_vertical_max", adp[['sensor_depth']] + min(adp[['distance']], na.rm = TRUE))
@@ -993,7 +993,7 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout,0, "_FillValue", "1e35")
     ncatt_put(ncout, 0, "featureType", "timeSeriesProfile") #link to oce object? ..... if adp == timeSeriesProfile
     ncatt_put
-
+    
     #BODC P01 names
     ncatt_put(ncout, "EWCT", "sdn_parameter_urn", "SDN:P01::LCEWAP01")
     ncatt_put(ncout, "NSCT", "sdn_parameter_urn", "SDN:P01::LCNSAP01")
@@ -1020,9 +1020,9 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, "SVEL", "sdn_parameter_urn", "SDN:P01::SVELCV01")
     ncatt_put(ncout, "ELTMEP01", "sdn_parameter_urn", "SDN:P01::ELTMEP01")
     ncatt_put(ncout, "time_string", "sdn_parameter_urn", "SDN:P01::DTUT8601")
-
-
-
+    
+    
+    
     ncatt_put(ncout, "EWCT", "sdn_parameter_name", "Eastward current velocity (Eulerian) in the water body by moored acoustic doppler current profiler (ADCP)")
     ncatt_put(ncout, "NSCT", "sdn_parameter_name", "Northward current velocity (Eulerian) in the water body by moored acoustic doppler current profiler (ADCP)")
     ncatt_put(ncout, "VCSP", "sdn_parameter_name", "Upward current velocity in the water body by moored acoustic doppler current profiler (ADCP)")
@@ -1046,10 +1046,10 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, "SVEL", "sdn_parameter_name", "Sound velocity in the water body by computation from temperature and salinity by unspecified algorithm")
     ncatt_put(ncout, 'ELTMEP01', "sdn_parameter_name", "Elapsed time (since 1970-01-01T00:00:00Z)")
     ncatt_put(ncout, 'time_string', "sdn_parameter_name", "String corresponding to format 'YYYY-MM-DDThh:mm:ss.sssZ' or other valid ISO8601 string")
-
-
-
-
+    
+    
+    
+    
     ncatt_put(ncout, "EWCT", "sdn_uom_urn", "SDN:P06::UVAA")
     ncatt_put(ncout, "NSCT", "sdn_uom_urn", "SDN:P06::UVAA")
     ncatt_put(ncout, "VCSP", "sdn_uom_urn", "SDN:P06::UVAA")
@@ -1074,8 +1074,8 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, "SVEL", "sdn_uom_urn", "SDN:P06:UVAA")
     ncatt_put(ncout, "ELTMEP01", "sdn_uom_urn", "SDN:P06::UTBB")
     ncatt_put(ncout, "time_string", "sdn_uom_urn", "SDN:P06::TISO")
-
-
+    
+    
     ncatt_put(ncout, "EWCT", "sdn_uom_name", "Metres per second")
     ncatt_put(ncout, "NSCT", "sdn_uom_name", "Metres per second")
     ncatt_put(ncout, "VCSP", "sdn_uom_name", "Metres per second")
@@ -1100,8 +1100,8 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, "SVEL", "sdn_uom_name", "Metres per second")
     ncatt_put(ncout, "ELTMEP01", "sdn_uom_name", "Seconds")
     ncatt_put(ncout, "time_string", "sdn_uom_name", "ISO8601")
-
-
+    
+    
     #CF standard names
     ncatt_put(ncout, "EWCT", "standard_name", "eastward_sea_water_velocity")
     ncatt_put(ncout, "NSCT", "standard_name", "northward_sea_water_velocity")
@@ -1114,17 +1114,17 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, "ROLL", "standard_name", "platform_roll_angle")
     ncatt_put(ncout, "PRES", "standard_name", "sea_water_pressure")
     ncatt_put(ncout, "SVEL", "standard_name", "speed_of_sound_in_sea_water")
-
+    
   }
-
+  
   if (adp@metadata$source == 'odf'){
     ncatt_put(ncout, 0, "mooring_number", adp[['mooring_number']])
-
+    
     #       deprecated --- Diana Cardoso 06/01/2018
     #ncatt_put(ncout, 0, "deployment_date", adp[['deployment_time']])
     #ncatt_put(ncout, 0, "recovery_date", adp[['recovery_time']])
-
-
+    
+    
     ncatt_put(ncout, 0, "firmware_version", adp[['firmwareVersion']])
     ncatt_put(ncout, 0, "frequency", adp[['frequency']])
     ncatt_put(ncout, 0, "beam_pattern", adp[['beamPattern']])
@@ -1137,10 +1137,10 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "transmit_pulse_length_cm", adp[['xmitPulseLength']])
     ncatt_put(ncout, 0, "false_target_reject_values", adp[['falseTargetThresh']])
     ncatt_put(ncout, 0, "serial_number", adp[['serialNumber']])
-
+    
     #deprecated --- Diana Cardoso 06/01/2018
     #ncatt_put(ncout, 0, "transform", adp[['oceCoordinate']])
-
+    
     ncatt_put(ncout, 0, "data_type", adp[['instrumentType']])
     ncatt_put(ncout, 0, "data_subtype", adp[['model']])
     ncatt_put(ncout, 0, "coord_system", adp[['oceCoordinate']])
@@ -1155,10 +1155,10 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "water_depth", adp[['water_depth']])
     ncatt_put(ncout, 0, "delta_t_sec",adp[['sampling_interval']])
     ncatt_put(ncout, 0, "pred_accuracy", adp[['velocityResolution']])
-
+    
     #FIXME: should be pulled from odf...not in object... issue with oce read.odf
     ncatt_put(ncout, "distance", "xducer_offset_from_bottom", adp[['depth_off_bottom']])
-
+    
     ncatt_put(ncout, "distance", "bin_size", adp[['cellSize']])
     ncatt_put(ncout, "EWCT", "sensor_type", adp[['instrumentType']])
     ncatt_put(ncout, "EWCT", "sensor_depth", adp[['sensor_depth']])
@@ -1185,7 +1185,7 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, "BEAM_01", "generic_name", "AGC")
     ncatt_put(ncout, "PGDP_01", "generic_name", "PGd")
     #CF
-
+    
     ncatt_put(ncout, 0, 'Conventions', 'CF-1.6')
     ncatt_put(ncout, 0, "creator_type", "person")
     ncatt_put(ncout, 0, "creator_institution", adp[['institution']])
@@ -1221,7 +1221,7 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, 0, "date_modified", date())
     ncatt_put(ncout,0, "_FillValue", "1e35")
     ncatt_put(ncout, 0, "featureType", "timeSeriesProfile") #link to oce object? ..... if adp == timeSeriesProfile
-
+    
     #BODC P01 names
     ncatt_put(ncout, "EWCT", "sdn_parameter_urn", "SDN:P01::LCEWAP01")
     ncatt_put(ncout, "NSCT", "sdn_parameter_urn", "SDN:P01::LCNSAP01")
@@ -1239,8 +1239,8 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, "PGDP_01", "sdn_parameter_name", "Acceptable proportion of signal returns by moored acoustic doppler current profiler (ADCP) beam 1")
     ncatt_put(ncout, "lon", "sdn_parameter_name", "Longitude east")
     ncatt_put(ncout, "lat", "sdn_parameter_name", "Latitude north")
-
-
+    
+    
     #P06
     ncatt_put(ncout, "EWCT", "sdn_uom_urn", "SDN:P06::UVAA")
     ncatt_put(ncout, "NSCT", "sdn_uom_urn", "SDN:P06::UVAA")
@@ -1250,7 +1250,7 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, "PGDP_01", "sdn_uom_urn", "SDN:P06::UPCT")
     ncatt_put(ncout, "lon", "sdn_uom_urn", "SDN:P06::DEGE")
     ncatt_put(ncout, "lat", "sdn_uom_urn", "SDN:P06:DEGN")
-
+    
     ncatt_put(ncout, "EWCT", "sdn_uom_name", "Metres per second")
     ncatt_put(ncout, "NSCT", "sdn_uom_name", "Metres per second")
     ncatt_put(ncout, "VCSP", "sdn_uom_name", "Metres per second")
@@ -1259,16 +1259,16 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, "PGDP_01", "sdn_uom_name", "Percent")
     ncatt_put(ncout, "lon", "sdn_uom_name", "Degrees east")
     ncatt_put(ncout, "lat", "sdn_uom_name", "Degrees north")
-
+    
     #CF standard names
     ncatt_put(ncout, "EWCT", "standard_name", "eastward_sea_water_velocity")
     ncatt_put(ncout, "NSCT", "standard_name", "northward_sea_water_velocity")
     ncatt_put(ncout, "VCSP", "standard_name", "upward_sea_water_velocity")
-
-
+    
+    
     ncatt_put(ncout, "lat", "standard_name", "latitude")
     ncatt_put(ncout, "lon", "standard_name", "longitude")
-
+    
   }
   if(!is.null(adp[['publisher_name']])){
     ncatt_put(ncout, 0, "publisher_name", adp[['publisher_name']])
@@ -1279,28 +1279,28 @@ oceNc_create <- function(adp, name,  metadata){
   if(!is.null(adp[['publisher_email']])){
     ncatt_put(ncout, 0, "publisher_email", adp[['publisher_email']])
   }
-
+  
   ####
   ncatt_put(ncout, "EWCT", "data_max", max(adp[['v']][,,1], na.rm = TRUE))
   ncatt_put(ncout, "EWCT", "data_min", min(adp[['v']][,,1], na.rm = TRUE))
   ncatt_put(ncout, "EWCT", "valid_max", 1000)
   ncatt_put(ncout, "EWCT", "valid_min", -1000)
-
+  
   ncatt_put(ncout, "NSCT", "data_max", max(adp[['v']][,,2], na.rm = TRUE))
   ncatt_put(ncout, "NSCT", "data_min", min(adp[['v']][,,2], na.rm = TRUE))
   ncatt_put(ncout, "NSCT", "valid_max", 1000)
   ncatt_put(ncout, "NSCT", "valid_min", -1000)
-
+  
   ncatt_put(ncout, "VCSP", "data_max", max(adp[['v']][,,3], na.rm = TRUE))
   ncatt_put(ncout, "VCSP", "data_min", min(adp[['v']][,,3], na.rm = TRUE))
   ncatt_put(ncout, "VCSP", "valid_max", 1000)
   ncatt_put(ncout, "VCSP", "valid_min", -1000)
-
+  
   ncatt_put(ncout, "ERRV", "data_max", max(adp[['v']][,,4], na.rm = TRUE))
   ncatt_put(ncout, "ERRV", "data_min", min(adp[['v']][,,4], na.rm = TRUE))
   ncatt_put(ncout, "ERRV", "valid_max", 2000)
   ncatt_put(ncout, "ERRV", "valid_min", -2000)
-
+  
   if(adp@metadata$source == 'raw'){
     ncatt_put(ncout, "BEAM_01", "data_min", min(adp[['a', 'numeric']][,,1], na.rm= TRUE))
     ncatt_put(ncout, "BEAM_01", "data_max", max(adp[['a', 'numeric']][,,1], na.rm= TRUE))
@@ -1312,16 +1312,16 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, "BEAM_04", "data_max", max(adp[['a', 'numeric']][,,4], na.rm= TRUE))
     ncatt_put(ncout, "CMAG_01", "data_min", min(adp[['q', 'numeric']][,,1], na.rm= TRUE))
     ncatt_put(ncout, "CMAG_01", "data_max", max(adp[['q', 'numeric']][,,1], na.rm= TRUE))
-
+    
     ncatt_put(ncout, "CMAG_02", "data_min", min(adp[['q' ,'numeric']][,,2], na.rm= TRUE))
     ncatt_put(ncout, "CMAG_02", "data_max", max(adp[['q', 'numeric']][,,2], na.rm= TRUE))
-
+    
     ncatt_put(ncout, "CMAG_03", "data_min", min(adp[['q', 'numeric']][,,3], na.rm= TRUE))
     ncatt_put(ncout, "CMAG_03", "data_max", max(adp[['q', 'numeric']][,,3], na.rm= TRUE))
-
+    
     ncatt_put(ncout, "CMAG_04", "data_min", min(adp[['q', 'numeric']][,,4], na.rm= TRUE))
     ncatt_put(ncout, "CMAG_04", "data_max", max(adp[['q', 'numeric']][,,4], na.rm= TRUE))
-
+    
     ncatt_put(ncout, "PGDP_01", "data_min", min(adp[['g', 'numeric']][,,1], na.rm= TRUE))
     ncatt_put(ncout, "PGDP_01", "data_max", max(adp[['g', 'numeric']][,,1], na.rm= TRUE))# eg min 25 % good
     ncatt_put(ncout, "PGDP_02", "data_min", min(adp[['g', 'numeric']][,,2], na.rm= TRUE))
@@ -1346,33 +1346,33 @@ oceNc_create <- function(adp, name,  metadata){
     ncatt_put(ncout, "PRES", "data_max", max(adp[['pressure']]))
     ncatt_put(ncout, "SVEL", "data_min", min(adp[['soundSpeed']]))
     ncatt_put(ncout, "SVEL", "data_max", max(adp[['soundSpeed']]))
-
+    
   }
   if( adp@metadata$source == 'odf'){
     ncatt_put(ncout, "BEAM_01", "data_min", min(adp[['a', 'numeric']], na.rm= TRUE))
     ncatt_put(ncout, "BEAM_01", "data_max", max(adp[['a', 'numeric']], na.rm= TRUE))
     ncatt_put(ncout, "PGDP_01", "data_min", min(adp[['q', 'numeric']], na.rm= TRUE))
     ncatt_put(ncout, "PGDP_01", "data_max", max(adp[['q', 'numeric']], na.rm= TRUE))
-
+    
   }
-
-
+  
+  
   if (!missing(metadata)) {
     metad <- read.csv(metadata, header = TRUE)
-
+    
     mn <- as.character(metad[,1])
     mv <- as.character(metad[,2])
-
-
+    
+    
     md <- as.list(mv)
     names(md) <- mn
-
+    
     for (m in seq_along(md)) {
       ncatt_put(ncout, 0, names(md)[m], md[[m]])
     }
     nc_close(ncout)
-
-
+    
+    
   }
 }
 
@@ -1477,48 +1477,103 @@ oceNc_create <- function(adp, name,  metadata){
 #'
 ####adpCombine####
 adpCombine <- function(adp, raw, ncin = '', dt = NULL){
-
-  a <- read.adp(raw)
-  #####pull metadata from RAW####
-
-  firmware_version <- a[['firmwareVersion']]
-  frequency <- a[['frequency']]
-  beam_pattern <- a[['beamPattern']]
-  orientation <- a[['orientation']]
-  beam_angle <- a[['beamAngle']]
-  janus <- a[['numberOfBeams']]
-  pings_per_ensemble <- a[['pingsPerEnsemble']]
-  pred_accuracy <- (a[['velocityResolution']]*1000)
-  valid_correlation_range <- a[['lowCorrThresh']]
-  minmax_percent_good <- a[['percentGdMinimum']]
-  error_velocity_threshold <- a[['errorVelocityMaximum']]
-  #time_between_ping_groups <- a[['']]
-  transmit_pulse_length_cm <-( a[['xmitPulseLength']]*100)
-  false_target_reject_values <- a[['falseTargetThresh']]
-  serial_number <- a[['serialNumber']]
-  data_type <- a[['instrumentType']]
-  bin1Distance <- a[['bin1Distance']]
-
-  adp <- oceSetMetadata(adp, 'firmware_version', firmware_version, note = NULL)
-  adp <- oceSetMetadata(adp, 'frequency', frequency, note = NULL)
-  adp <- oceSetMetadata(adp, 'beam_pattern' , beam_pattern, note = NULL)
-  adp <- oceSetMetadata(adp, 'orientation', orientation, note = NULL)
-  adp <- oceSetMetadata(adp, 'beam_angle', beam_angle, note = NULL)
-  adp <- oceSetMetadata(adp, 'janus', janus, note = NULL)
-  adp <- oceSetMetadata(adp, 'pings_per_ensemble', pings_per_ensemble, note = NULL)
-  adp <- oceSetMetadata(adp, 'pred_accuracy', pred_accuracy, note = NULL)
-  adp <- oceSetMetadata(adp, 'valid_correlation_range', valid_correlation_range, note = NULL)
-  adp <- oceSetMetadata(adp, 'minmax_percent_good', minmax_percent_good, note = NULL)
-  adp <- oceSetMetadata(adp, 'error_velocity_threshold', error_velocity_threshold, note = NULL)
-  #adp <- oceSetMetadata(adp, 'time_between_ping_groups', , note = NULL)
-  adp <- oceSetMetadata(adp, 'transmit_pulse_length_cm', transmit_pulse_length_cm, note = NULL)
-  adp <- oceSetMetadata(adp, 'false_target_reject_values', false_target_reject_values, note = NULL)
-  adp <- oceSetMetadata(adp, 'serial_number', serial_number, note = NULL)
-  adp <- oceSetMetadata(adp, 'data_type', data_type, note = NULL)
-  adp <- oceSetMetadata(adp, 'bin1Distance', bin1Distance, note = NULL)
-
+  if(!is.null(raw)){
+    a <- read.adp(raw)
+    #####pull metadata from RAW####
+    
+    firmware_version <- a[['firmwareVersion']]
+    frequency <- a[['frequency']]
+    beam_pattern <- a[['beamPattern']]
+    orientation <- a[['orientation']]
+    beam_angle <- a[['beamAngle']]
+    janus <- a[['numberOfBeams']]
+    pings_per_ensemble <- a[['pingsPerEnsemble']]
+    pred_accuracy <- (a[['velocityResolution']]*1000)
+    valid_correlation_range <- a[['lowCorrThresh']]
+    minmax_percent_good <- a[['percentGdMinimum']]
+    error_velocity_threshold <- a[['errorVelocityMaximum']]
+    #time_between_ping_groups <- a[['']]
+    transmit_pulse_length_cm <-( a[['xmitPulseLength']]*100)
+    false_target_reject_values <- a[['falseTargetThresh']]
+    serial_number <- a[['serialNumber']]
+    data_type <- a[['instrumentType']]
+    bin1Distance <- a[['bin1Distance']]
+    
+    adp <- oceSetMetadata(adp, 'firmware_version', firmware_version, note = NULL)
+    adp <- oceSetMetadata(adp, 'frequency', frequency, note = NULL)
+    adp <- oceSetMetadata(adp, 'beam_pattern' , beam_pattern, note = NULL)
+    adp <- oceSetMetadata(adp, 'orientation', orientation, note = NULL)
+    adp <- oceSetMetadata(adp, 'beam_angle', beam_angle, note = NULL)
+    adp <- oceSetMetadata(adp, 'janus', janus, note = NULL)
+    adp <- oceSetMetadata(adp, 'pings_per_ensemble', pings_per_ensemble, note = NULL)
+    adp <- oceSetMetadata(adp, 'pred_accuracy', pred_accuracy, note = NULL)
+    adp <- oceSetMetadata(adp, 'valid_correlation_range', valid_correlation_range, note = NULL)
+    adp <- oceSetMetadata(adp, 'minmax_percent_good', minmax_percent_good, note = NULL)
+    adp <- oceSetMetadata(adp, 'error_velocity_threshold', error_velocity_threshold, note = NULL)
+    #adp <- oceSetMetadata(adp, 'time_between_ping_groups', , note = NULL)
+    adp <- oceSetMetadata(adp, 'transmit_pulse_length_cm', transmit_pulse_length_cm, note = NULL)
+    adp <- oceSetMetadata(adp, 'false_target_reject_values', false_target_reject_values, note = NULL)
+    adp <- oceSetMetadata(adp, 'serial_number', serial_number, note = NULL)
+    adp <- oceSetMetadata(adp, 'data_type', data_type, note = NULL)
+    adp <- oceSetMetadata(adp, 'bin1Distance', bin1Distance, note = NULL)
+    
+  }else{
+    warning("No raw file provided, please ensure metadata is complete!")
+    if(!missing(ncin)){
+      ni <- nc_open(ncin)
+      firmware_version <- ncatt_get(ni, 0, 'firmware_version')
+      frequency <- ncatt_get(ni,0, 'frequency')
+      beam_pattern <- ncatt_get(ni, 0,"beam_pattern")
+      orientation <- ncatt_get(ni, 0,"orientation")
+      beam_angle <- ncatt_get(ni,0, "beam_angle")
+      janus <- ncatt_get(ni,0, "janus")
+      pings_per_ensemble <- ncatt_get(ni,0, 'pings_per_ensemble')
+      pings_per_ensemble <- as.numeric(pings_per_ensemble$value)
+      pred_accuracy <- ncatt_get(ni,0, 'pred_accuracy')
+      valid_correlation_range <- ncatt_get(ni,0, 'valid_correlation_range')
+      minmax_percent_good <- ncatt_get(ni,0, 'minmax_percent_good' )
+      error_velocity_threshold <- ncatt_get(ni, 0, 'error_velocity_threshold')
+      transmit_pulse_length_cm <- ncatt_get(ni, 0, 'transmit_pulse_length_cm')
+      false_target_reject_values <- ncatt_get(ni, 0, 'false_target_reject_values')
+      serial_number <- ncatt_get(ni, 0, 'ADCP_serial_number')
+      data_type <- ncatt_get(ni, 0, 'DATA_TYPE')
+      D <- ncvar_get(ni, 'D_3')
+      Tx <- ncvar_get(ni, 'Tx_1211')
+      nc_close(ni)
+      
+      
+      
+      adp <- oceSetMetadata(adp, 'firmware_version', firmware_version$value, note = NULL)
+      adp <- oceSetMetadata(adp, 'frequency', frequency$value, note = NULL)
+      adp <- oceSetMetadata(adp, 'beam_pattern' , beam_pattern$value, note = NULL)
+      adp <- oceSetMetadata(adp, 'orientation', orientation$value, note = NULL)
+      adp <- oceSetMetadata(adp, 'beam_angle', beam_angle$value, note = NULL)
+      adp <- oceSetMetadata(adp, 'janus', janus$value, note = NULL)
+      adp <- oceSetMetadata(adp, 'pings_per_ensemble', pings_per_ensemble, note = NULL)
+      adp <- oceSetMetadata(adp, 'pred_accuracy', pred_accuracy$value, note = NULL)
+      adp <- oceSetMetadata(adp, 'valid_correlation_range', valid_correlation_range$value, note = NULL)
+      adp <- oceSetMetadata(adp, 'minmax_percent_good', minmax_percent_good$value, note = NULL)
+      adp <- oceSetMetadata(adp, 'error_velocity_threshold', error_velocity_threshold$value, note = NULL)
+      #adp <- oceSetMetadata(adp, 'time_between_ping_groups', , note = NULL)
+      adp <- oceSetMetadata(adp, 'transmit_pulse_length_cm', transmit_pulse_length_cm$value, note = NULL)
+      adp <- oceSetMetadata(adp, 'false_target_reject_values', false_target_reject_values$value, note = NULL)
+      adp <- oceSetMetadata(adp, 'serial_number', serial_number$value, note = NULL)
+      adp <- oceSetMetadata(adp, 'data_type', data_type$value, note = NULL)
+      
+      adp <- oceSetMetadata(adp, 'bin1Distance', adp[['cellSize']]/2, note = NULL)
+      
+    }else{
+      warning(
+        "Please provide metadata: firmware_version, frequency, beam_pattern, orientation,
+        beam_angle, janus, pings_per_ensemble, pred_accuracy, valid_correlation_range, minmax_percent_good
+        , error_velocity_threshold, transmit_pulse_length_cm, false_target_reject_Values, serial_number
+        , data_type, bin1Distance"
+      )
+      
+    }
+  }
   #####pull metadata from archive NC####
-
+  
   if(!missing(ncin)){
     ni <- nc_open(ncin)
     #pull log sheet metadata from incoming netCDF
@@ -1532,10 +1587,10 @@ adpCombine <- function(adp, raw, ncin = '', dt = NULL){
     #starting_water_layer <- ncatt_get(ni,  0, 'starting_water_layer')
     #ending_water_layer <- ncatt_get(ni, 0,  'ending_water_layer')
     #depth_note <- ncatt_get(ni, 0,  'depth_note')
-
+    
     #     deprecated --- Diana Cardoso 06/01/2018
     #transform <- ncatt_get(ni, 0,  'transform')
-
+    
     data_subtype <- ncatt_get(ni, 0,  'DATA_SUBTYPE')
     coord_system <- ncatt_get(ni, 0,  'COORD_SYSTEM')
     water_mass <- ncatt_get(ni, 0,  'WATER_MASS')
@@ -1557,9 +1612,9 @@ adpCombine <- function(adp, raw, ncin = '', dt = NULL){
     data_origin <- ncatt_get(ni, 0, 'DATA_ORIGIN')
     xducer_offset_from_bottom <- ncatt_get(ni, 'depth', 'xducer_offset_from_bottom')
     bin_size <- ncatt_get(ni, 'depth', 'bin_size')
-
+    
     nc_close(ni)
-
+    
     adp <- oceSetMetadata(adp, 'creation_date', creation_date$value, note = NULL)
     adp <- oceSetMetadata(adp, 'institution', data_origin$value, note = NULL)
     adp <- oceSetMetadata(adp, 'time_coverage_start', time_coverage_start$value, note = NULL)
@@ -1570,10 +1625,10 @@ adpCombine <- function(adp, raw, ncin = '', dt = NULL){
     #adp <- oceSetMetadata(adp, 'starting_water_layer', starting_water_layer$value)
     #adp <- oceSetMetadata(adp, 'ending_water_layer', ending_water_layer$value)
     #adp <- oceSetMetadata(adp, 'depth_note', depth_note$value)
-
+    
     #     deprecated --- Diana Cardoso 06/01/2018
     #adp <- oceSetMetadata(adp, 'transform', transform$value)
-
+    
     adp <- oceSetMetadata(adp, 'data_subtype', data_subtype$value, note = NULL)
     adp <- oceSetMetadata(adp, 'coord_system', coord_system$value, note = NULL)
     adp <- oceSetMetadata(adp, 'water_mass', water_mass$value, note = NULL)
@@ -1582,7 +1637,7 @@ adpCombine <- function(adp, raw, ncin = '', dt = NULL){
     #adp <- oceSetMetadata(adp, 'depth_const', depth_const$value)
     #adp <- oceSetMetadata(adp, 'drifter', drifter$value)
     #adp <- oceSetMetadata(adp, 'composite', composite$value)
-
+    
     adp <- oceSetMetadata(adp, 'FillValue', FillValue$value, note = NULL)
     adp <- oceSetMetadata(adp, 'experiment', experiment$value, note = NULL)
     adp <- oceSetMetadata(adp, 'project', project$value, note = NULL)
@@ -1596,15 +1651,18 @@ adpCombine <- function(adp, raw, ncin = '', dt = NULL){
     adp <- oceSetMetadata(adp, 'ping_interval', ping_interval$value, note = NULL)
     adp <- oceSetMetadata(adp, 'sample_interval', pings_per_ensemble * ping_interval$value, note = NULL)
     adp <- oceSetMetadata(adp, 'title', title$value, note = NULL)
-
-
-
+    
+    
+    
     #set metadata source
-
-    adp <- oceSetMetadata(adp, 'source', 'netCDF, Raw, ODF combined')
-
+    if (!is.null(raw)){
+      adp <- oceSetMetadata(adp, 'source', 'netCDF, Raw, ODF combined')
+    }else{
+      adp <- oceSetMetadata(adp, 'source', 'netCDF, ODF combined')
+    }
+    
   }
-
+  
   if(missing(ncin)){
     warning('NC file not provided, object is missing metadata')
     warning(
@@ -1614,154 +1672,189 @@ adpCombine <- function(adp, raw, ncin = '', dt = NULL){
       magnetic_variation, , delta_t_sec, time_between_ping_groups, depth:
       xducer_offset_from_bottom, depth: bin_size'
     )
-
+    
     adp<- oceSetMetadata(adp, 'source', 'Raw, ODF combined')
   }
-
-  #####pull data from raw file#####
-  a <- read.adp(raw)
-  BEAM_01 <- a[['a', 'numeric']][,,1]
-  BEAM_02 <- a[['a', 'numeric']][,,2]
-  BEAM_03 <- a[['a', 'numeric']][,,3]
-  BEAM_04 <- a[['a', 'numeric']][,,4]
-  PGDP_01 <- a[['g', 'numeric']][,,1]
-  PGDP_02 <- a[['g', 'numeric']][,,2]
-  PGDP_03 <- a[['g', 'numeric']][,,3]
-  CMAG_01 <- a[['q', 'numeric']][,,1]
-  CMAG_02 <- a[['q', 'numeric']][,,2]
-  CMAG_03 <- a[['q', 'numeric']][,,3]
-  CMAG_04 <- a[['q', 'numeric']][,,4]
-
-  PTCH <- a[['pitch']]
-  ROLL <- a[['roll']]
-  HGHT <- a[['distance']]
-  Tx <- a[['temperature']]
-  D <- swDepth(pressure = a[['pressure']], latitude = adp[['latitude']], eos = 'gsw')
-  HEAD <- a[['heading']]
-  PRES <- a[['pressure']]
-  SVEL <- a[['soundSpeed']]
-
-
-  #####limit dimensions to match odf files####
-
-  ####apply time offset####
-
-  if (is.null(dt)){
-    t <-  ( a[['time']] + (adp[['sample_interval']]/2))
-    a <- oceSetData(a, 'time', t)
+  if (!is.null(raw)){
+    #####pull data from raw file#####
+    a <- read.adp(raw)
+    BEAM_01 <- a[['a', 'numeric']][,,1]
+    BEAM_02 <- a[['a', 'numeric']][,,2]
+    BEAM_03 <- a[['a', 'numeric']][,,3]
+    BEAM_04 <- a[['a', 'numeric']][,,4]
+    PGDP_01 <- a[['g', 'numeric']][,,1]
+    PGDP_02 <- a[['g', 'numeric']][,,2]
+    PGDP_03 <- a[['g', 'numeric']][,,3]
+    CMAG_01 <- a[['q', 'numeric']][,,1]
+    CMAG_02 <- a[['q', 'numeric']][,,2]
+    CMAG_03 <- a[['q', 'numeric']][,,3]
+    CMAG_04 <- a[['q', 'numeric']][,,4]
+    
+    PTCH <- a[['pitch']]
+    ROLL <- a[['roll']]
+    HGHT <- a[['distance']]
+    Tx <- a[['temperature']]
+    D <- swDepth(pressure = a[['pressure']], latitude = adp[['latitude']], eos = 'gsw')
+    HEAD <- a[['heading']]
+    PRES <- a[['pressure']]
+    SVEL <- a[['soundSpeed']]
+    
+    
+    #####limit dimensions to match odf files####
+    
+    ####apply time offset####
+    
+    if (is.null(dt)){
+      t <-  ( a[['time']] + (adp[['sample_interval']]/2))
+      a <- oceSetData(a, 'time', t)
+    }else{
+      t <- (a[['time']] + dt)
+      a <- oceSetData(a, 'time', t)
+    }
+    
+    #limit by time
+    limitmat <- matrix(0, nrow = length(a[['time']]), ncol = length(a[['distance']]))
+    limitvec <- matrix(0, ncol = length(a[['time']]))
+    
+    
+    
+    #create 'flag mask' where 4 = bad vlaue (outside bounds)
+    limitmat[as.POSIXct(a[['time']], tz = 'UTC') < as.POSIXct(adp[['time']][[1]], tz = 'UTC') | as.POSIXct(a[['time']], tz = 'UTC') > as.POSIXct(adp[['time']][[length(adp[['time']])]], tz = 'UTC')] <- 4
+    limitvec[as.POSIXct(a[['time']], tz = 'UTC') < as.POSIXct(adp[['time']][[1]], tz = 'UTC') | as.POSIXct(a[['time']], tz = 'UTC') > as.POSIXct(adp[['time']][[length(adp[['time']])]], tz = 'UTC')] <- 4
+    
+    
+    #limit time variable
+    a[['time']][limitvec == 4] <- NA
+    
+    #limit other transferable data
+    PTCH[limitvec == 4] <- NA
+    ROLL[limitvec == 4] <- NA
+    Tx[limitvec == 4] <- NA
+    D[limitvec == 4] <- NA
+    HEAD[limitvec == 4] <- NA
+    PRES[limitvec == 4] <- NA
+    SVEL[limitvec == 4] <- NA
+    
+    BEAM_01[limitmat == 4] <- NA
+    BEAM_02[limitmat == 4] <- NA
+    BEAM_03[limitmat == 4] <- NA
+    BEAM_04[limitmat == 4] <- NA
+    PGDP_01[limitmat == 4] <- NA
+    PGDP_02[limitmat == 4] <- NA
+    PGDP_03[limitmat == 4] <- NA
+    CMAG_01[limitmat == 4] <- NA
+    CMAG_02[limitmat == 4] <- NA
+    CMAG_03[limitmat == 4] <- NA
+    CMAG_04[limitmat == 4] <- NA
+    
+    
+    
+    ####Check distances match####
+    if (length(a[['distance']]) != length(adp[['distance']])){
+      warning('ADP DISTANCE VECTORS DO NOT MATCH, DOUBLE CHECK FOR MISSING BINS!')
+    }
+    
+    #####insert into adp####
+    
+    #create an array
+    x <- nrow(adp[['a']])
+    y <- ncol(adp[['a']])
+    z <- 4
+    aa <- array(dim = c(x, y, z))
+    
+    
+    #combine beams into a single array using dimensions of odf data
+    aa[,,1] <- na.omit(BEAM_01[, 1:length(adp[['distance']])])
+    aa[,,2] <- na.omit(BEAM_02[, 1:length(adp[['distance']])])
+    aa[,,3] <- na.omit(BEAM_03[, 1:length(adp[['distance']])])
+    aa[,,4] <- na.omit(BEAM_04[, 1:length(adp[['distance']])])
+    
+    #put array into adp object
+    adp <- oceSetData(adp, 'a', aa, note = NULL)
+    
+    #create a array
+    l <- nrow(adp[['q']])
+    m <- ncol(adp[['q']])
+    n <- 4
+    gg <- array(dim = c(l, m, n))
+    
+    #combine beams into a single array using dimensions of odf data
+    gg[,,1] <- na.omit(PGDP_01[, 1:length(adp[['distance']])])
+    gg[,,2] <- na.omit(PGDP_02[, 1:length(adp[['distance']])])
+    gg[,,3] <- na.omit(PGDP_03[, 1:length(adp[['distance']])])
+    gg[,,4] <- adp[['q', 'numeric']]
+    
+    #put array into adp object
+    adp <- oceSetData(adp, 'g', gg, note = NULL)
+    
+    #add correlation magnitude array
+    qq <- array(dim = c(l, m, n))
+    
+    qq[,,1] <- na.omit(CMAG_01[, 1:length(adp[['distance']])])
+    qq[,,2] <- na.omit(CMAG_02[, 1:length(adp[['distance']])])
+    qq[,,3] <- na.omit(CMAG_03[, 1:length(adp[['distance']])])
+    qq[,,4] <- na.omit(CMAG_04[, 1:length(adp[['distance']])])
+    
+    adp <- oceSetData(adp, 'q', qq, note = NULL)
+    
+    #insert other data
+    
+    adp <- oceSetData(adp, 'pitch', na.omit(PTCH), note = NULL)
+    adp <- oceSetData(adp, 'roll', na.omit(ROLL), note = NULL)
+    adp <- oceSetData(adp, 'hght', (HGHT[ 1:length(adp[['distance']])]), note = NULL)
+    adp <- oceSetData(adp, 'temperature', na.omit(Tx), note = NULL)
+    adp <- oceSetData(adp, 'depth', na.omit(D), note = NULL)
+    adp <- oceSetData(adp, 'heading', na.omit(HEAD), note = NULL)
+    adp <- oceSetData(adp, 'pressure', na.omit(PRES), note = NULL)
+    adp <- oceSetData(adp, 'soundSpeed', na.omit(SVEL), note = NULL)
+    
   }else{
-    t <- (a[['time']] + dt)
-    a <- oceSetData(a, 'time', t)
+    
+    adp <- oceSetData(adp, 'depth', D)
+    adp <- oceSetData(adp, 'temperature', Tx)
+    
+    #match dims with NAs
+    aa <- array(NA, dim = list(length(adp[['a']][,1]), length(adp[['a']][1,]), 3))
+    ar <- abind(aa, adp[['a']], along = 3)
+    adp <- oceSetData(adp, 'a', ar)
+    
+    gg <- array(NA, dim = list(length(adp[['q']][,1]), length(adp[['q']][1,]), 3))
+    gr <- abind(gg, adp[['q']], along = 3)
+    adp <- oceSetData(adp, 'g', gr)
+    
+    qq <- array(NA, dim = dim(adp[['g']]))
+    adp <- oceSetData(adp, 'q', qq)
+    
+    
+    l <- matrix(NA, ncol = length(adp[['time']]))
+    
+    adp <- oceSetData(adp, 'pitch', l, note = NULL)
+    adp <- oceSetData(adp, 'roll', l, note = NULL)
+    adp <- oceSetData(adp, 'hght', l, note = NULL)
+    
+    adp <- oceSetData(adp, 'heading',l, note = NULL)
+    adp <- oceSetData(adp, 'pressure', l, note = NULL)
+    adp <- oceSetData(adp, 'soundSpeed',l, note = NULL)
+    
+    
+    
+    
+    
+    
   }
-
-  #limit by time
-  limitmat <- matrix(0, nrow = length(a[['time']]), ncol = length(a[['distance']]))
-  limitvec <- matrix(0, ncol = length(a[['time']]))
-
-
-
-  #create 'flag mask' where 4 = bad vlaue (outside bounds)
-  limitmat[as.POSIXct(a[['time']], tz = 'UTC') < as.POSIXct(adp[['time']][[1]], tz = 'UTC') | as.POSIXct(a[['time']], tz = 'UTC') > as.POSIXct(adp[['time']][[length(adp[['time']])]], tz = 'UTC')] <- 4
-  limitvec[as.POSIXct(a[['time']], tz = 'UTC') < as.POSIXct(adp[['time']][[1]], tz = 'UTC') | as.POSIXct(a[['time']], tz = 'UTC') > as.POSIXct(adp[['time']][[length(adp[['time']])]], tz = 'UTC')] <- 4
-
-
-  #limit time variable
-  a[['time']][limitvec == 4] <- NA
-
-  #limit other transferable data
-  PTCH[limitvec == 4] <- NA
-  ROLL[limitvec == 4] <- NA
-  Tx[limitvec == 4] <- NA
-  D[limitvec == 4] <- NA
-  HEAD[limitvec == 4] <- NA
-  PRES[limitvec == 4] <- NA
-  SVEL[limitvec == 4] <- NA
-
-  BEAM_01[limitmat == 4] <- NA
-  BEAM_02[limitmat == 4] <- NA
-  BEAM_03[limitmat == 4] <- NA
-  BEAM_04[limitmat == 4] <- NA
-  PGDP_01[limitmat == 4] <- NA
-  PGDP_02[limitmat == 4] <- NA
-  PGDP_03[limitmat == 4] <- NA
-  CMAG_01[limitmat == 4] <- NA
-  CMAG_02[limitmat == 4] <- NA
-  CMAG_03[limitmat == 4] <- NA
-  CMAG_04[limitmat == 4] <- NA
-
-
-
-  ####Check distances match####
-  if (length(a[['distance']]) != length(adp[['distance']])){
-    warning('ADP DISTANCE VECTORS DO NOT MATCH, DOUBLE CHECK FOR MISSING BINS!')
-  }
-
-  #####insert into adp####
-
-  #create an array
-  x <- nrow(adp[['a']])
-  y <- ncol(adp[['a']])
-  z <- 4
-  aa <- array(dim = c(x, y, z))
-
-
-  #combine beams into a single array using dimensions of odf data
-  aa[,,1] <- na.omit(BEAM_01[, 1:length(adp[['distance']])])
-  aa[,,2] <- na.omit(BEAM_02[, 1:length(adp[['distance']])])
-  aa[,,3] <- na.omit(BEAM_03[, 1:length(adp[['distance']])])
-  aa[,,4] <- na.omit(BEAM_04[, 1:length(adp[['distance']])])
-
-  #put array into adp object
-  adp <- oceSetData(adp, 'a', aa, note = NULL)
-
-  #create a array
-  l <- nrow(adp[['q']])
-  m <- ncol(adp[['q']])
-  n <- 4
-  gg <- array(dim = c(l, m, n))
-
-  #combine beams into a single array using dimensions of odf data
-  gg[,,1] <- na.omit(PGDP_01[, 1:length(adp[['distance']])])
-  gg[,,2] <- na.omit(PGDP_02[, 1:length(adp[['distance']])])
-  gg[,,3] <- na.omit(PGDP_03[, 1:length(adp[['distance']])])
-  gg[,,4] <- adp[['q', 'numeric']]
-
-  #put array into adp object
-  adp <- oceSetData(adp, 'g', gg, note = NULL)
-
-  #add correlation magnitude array
-  qq <- array(dim = c(l, m, n))
-
-  qq[,,1] <- na.omit(CMAG_01[, 1:length(adp[['distance']])])
-  qq[,,2] <- na.omit(CMAG_02[, 1:length(adp[['distance']])])
-  qq[,,3] <- na.omit(CMAG_03[, 1:length(adp[['distance']])])
-  qq[,,4] <- na.omit(CMAG_04[, 1:length(adp[['distance']])])
-
-  adp <- oceSetData(adp, 'q', qq, note = NULL)
-
-  #insert other data
-
-  adp <- oceSetData(adp, 'pitch', na.omit(PTCH), note = NULL)
-  adp <- oceSetData(adp, 'roll', na.omit(ROLL), note = NULL)
-  adp <- oceSetData(adp, 'hght', (HGHT[ 1:length(adp[['distance']])]), note = NULL)
-  adp <- oceSetData(adp, 'temperature', na.omit(Tx), note = NULL)
-  adp <- oceSetData(adp, 'depth', na.omit(D), note = NULL)
-  adp <- oceSetData(adp, 'heading', na.omit(HEAD), note = NULL)
-  adp <- oceSetData(adp, 'pressure', na.omit(PRES), note = NULL)
-  adp <- oceSetData(adp, 'soundSpeed', na.omit(SVEL), note = NULL)
-
+  
   ####set sensor_depth
   adp <- oceSetMetadata(adp, 'sensor_depth', mean(adp[['depth']]), note = NULL)
-
+  
   ###fix event qualifier pulled from odf
   adp <- oceSetMetadata(adp, 'eventQualifier', adp[['serialNumber']], note = NULL)
-
+  
   ##update processingLog
   adp@processingLog <- processingLogAppend(adp@processingLog, 'adp object combined from raw file, odf files and netCDF file, metadata and varibale data pulled from various sources')
-
+  
   return(adp)
-
-}
+  
+  }
 
 
 ####create netCDF file from combined adp source####
@@ -1794,16 +1887,16 @@ adpNC <- function(adp, name){
   #file name and path
   ncpath <- "./"
   ncfname <- paste(ncpath, name, ".nc", sep = "")
-
-
+  
+  
   ####setting dimensions and definitions####
   #dimension variables from adp object
   time <- as.POSIXct(adp[['time']], tz = 'UTC', origin = '1970-01-01 00:00:00')
   dist <- adp[['distance', 'numeric']]
   lon <- adp[['longitude']]
   lat <- adp[['latitude']]
-
-
+  
+  
   #create dimensions
   timedim <- ncdim_def("time", "seconds since 1970-01-01T00:00:00Z", as.double(time))    #time formatting FIX
   distdim <- ncdim_def("distance", "metres", as.double(dist))
@@ -1811,97 +1904,97 @@ adpNC <- function(adp, name){
   londim <- ncdim_def("lon", "degrees_east" , as.double(lon))
   latdim <- ncdim_def("lat", "degrees_north", as.double(lat))
   dimnchar <- ncdim_def('nchar', '', 1:23, create_dimvar = FALSE)
-
+  
   #set fill value
   FillValue <- 1e35
   #####define variables####
-
+  
   dlname <- 'lon'
   lon_def <- ncvar_def(longname= "longitude", units = 'degrees_east', dim = stationdim, name = dlname, prec = 'double')
-
+  
   dlname <- 'lat'
   lat_def <- ncvar_def( longname = 'latitude', units = 'degrees_north', dim =  stationdim, name = dlname, prec = 'double')
-
+  
   dlname <- "eastward_sea_water_velocity"
   u_def <- ncvar_def("EWCT", "m/sec", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
+  
   dlname <- "northward_sea_water_velocity"
   v_def <- ncvar_def("NSCT", "m/sec", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
+  
   dlname <- "upward_sea_water_velocity"
   w_def <- ncvar_def("VCSP", "m/sec", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
+  
   dlname <- "time_02"
   t_def <- ncvar_def("ELTMEP01", "seconds since 1970-01-01T00:00:00Z", list( stationdim, timedim), FillValue, dlname, prec = "double")
-
+  
   dlname <- "error_velocity_in_sea_water"
   e_def <- ncvar_def("ERRV", "m/sec", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
+  
   dlname <- "ADCP_echo_intensity_beam_1"
-
+  
   b1_def <- ncvar_def("BEAM_01", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
+  
   dlname <- "ADCP_echo_intensity_beam_2"
   b2_def <- ncvar_def("BEAM_02", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
+  
   dlname <- "ADCP_echo_intensity_beam_3"
   b3_def <- ncvar_def("BEAM_03", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
+  
   dlname <- "ADCP_echo_intensity_beam_4"
   b4_def <- ncvar_def("BEAM_04", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
+  
   dlname <- "ADCP_correlation_magnitude_beam_1"
   cm1_def <- ncvar_def("CMAG_01", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
+  
   dlname <- "ADCP_correlation_magnitude_beam_2"
   cm2_def <- ncvar_def("CMAG_02", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
+  
   dlname <- "ADCP_correlation_magnitude_beam_3"
   cm3_def <- ncvar_def("CMAG_03", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
+  
   dlname <- "ADCP_correlation_magnitude_beam_4"
   cm4_def <- ncvar_def("CMAG_04", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
+  
   dlname <- "percent_good_beam_1"
   pg1_def <- ncvar_def("PGDP_01", "percent", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
+  
   dlname <- "percent_good_beam_2"
   pg2_def <- ncvar_def("PGDP_02", "percent", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
+  
   dlname <- "percent_good_beam_3"
   pg3_def <- ncvar_def("PGDP_03", "percent", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
+  
   dlname <- "percent_good_beam_4"
   pg4_def <- ncvar_def("PGDP_04", "percent", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
+  
   dlname <- "pitch"
   p_def <- ncvar_def("PTCH", "degrees", list(  timedim, stationdim), FillValue, dlname, prec = "float")
-
+  
   dlname <- "roll"
   r_def <- ncvar_def("ROLL", "degrees", list(  timedim , stationdim), FillValue, dlname, prec = "float")
-
+  
   dlname <- "height of sea surface"
   hght_def <- ncvar_def("hght", "m", list(  distdim, stationdim ), FillValue, dlname, prec = "float")
-
+  
   dlname <- "ADCP Transducer Temp."
   Tx_def <- ncvar_def("Tx", "degrees", list( timedim , stationdim), FillValue, dlname, prec = "float")
-
+  
   dlname <- "instrument depth"
   D_def <- ncvar_def("DEPH", "m", list(timedim, stationdim), FillValue, dlname, prec = "float")
-
+  
   dlname <- "heading"
   head_def <- ncvar_def("HEAD", "degrees", list(timedim, stationdim), FillValue, dlname, prec = "float")
-
+  
   dlname <- "pressure"
   pres_def <- ncvar_def("PRES", "decibars", list(timedim, stationdim), FillValue, dlname, prec = "float")
-
+  
   dlname <- "speed of sound"
   svel_def <- ncvar_def("SVEL", "m/s", list(timedim, stationdim), FillValue, dlname, prec = "float")
-
+  
   dlname <- "time_string"
   ts_def <- ncvar_def("DTUT8601", units = "",dim =  list( dimnchar, timedim), missval = NULL, name =  dlname, prec = "char")
-
-
+  
+  
   #####write out definitions to new nc file####
   ncout <- nc_create(ncfname, list(u_def, v_def, w_def, e_def, t_def, b1_def, b2_def, b3_def, b4_def, cm1_def, cm2_def, cm3_def, cm4_def, pg1_def, pg2_def, pg3_def, pg4_def, p_def, r_def, hght_def, Tx_def, D_def, lon_def, lat_def, head_def, pres_def, svel_def, ts_def), force_v4 = TRUE)
   ncvar_put(ncout, u_def, adp[['v']][,,1])
@@ -1932,7 +2025,7 @@ adpNC <- function(adp, name){
   ncvar_put(ncout, pres_def, adp[['pressure']])
   ncvar_put(ncout, svel_def, adp[['soundSpeed']])
   ncvar_put(ncout, ts_def, adp[['time']])
-
+  
   ####metadata####
   ####dimensions####
   ncatt_put(ncout, 'station', attname = 'cf_role',attval =  'timeseries_id')
@@ -1943,7 +2036,7 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 'time' , 'calendar', 'gregorian')
   ncatt_put(ncout, 'time_string', 'note', 'time values as ISO8601 string, YY-MM-DD hh:mm:ss')
   ncatt_put(ncout, 'time_string', 'time_zone', 'UTC')
-
+  
   ####global####
   ncatt_put(ncout, 0, "Conventions", 'CF-1.6')
   ncatt_put(ncout, 0, "creator_institution", adp[['institution']])
@@ -1963,7 +2056,7 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 0, 'summary', adp[['summary']])
   ncatt_put(ncout, 0, "mooring_number", adp[['station']])
   ncatt_put(ncout, 0, "naming_authority", 'MEDS, BODC, CF')
-  ncatt_put(ncout, 0, "comment", adp[['comment']])
+  ncatt_put(ncout, 0, "comment", "Data has been combined from archived ODF files")
   ncatt_put(ncout, 0, "time_coverage_duration", (tail(adp[['time']], n = 1) - adp[['time']][[1]]))
   ncatt_put(ncout, 0, "time_coverage_duration_units", "days")
   ncatt_put(ncout, 0, "cdm_data_type", "station")
@@ -1971,12 +2064,12 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 0, "publisher_name", adp[['publisher_name']])
   ncatt_put(ncout, 0, "publisher_email", "BIO.Datashop@dfo-mpo.gc.ca")
   ncatt_put(ncout, 0, "processing_history", adp[['processing_history']])
-
+  
   #     deprecated --- Diana Cardoso 06/01/2018
   #ncatt_put(ncout, 0, "deployment_date", adp[['deployment_date']])
   #ncatt_put(ncout, 0, "recovery_date", adp[['recovery_date']])
-
-
+  
+  
   ncatt_put(ncout, 0, "firmware_version", adp[['firmware_version']])
   ncatt_put(ncout, 0, "frequency", adp[['frequency']])
   ncatt_put(ncout, 0, "beam_pattern", adp[['beam_pattern']])
@@ -1989,10 +2082,10 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 0, "transmit_pulse_length_cm", adp[['transmit_pulse_length_cm']])
   ncatt_put(ncout, 0, "false_target_reject_values", adp[['false_target_reject_values']])
   ncatt_put(ncout, 0, "serial_number", adp[['serial_number']])
-
+  
   #     deprecated --- Diana Cardoso 06/01/2018
   #ncatt_put(ncout, 0, "transform", adp[['transform']])
-
+  
   ncatt_put(ncout, 0, "data_type", adp[['data_type']])
   ncatt_put(ncout, 0, "data_subtype", adp[['data_subtype']])
   ncatt_put(ncout, 0, "coord_system", adp[['coord_system']])
@@ -2002,7 +2095,7 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 0, "platform", adp[['ship']])
   ncatt_put(ncout, 0, "sounding", adp[['sounding']])
   ncatt_put(ncout, 0, "chief_scientist", adp[['scientist']])
-
+  
   ncatt_put(ncout, 0, "water_depth", adp[['sounding']])
   ncatt_put(ncout, 0, "delta_t_sec",adp[['delta_t_sec']])
   ncatt_put(ncout, 0, "pred_accuracy", adp[['pred_accuracy']])
@@ -2015,16 +2108,16 @@ adpNC <- function(adp, name){
   #ncatt_put(ncout, 0, "drifter", adp[['drifter']])
   ncatt_put(ncout, 0, "experiment", adp[['experiment']])
   ncatt_put(ncout, 0, "cruise_name", adp[['cruise']])
-
-
-
-
-
+  
+  
+  
+  
+  
   ####variables####
-
+  
   ncatt_put(ncout, "DEPH", "xducer_offset_from_bottom", adp[['xducer_offset_from_bottom']])
   ncatt_put(ncout, "DEPH", "bin_size", adp[['bin_size']])
-
+  
   ncatt_put(ncout, "EWCT", "sensor_type", adp[['inst_type']])
   ncatt_put(ncout, "EWCT", "sensor_depth", adp[['sensor_depth']])
   ncatt_put(ncout, "EWCT", "serial_number", adp[['serial_number']])
@@ -2113,11 +2206,11 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, "SVEL", "sensor_type", adp[['inst_type']])
   ncatt_put(ncout, "SVEL", "sensor_depth", adp[['sensor_depth']])
   ncatt_put(ncout, "SVEL", "serial_number", adp[['serial_number']])
-
+  
   ####CF conventions & BODC standards####
   ncatt_put(ncout, 0, 'Conventions', 'CF-1.6')
   ncatt_put(ncout, 0, "creator_type", "person")
-
+  
   ncatt_put(ncout, 0, "program", adp[['description']])
   ncatt_put(ncout, 0, "time_coverage_start", adp[['time_coverage_start']])
   ncatt_put(ncout, 0, "time_coverage_end", adp[['time_coverage_end']])
@@ -2127,7 +2220,7 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 0, "geospatial_lon_min", adp[['longitude']])
   ncatt_put(ncout, 0, "geospatial_lon_max", adp[['longitude']])
   ncatt_put(ncout, 0, "geospatial_lon_units", "degrees_east")
-
+  
   if (adp[['orientation']] == 'up' ){
     ncatt_put(ncout, 0, "geospatial_vertical_min", adp[['sensor_depth']] + max(adp[['distance']], na.rm = TRUE))
     ncatt_put(ncout, 0, "geospatial_vertical_max", adp[['sensor_depth']] + min(adp[['distance']], na.rm = TRUE))
@@ -2138,12 +2231,12 @@ adpNC <- function(adp, name){
   }
   ncatt_put(ncout, 0, "geospatial_vertical_units", "metres")
   ncatt_put(ncout, 0, "geospatial_vertical_positive", 'down')
-
+  
   ncatt_put(ncout, 0, "project", adp[['project']])
   ncatt_put(ncout,0, "_FillValue", "1e35")
   ncatt_put(ncout, 0, "featureType", "timeSeriesProfile")
   ncatt_put(ncout, 0, "date_modified", date())
-
+  
   #added meta to meet conventions (not found in archive) #to be inserted manually
   #??????
   if(!is.null(adp[['sea_name']])){
@@ -2159,11 +2252,11 @@ adpNC <- function(adp, name){
   if(!is.null(adp[['publisher_email']])){
     ncatt_put(ncout, 0, "publisher_email", adp[['publisher_email']])
   }
-
-
+  
+  
   ncatt_put(ncout, 0, "institution", adp[['institution']])
-
-
+  
+  
   ####BODC P01 names####
   ncatt_put(ncout, "EWCT", "sdn_parameter_urn", "SDN:P01::LCEWAP01")
   ncatt_put(ncout, "NSCT", "sdn_parameter_urn", "SDN:P01::LCNSAP01")
@@ -2189,8 +2282,8 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, "PRES", "sdn_parameter_urn", "SDN:P01::PRESPR01")
   ncatt_put(ncout, "SVEL", "sdn_parameter_urn", "SDN:P01::SVELCV01")
   ncatt_put(ncout, "time_string", "sdn_parameter_urn", "SDN:P01::DTUT8601")
-
-
+  
+  
   ncatt_put(ncout, "EWCT", "sdn_parameter_name", "Eastward current velocity (Eulerian) in the water body by moored acoustic doppler current profiler (ADCP)")
   ncatt_put(ncout, "NSCT", "sdn_parameter_name", "Northward current velocity (Eulerian) in the water body by moored acoustic doppler current profiler (ADCP)")
   ncatt_put(ncout, "VCSP", "sdn_parameter_name", "Upward current velocity in the water body by moored acoustic doppler current profiler (ADCP)")
@@ -2214,8 +2307,8 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, "SVEL", "sdn_parameter_name", "Sound velocity in the water body by computation from temperature and salinity by unspecified algorithm")
   ncatt_put(ncout, 'ELTMEP01', "sdn_parameter_name", "Elapsed time (since 1970-01-01T00:00:00Z)")
   ncatt_put(ncout, 'time_string', "sdn_parameter_name", "String corresponding to format 'YYYY-MM-DDThh:mm:ss.sssZ' or other valid ISO8601 string")
-
-
+  
+  
   ncatt_put(ncout, "EWCT", "sdn_uom_urn", "SDN:P06::UVAA")
   ncatt_put(ncout, "NSCT", "sdn_uom_urn", "SDN:P06::UVAA")
   ncatt_put(ncout, "VCSP", "sdn_uom_urn", "SDN:P06::UVAA")
@@ -2240,7 +2333,7 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, "SVEL", "sdn_uom_urn", "SDN:P06:UVAA")
   ncatt_put(ncout, "ELTMEP01", "sdn_uom_urn", "SDN:P06::UTBB")
   ncatt_put(ncout, "time_string", "sdn_uom_urn", "SDN:P06::TISO")
-
+  
   ncatt_put(ncout, "EWCT", "sdn_uom_name", "Metres per second")
   ncatt_put(ncout, "NSCT", "sdn_uom_name", "Metres per second")
   ncatt_put(ncout, "VCSP", "sdn_uom_name", "Metres per second")
@@ -2265,8 +2358,8 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, "SVEL", "sdn_uom_name", "Metres per second")
   ncatt_put(ncout, "ELTMEP01", "sdn_uom_name", "Seconds")
   ncatt_put(ncout, "time_string", "sdn_uom_name", "ISO8601")
-
-
+  
+  
   #####CF standard names####
   ncatt_put(ncout, "EWCT", "standard_name", "eastward_sea_water_velocity")
   ncatt_put(ncout, "NSCT", "standard_name", "northward_sea_water_velocity")
@@ -2280,97 +2373,97 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, "ROLL", "standard_name", "platform_roll_angle")
   ncatt_put(ncout, "PRES", "standard_name", "sea_water_pressure")
   ncatt_put(ncout, "SVEL", "standard_name", "speed_of_sound_in_sea_water")
-
-
+  
+  
   ####data max and min####
   ncatt_put(ncout, "EWCT", "data_max", max(adp[['v']][,,1], na.rm = TRUE))
   ncatt_put(ncout, "EWCT", "data_min", min(adp[['v']][,,1], na.rm = TRUE))
   ncatt_put(ncout, "EWCT", "valid_max", 1000)
   ncatt_put(ncout, "EWCT", "valid_min", -1000)
-
+  
   ncatt_put(ncout, "NSCT", "data_max", max(adp[['v']][,,2], na.rm = TRUE))
   ncatt_put(ncout, "NSCT", "data_min", min(adp[['v']][,,2], na.rm = TRUE))
   ncatt_put(ncout, "NSCT", "valid_max", 1000)
   ncatt_put(ncout, "NSCT", "valid_min", -1000)
-
+  
   ncatt_put(ncout, "VCSP", "data_max", max(adp[['v']][,,3], na.rm = TRUE))
   ncatt_put(ncout, "VCSP", "data_min", min(adp[['v']][,,3], na.rm = TRUE))
   ncatt_put(ncout, "VCSP", "valid_max", 1000)
   ncatt_put(ncout, "VCSP", "valid_min", -1000)
-
+  
   ncatt_put(ncout, "ERRV", "data_max", max(adp[['v']][,,4], na.rm = TRUE))
   ncatt_put(ncout, "ERRV", "data_min", min(adp[['v']][,,4], na.rm = TRUE))
   ncatt_put(ncout, "ERRV", "valid_max", 2000)
   ncatt_put(ncout, "ERRV", "valid_min", -2000)
-
+  
   ncatt_put(ncout, "BEAM_01", "data_min", min(adp[['a', 'numeric']][,,1], na.rm= TRUE))
   ncatt_put(ncout, "BEAM_01", "data_max", max(adp[['a', 'numeric']][,,1], na.rm= TRUE))
-
+  
   ncatt_put(ncout, "BEAM_02", "data_min", min(adp[['a' ,'numeric']][,,2], na.rm= TRUE))
   ncatt_put(ncout, "BEAM_02", "data_max", max(adp[['a', 'numeric']][,,2], na.rm= TRUE))
-
+  
   ncatt_put(ncout, "BEAM_03", "data_min", min(adp[['a', 'numeric']][,,3], na.rm= TRUE))
   ncatt_put(ncout, "BEAM_03", "data_max", max(adp[['a', 'numeric']][,,3], na.rm= TRUE))
-
+  
   ncatt_put(ncout, "BEAM_04", "data_min", min(adp[['q', 'numeric']][,,4], na.rm= TRUE))
   ncatt_put(ncout, "BEAM_04", "data_max", max(adp[['q', 'numeric']][,,4], na.rm= TRUE))
-
+  
   ncatt_put(ncout, "CMAG_01", "data_min", min(adp[['q', 'numeric']][,,1], na.rm= TRUE))
   ncatt_put(ncout, "CMAG_01", "data_max", max(adp[['q', 'numeric']][,,1], na.rm= TRUE))
-
+  
   ncatt_put(ncout, "CMAG_02", "data_min", min(adp[['q' ,'numeric']][,,2], na.rm= TRUE))
   ncatt_put(ncout, "CMAG_02", "data_max", max(adp[['q', 'numeric']][,,2], na.rm= TRUE))
-
+  
   ncatt_put(ncout, "CMAG_03", "data_min", min(adp[['q', 'numeric']][,,3], na.rm= TRUE))
   ncatt_put(ncout, "CMAG_03", "data_max", max(adp[['q', 'numeric']][,,3], na.rm= TRUE))
-
+  
   ncatt_put(ncout, "CMAG_04", "data_min", min(adp[['q', 'numeric']][,,4], na.rm= TRUE))
   ncatt_put(ncout, "CMAG_04", "data_max", max(adp[['q', 'numeric']][,,4], na.rm= TRUE))
-
-
+  
+  
   ncatt_put(ncout, "PGDP_01", "data_min", min(adp[['g', 'numeric']][,,1], na.rm= TRUE))
   ncatt_put(ncout, "PGDP_01", "data_max", max(adp[['g', 'numeric']][,,1], na.rm= TRUE))# eg min 25 % good
-
+  
   ncatt_put(ncout, "PGDP_02", "data_min", min(adp[['g', 'numeric']][,,2], na.rm= TRUE))
   ncatt_put(ncout, "PGDP_02", "data_max", max(adp[['g' ,'numeric']][,,2], na.rm= TRUE))
-
+  
   ncatt_put(ncout, "PGDP_03", "data_min", min(adp[['g' ,'numeric']][,,3], na.rm= TRUE))
   ncatt_put(ncout, "PGDP_03", "data_max", max(adp[['g', 'numeric']][,,3], na.rm= TRUE))
-
+  
   ncatt_put(ncout, "PGDP_04", "data_min", min(adp[['g', 'numeric']][,,4], na.rm= TRUE))
   ncatt_put(ncout, "PGDP_04", "data_max", max(adp[['g', 'numeric']][,,4], na.rm= TRUE))
-
+  
   ncatt_put(ncout, "hght", "data_min", min(adp[['depth', 'numeric']]))
   ncatt_put(ncout, "hght", "data_max", max(adp[['depth', 'numeric']]))
-
+  
   ncatt_put(ncout, "DEPH", "data_min", min(adp[['depth']]))
   ncatt_put(ncout, "DEPH", "data_max", max(adp[['depth']]))
-
+  
   ncatt_put(ncout, "Tx", "data_min", min(adp[['temperature']]))
   ncatt_put(ncout, "Tx", "data_max", max(adp[['temperature']]))
-
+  
   ncatt_put(ncout, "PTCH", "data_min", min(adp[['pitch']]))
   ncatt_put(ncout, "PTCH", "data_max", max(adp[['pitch']]))
-
+  
   ncatt_put(ncout, "ROLL", "data_min", min(adp[['roll']]))
   ncatt_put(ncout, "ROLL", "data_max", max(adp[['roll']]))
-
+  
   ncatt_put(ncout, "HEAD", "data_min", min(adp[['heading']]))
   ncatt_put(ncout, "HEAD", "data_max", max(adp[['heading']]))
-
+  
   ncatt_put(ncout, "PRES", "data_min", min(adp[['pressure']]))
   ncatt_put(ncout, "PRES", "data_max", max(adp[['pressure']]))
-
+  
   ncatt_put(ncout, "SVEL", "data_min", min(adp[['soundSpeed']]))
   ncatt_put(ncout, "SVEL", "data_max", max(adp[['soundSpeed']]))
-
-
+  
+  
   ####nc close####
   nc_close(ncout)
-
-
-
-
+  
+  
+  
+  
 }
 
 
@@ -2441,50 +2534,50 @@ insertInst <- function(adp, var, file = adp[['alternate_pressure_file']], offset
     if( var == 'heading'){
       ensemble <- inst[[1]]
       heading <- inst[[2]]
-
+      
       if (length(ensemble) != length(adp[['heading']])){
         warning("Incorrect dimensions! Please confirm length of heading vector!")
       }else{
         adp[['heading']] <- heading
         adp@processingLog <- processingLogAppend(adp@processingLog, value = paste("Instrument heading inserted from alternate file", file))
-              return(adp)
-        }
+        return(adp)
+      }
     }
     if (var != 'heading'){
       warning("INVALID VAR INPUT!")
       stop()
     }
-
+    
   }else{
     inst <- read.oce(file)
-
-  vr <- inst[[var]]
-  u <- inst@metadata$units[var]
-  if (var == 'pressure'){
-    if (offset != 0 ){
-      vr <-  vr + offset      #generalized seawater conversion between metres and decibar (1m = 1dbar)
+    
+    vr <- inst[[var]]
+    u <- inst@metadata$units[var]
+    if (var == 'pressure'){
+      if (offset != 0 ){
+        vr <-  vr + offset      #generalized seawater conversion between metres and decibar (1m = 1dbar)
+      }
     }
+    #check dimensions
+    
+    if(length(adp[['time']]) != length(vr)){
+      warning('dimensions are incorrect, attempt to rectify, please confirm')
+      t <- inst[['time']]
+      vr[t < adp[['time_coverage_start']]] <- NA
+      vr[t > adp[['time_coverage_end']]] <- NA
+      vr <- na.omit(vr)
+      length(vr) <- length(adp[['time']])
+      
+    }
+    
+    adp <- oceSetData(adp, paste(var, 'alternate', sep = '_'), vr, note = NULL)
+    adp@metadata$units[paste(var, 'alternate', sep = '_')] <- u
+    
+    adp@processingLog <- processingLogAppend(adp@processingLog, paste(var, '_alternate', '  pulled from  ', file, '   with offset of  ', offset, 'm.'))
+    
+    return(adp)
   }
-  #check dimensions
-
-  if(length(adp[['time']]) != length(vr)){
-    warning('dimensions are incorrect, attempt to rectify, please confirm')
-    t <- inst[['time']]
-    vr[t < adp[['time_coverage_start']]] <- NA
-    vr[t > adp[['time_coverage_end']]] <- NA
-    vr <- na.omit(vr)
-    length(vr) <- length(adp[['time']])
-
-  }
-
-  adp <- oceSetData(adp, paste(var, 'alternate', sep = '_'), vr, note = NULL)
-  adp@metadata$units[paste(var, 'alternate', sep = '_')] <- u
-
-  adp@processingLog <- processingLogAppend(adp@processingLog, paste(var, '_alternate', '  pulled from  ', file, '   with offset of  ', offset, 'm.'))
-
-  return(adp)
-  }
-
+  
 }
 
 
@@ -2542,14 +2635,14 @@ adjustDepths <- function(adp){
       warning('No vertical separation provided!')
     }
     pres <- adp[['pressure_alternate']]
-
+    
     presadj <- pres + vsep
-
+    
     adp[['depth']] <- swDepth(pressure = presadj, latitude = adp[['latitude']], eos = 'gsw')
-
+    
     adp@processingLog <- processingLogAppend(adp@processingLog, paste('Depths adjusted based on pressure data from', adp[['alternate_pressure_file']], 'with vertical separation of', adp[['vertical_separation']], sep = '  '))
   }
-
+  
 }
 
 
@@ -2581,7 +2674,7 @@ binMap <- function(obj){
   bin[[1]] <- obj[['bin1Distance']]
   counter <- 1
   for (i in 2: length(obj[['distance']])){
-
+    
     bin[[i]] <- bin[[1]] + obj[['cellSize']] * counter
     counter <- counter +1
   }
@@ -2610,11 +2703,11 @@ binMap <- function(obj){
 
 
 flag <- function(adp, values){
-
+  
   if( !is.null(values$time)){
     # if ( !is.null( values$depth)){ #FIXME: add index by depth and beam as well?
     #   if (!is.null (values$beam)){
-
+    
     for ( i in 1: length(values$time)){
       f <- values$time[[i]]
       # g <- values$depth[[i]]
@@ -2631,7 +2724,7 @@ flag <- function(adp, values){
     #     }
     # }
   }
-
+  
   # else{
   #   for ( i in 1: length(values$time)){
   #     f <- values$time[[i]]
@@ -2640,7 +2733,7 @@ flag <- function(adp, values){
   #     adp[['vFlag']][f, , ] <- 4
   # }
   # }
-
+  
   for( i in 1:length(values$time)){
     adp@processingLog <- processingLogAppend(adp@processingLog, paste('Specific data points flagged based on visual inspection, index of flagged point was, adp[["v"]][', values$time[[i]], ', , ]' , sep = '  '))
   }
@@ -2704,8 +2797,8 @@ plot_ei <- function(adp, ...){
   lines(a3m, bins, xlim = c(0, 255), type = 'l', col = 'green', xlab = '', ylab = '')
   lines(a4m, bins, xlim = c(0, 255), type = 'l', col = 'blue', xlab = '', ylab = '')
   legend('topright' , legend = c('Beam 1', 'Beam 2', 'Beam 3', 'Beam 4'), col = c('black', 'red', 'green', 'blue'), lty = 1, cex = 0.6)
-
-
+  
+  
 }
 
 
@@ -2733,18 +2826,18 @@ plot_ei <- function(adp, ...){
 
 
 pvPlot <- function(x, control, xlim = c(range(x[['distance']])), ylim = c(range(x[['distance']])), ...){
-
+  
   ##oce code
   mgp=getOption("oceMgp")
   par(mar = c(mgp[1] + 1, mgp[1] + 1, 1, 1))
   dt <-
     as.numeric(difftime(x@data$time[2], x@data$time[1], units = "sec")) # FIXME: should not assume all equal
   mPerKm <- 1000
-
+  
   U <- x@data$v[, , 1]
   V <- x@data$v[, , 2]
   ttt <- x@data$time
-
+  
   if (!missing(control) && !is.null(control$bin)) {
     # if (control$bin < 1)
     #   stop("cannot have control$bin less than 1, but got ", control$bin)
@@ -2768,11 +2861,11 @@ pvPlot <- function(x, control, xlim = c(range(x[['distance']])), ylim = c(range(
         u[[i]] <- U[, control$bin[[i]]]
         v[[i]] <- V[, control$bin[[i]]]
       }
-        bins <- TRUE
-
+      bins <- TRUE
+      
     }
     ##
-
+    
   } else {
     if (x@metadata$numberOfCells > 1) {
       u <- apply(U, 1, mean, na.rm = TRUE)
@@ -2785,12 +2878,12 @@ pvPlot <- function(x, control, xlim = c(range(x[['distance']])), ylim = c(range(
   }
   u[is.na(u)] <- 0        # zero out missing
   v[is.na(v)] <- 0
-
-
+  
+  
   if (bins == FALSE){
     xDist <- integrateTrapezoid(ttt, u, 'cA') / mPerKm
     yDist <- integrateTrapezoid(ttt, v, 'cA') / mPerKm
-
+    
     plot(
       xDist,
       yDist,
@@ -2804,17 +2897,17 @@ pvPlot <- function(x, control, xlim = c(range(x[['distance']])), ylim = c(range(
       ...
     )
   }
-
+  
   if(bins == TRUE){
     xDist <- NULL
     yDist <- NULL
     listcol <-  1:150
-
+    
     for ( i in 1:length(control$bin)){
       xDist[[i]] <- integrateTrapezoid(ttt, u[[i]], 'cA') / mPerKm
       yDist[[i]] <- integrateTrapezoid(ttt, v[[i]], 'cA') / mPerKm
     }
-
+    
     for ( i in 1:length(control$bin)){
       plot(
         xDist[[i]],
@@ -2827,15 +2920,15 @@ pvPlot <- function(x, control, xlim = c(range(x[['distance']])), ylim = c(range(
         xlim = xlim,
         ylim = ylim,
         ...
-
+        
       )
       par(new = TRUE)
     }
-
-
+    
+    
     legend('topleft', legend = paste('Bin', control$bin, sep = '  '), col = listcol, lty = 1, cex = 0.5)
   }
-
+  
 }
 
 
@@ -2868,12 +2961,12 @@ pvPlot <- function(x, control, xlim = c(range(x[['distance']])), ylim = c(range(
 plotQC <- function(obj, QC, ... ){
   Bad <- handleFlags(object = adp, flags = 1, actions = list('NA'))
   Good <- handleFlags(object = adp, flags = 4, actions = list('NA'))
-
+  
   if( QC == 'u'){
-
+    
     uBad <- Bad[['v']][,,1]
     uGood <- Good[['v']][,,1]
-
+    
     for(i in 1:length(obj[['v']][1,,1])){
       plot(uGood[,i], xlab = "time (s)", ylab = "m/s",  main = (paste( "Bin", i, ": Depth", round(adp[['depthMean']] - adp[['distance']][i], digits= 0), 'm, of U')), type = 'l', ylim = c(-1.5, 1.5))
       par(new = TRUE)
@@ -2885,80 +2978,80 @@ plotQC <- function(obj, QC, ... ){
   if( QC == 'v'){
     vBad <- Bad[['v']][,,2]
     vGood <- Good[['v']][,,2]
-
+    
     for(i in 1:length(obj[['v']][1,,1])){
       plot(vGood[,i], xlab = "time (s)", ylab = "m/s",  main = (paste( "Bin", i, ": Depth", round(adp[['depthMean']] - adp[['distance']][i], digits= 0), 'm, of V')), type = 'l', ylim = c(-1.5, 1.5), ...)
       par(new = TRUE)
       plot(vBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(-1.5, 1.5))
       par(new = TRUE)
       mtext(text =paste(round(length(na.omit(vBad[,i]))/ length(vBad[,i]) *100, digits = 2), "%  invalid data"), side = 1, cex = 0.8)
-
+      
     }
-
+    
   }
   if( QC == 'w'){
     wBad <- Bad[['v']][,,3]
     wGood <- Good[['v']][,,3]
-
+    
     for(i in 1:length(obj[['v']][1,,1])){
       plot(wGood[,i], xlab = "time (s)", ylab = "m/s",  main = (paste( "Bin", i, ": Depth", round(adp[['depthMean']] - adp[['distance']][i], digits= 0), 'm, of W')), type = 'l', ylim = c(-1.5, 1.5), ...)
       par(new = TRUE)
       plot(wBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(-1.5, 1.5))
       par(new = TRUE)
       mtext(text =paste(round(length(na.omit(wBad[,i]))/ length(wBad[,i]) *100, digits = 2), "%  invalid data"), side = 1, cex = 0.8)
-
+      
     }
   }
-
+  
   if( QC == 'er'){
     erBad <- Bad[['v']][,,4]
     erGood <- Good[['v']][,,4]
-
+    
     for(i in 1:length(obj[['v']][1,,1])){
       plot(erGood[,i], xlab = "time (s)", ylab = "m/s",  main = (paste( "Bin", i, ": Depth", round(adp[['depthMean']] - adp[['distance']][i], digits= 0), 'm, of ERRV')), type = 'l', ylim = c(-4, 4), ...)
       par(new = TRUE)
       plot(erBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(-4, 4))
       par(new = TRUE)
       mtext(text =paste(round(length(na.omit(erBad[,i]))/ length(erBad[,i]) *100, digits = 2), "%  invalid data"), side = 1, cex = 0.8)
-
+      
     }
   }
   if( QC == 'ei'){
-
+    
     eiBad <- Bad[['a', 'numeric']][,,1]
     eiBad[is.na(Bad[['v']][,,1])] <- NA
-
-
+    
+    
     eiGood <- Good[['a', 'numeric']][,,1]
     eiGood[is.na(Good[['v']][,,1])] <- NA
-
+    
     for(i in 1:length(obj[['a']][1,,1])){
       plot(eiGood[,i], xlab = "time (s)", ylab = "Intensity (counts)",  main = (paste( "Bin", i, ": Depth", round(adp[['depthMean']] - adp[['distance']][i], digits= 0), 'm, of Echo Intensity (Beam 1)')), type = 'l', ylim = c(0, 255),...)
       par(new = TRUE)
       plot(eiBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(0, 255))
       par(new = TRUE)
       mtext(text =paste(round(length(na.omit(eiBad[,i]))/ length(eiBad[,i]) *100, digits = 2), "%  invalid data"), side = 1, cex = 0.8)
-
+      
     }
   }
-
+  
   if( QC == 'pg'){
     pgBad <- Bad[['g', 'numeric']][,,1] + Bad[['g', 'numeric']][,,4]
     pgBad[is.na(Bad[['v']][,,1])] <- NA
-
+    
     pgGood <- Good[['g', 'numeric']][,,1] + Good[['g', 'numeric']][,,4]
     pgGood[is.na(Good[['v']][,,1])] <- NA
-
+    
     for(i in 1:length(obj[['g']][1,,1])){
       plot(pgGood[,i], xlab = "time (s)", ylab = "%",  main = (paste( "Bin", i, ": Depth", round(adp[['depthMean']] - adp[['distance']][i], digits= 0), 'm,  of Percent Good (Beam 1)')), type = 'l', ylim = c(0, 100), ...)
       par(new = TRUE)
       plot(pgBad[,i], xlab = '', ylab = '', axes = FALSE, col = 'red', type = 'l', ylim = c(0, 100))
       par(new = TRUE)
       mtext(text =paste(round(length(na.omit(pgBad[,i]))/ length(pgBad[,i]) *100, digits = 2), "%  invalid data"), side = 1, cex = 0.8)
-
+      
     }
   }
-
+  
 }
 
 
@@ -2980,9 +3073,9 @@ plotQC <- function(obj, QC, ... ){
 #'
 #' @examples
 startPlots <- function(adp, path){
-
+  
   #save all plots to folder
-
+  
   if (!is.null(adp[['mooring_number']])){
     mooring <- adp[['mooring_number']]
   }
@@ -2992,18 +3085,18 @@ startPlots <- function(adp, path){
   if(!is.null(adp[['station']])){
     mooring <- adp[['station']]
   }
-
+  
   plotpath <- paste0(path, '/Plots/M', mooring)
-
+  
   if (dir.exists(plotpath)){
-
+    
   }else{
     dir.create(paste0(path, '/Plots/M', mooring))
   }
-
-
-
-
+  
+  
+  
+  
   #general first look plots
   pdf( file = paste0(plotpath, '/PreProcessingPlots.pdf'))
   plot(adp, which = 1, title = 'EWCT: PreProcessing')  #u
@@ -3036,7 +3129,7 @@ startPlots <- function(adp, path){
 #'
 #' binPlot(adp, x = adp[['v']][,,1])
 binPlot <- function(adp, x, path){
-
+  
   if (!is.null(adp[['mooring_number']])){
     mooring <- adp[['mooring_number']]
   }
@@ -3046,24 +3139,24 @@ binPlot <- function(adp, x, path){
   if(!is.null(adp[['station']])){
     mooring <- adp[['station']]
   }
-
+  
   plotpath <- paste0(path, '/Plots/M', mooring)
-
+  
   if (dir.exists(plotpath)){
-
+    
   }else{
     dir.create(paste0(path, '/Plots/M', mooring))
   }
-
-
-#save bin plots to pdf
-name <- paste('binbybinplot_V_', adp[['cruise_number']],'_', adp[['mooring_number']], '_', '1-50', sep = '') #name pdf
-pdf(paste0(plotpath,'/', name, '.pdf') , width = 8, height = 40 ) #save to pdf
-par(mfrow = c(15, 1)) #set number of plots per page (rows, columns)
-#cat(paste('Bin Plot of mooring', adp[['mooring_number']], 'from cruise', adp[['cruise_number']], 'with data from', adp[['time_coverage_start']], 'to', adp[['time_coverage_end']], sep = '  '))
-plotBin(x)
-dev.off() #close pdf
-print(paste("PreProcessingPlots.pdf created in", plotpath))
+  
+  
+  #save bin plots to pdf
+  name <- paste('binbybinplot_V_', adp[['cruise_number']],'_', adp[['mooring_number']], '_', '1-50', sep = '') #name pdf
+  pdf(paste0(plotpath,'/', name, '.pdf') , width = 8, height = 40 ) #save to pdf
+  par(mfrow = c(15, 1)) #set number of plots per page (rows, columns)
+  #cat(paste('Bin Plot of mooring', adp[['mooring_number']], 'from cruise', adp[['cruise_number']], 'with data from', adp[['time_coverage_start']], 'to', adp[['time_coverage_end']], sep = '  '))
+  plotBin(x)
+  dev.off() #close pdf
+  print(paste("PreProcessingPlots.pdf created in", plotpath))
 }
 
 #' End Plots
@@ -3088,21 +3181,21 @@ endPlots <- function(adpClean, path){
     mooring <- adpClean[['station']]
   }
   plotpath <- paste0(path, '/Plots/M', mooring)
-
+  
   if (dir.exists(plotpath)){
-
+    
   }else{
-  dir.create(paste0(path, '/Plots/M', mooring))
+    dir.create(paste0(path, '/Plots/M', mooring))
   }
-
+  
   #check plots
   pdf(paste0(plotpath, '/PostProcessing.pdf'))
   #     looking for any spikes on either end of dataset
   plot(adp[['depth']], main = 'Depth: PostProcessing', xlab = 'time (seconds)', ylab = 'Depth (m)', lty = 2)
-
+  
   #     looking for pressure spikes on either end
   plot(adp, which = 15, main = 'Pressure: PostProcessing')
-
+  
   #     plot velocity beams
   plot(adpClean, which = 1, title = 'EWCT: PostProcessing')
   mtext('m/s', side = 4)
@@ -3116,7 +3209,7 @@ endPlots <- function(adpClean, path){
   plot_ei(adpClean, main = 'Echo Intensity')
   dev.off()
   print(paste("PreProcessingPlots.pdf created in", plotpath))
-
+  
 }
 
 #' Quality Control Plots
@@ -3158,22 +3251,22 @@ qcPlots <- function(adp, QC, path){
     mooring <- adp[['station']]
   }
   plotpath <- paste0(path, '/Plots/M', mooring)
-
+  
   if (dir.exists(plotpath)){
-
+    
   }else{
     dir.create(paste0(path, '/Plots/M', mooring))
   }
-
+  
   name <- paste('binbybinplot', QC, mooring, sep = '_')
-
+  
   #     check any other relvant plots to confirm QC before exporting
   pdf(paste0(plotpath,'/', name, '_QC.pdf') , width = 8, height = 40 ) #save to pdf
   par(mfrow = c(15, 1)) #set number of plots per page (rows, columns)
   plotQC(adp, QC = QC)
   dev.off() #close pdf
   print(paste("PreProcessingPlots.pdf created in", plotpath))
-
+  
 }
 
 #mapPlot check
@@ -3208,11 +3301,11 @@ plotMap <- function(adp){
 #' @examples
 as.P01 <- function(gf3){
   gf32p01 <- read.csv('c:/Users/ChisholmE/Documents/sample files/GF3 Code Map.csv', header = TRUE)
-
-
-
+  
+  
+  
   line <- grep(gf32p01$GF3.code, pattern = gf3)
-
+  
   if (length(line) == 0){
     yn <- list()
     for (i in 1:length(gf32p01$GF3.code)){
@@ -3221,13 +3314,13 @@ as.P01 <- function(gf3){
         line <- i
       }
     }
-
+    
   }
   if (length(line) == 0){
     warning(paste(gf3, 'not recognized in list of GF3 codes!'))
     stop()
   }
-
+  
   gf3 <- list(gf3 = gf3)
   gf3$P01 <- as.character(gf32p01$P01.code[[line]])
   gf3$P01name <-as.character(gf32p01$P01..preferred.name[[line]])
@@ -3235,6 +3328,6 @@ as.P01 <- function(gf3){
   gf3$P06name <- as.character(gf32p01$P06.unit.name[[line]])
   gf3$units <- as.character(gf32p01$units[[line]])
   gf3$std <- as.character(gf32p01$standard_name[[line]])
-
+  
   return(gf3)
 }
