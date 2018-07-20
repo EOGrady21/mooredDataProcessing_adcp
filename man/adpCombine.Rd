@@ -23,6 +23,14 @@ pingsPerEnsemble * ensembleInterval}
 \description{
 Combines archived data and metadata from raw, odf and netCDF
  sources into adp object which can be exported as netCDF or saved
+ 
+ @details If either netCDF or Raw file is unavailable this function can still
+   run, however if only ODF files are available please use only
+   \code{\link[ADCP:odf2adp]{odf2adp}} to combine odf files If netCDF file is
+   missing some metadata may be required to be added manually. If raw file is
+   missing dataset will not be complete but will include null values where
+   set is missing data. Either way the object produced can still be passed to
+   \code{\link[ADCP:adpNC]{adpNC()}} for export.
 }
 \details{
 \bold{a)	Raw file (.000)}
