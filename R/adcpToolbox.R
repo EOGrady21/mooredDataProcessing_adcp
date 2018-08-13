@@ -3099,7 +3099,7 @@ startPlots <- function(adp, path){
   if (dir.exists(plotpath)){
     
   }else{
-    dir.create(paste0(path, '/Plots/M', mooring))
+    dir.create(paste0(path, '/Plots/M', mooring), recursive = TRUE)
   }
   
   
