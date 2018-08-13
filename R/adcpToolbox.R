@@ -2537,7 +2537,7 @@ adpNC <- function(adp, name){
 
 insertInst <- function(adp, var, file = adp[['alternate_pressure_file']], offset = adp[['vertical_separation']]){
   csv <- grep(file, pattern = ".csv")
-  if (csv > 0 ){
+  if (length(csv) > 0 ){
     inst <- read.csv(file, header = TRUE)
     if( var == 'heading'){
       ensemble <- inst[[1]]
