@@ -263,7 +263,7 @@ limit_depthbytime <- function(adp, tz = 'UTC'){
   }
   adp[['depth']] <- swDepth(adp[['pressure']], latitude = adp[['latitude']], eos = getOption("oceEOS", default = "gsw"))
   depth <- adp[['depth']]
-  depth[as.POSIXct(adp[['time']], tz) <= as.POSIXct(adp[['time_coverage_start']], tz) | as.POSIXct(adp[['time']], tz) >= as.POSIXct(adp[['time_coverage_end']], tz)] <- NA
+  depth[as.POSIXct(adp[['time']], tz) < as.POSIXct(adp[['time_coverage_start']], tz) | as.POSIXct(adp[['time']], tz) > as.POSIXct(adp[['time_coverage_end']], tz)] <- NA
   
   mdt <- round(mean(depth, na.rm = TRUE), digits = 2)
   adp@metadata$sensor_depth <- mdt
