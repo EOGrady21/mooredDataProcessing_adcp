@@ -3288,9 +3288,10 @@ qcPlots <- function(adp, QC, path){
 #'
 #' @examples
 plotMap <- function(adp){
+  require('maps')
   lat <- adp[['latitude']]
   lon <- adp[['longitude']]
-  map(plot = TRUE, xlim = c(lon-20, lon+20), ylim = c(lat-20, lat+20), fill = TRUE, col = 'green')
+  maps::map(plot = TRUE, xlim = c(lon-20, lon+20), ylim = c(lat-20, lat+20), fill = TRUE, col = 'green')
   par(new = TRUE)
   points(lon, lat, col = 'red')
 }
