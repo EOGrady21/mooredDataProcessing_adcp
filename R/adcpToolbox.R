@@ -1847,7 +1847,7 @@ adpCombine <- function(adp, raw, ncin = '', dt = NULL){
   }
   
   ####set sensor_depth
-  adp <- oceSetMetadata(adp, 'sensor_depth', mean(adp[['depth']]), note = NULL)
+  adp <- oceSetMetadata(adp, 'sensor_depth', mean(adp[['depth']], na.rm= TRUE), note = NULL)
   
   ###fix event qualifier pulled from odf
   adp <- oceSetMetadata(adp, 'eventQualifier', adp[['serialNumber']], note = NULL)
@@ -2046,7 +2046,7 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 0, 'acknowledgement', adp[['acknowledgement']] )
   ncatt_put(ncout, 0, 'comment', adp[['comment']])
   ncatt_put(ncout, 0, 'cruise_description', adp[['cruise_description']])
-  ncatt_put(ncout, 0, 'date_created', Sys.Date())
+  ncatt_put(ncout, 0, 'date_created', as.character(Sys.Date())) #issue with sys date being output as numeric
   ncatt_put(ncout, 0, 'keywords', 'Oceans > Ocean Circulation > Ocean Currents')
   ncatt_put(ncout, 0, 'keywords_vocabulary', 'GCMD Science Keywords')
   ncatt_put(ncout, 0, 'model', adp[['model']])
@@ -2325,15 +2325,15 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, "PGDP_03", "sdn_uom_urn", "SDN:P06::UPCT")
   ncatt_put(ncout, "PGDP_04", "sdn_uom_urn", "SDN:P06::UPCT")
   ncatt_put(ncout, "hght", "sdn_uom_urn", "SDN:P06::ULAA")
-  ncatt_put(ncout, "DEPH", "sdn_uom_urn", "SDN:P06:ULAA")
+  ncatt_put(ncout, "DEPH", "sdn_uom_urn", "SDN:P06::ULAA")
   ncatt_put(ncout, "Tx", "sdn_uom_urn", "SDN:P06::UPAA")
   ncatt_put(ncout, "PTCH", "sdn_uom_urn", "SDN:P06:UAAA")
   ncatt_put(ncout, "ROLL", "sdn_uom_urn", "SDN:P06:UAAA")
   ncatt_put(ncout, "lon", "sdn_uom_urn", "SDN:P06::DEGE")
-  ncatt_put(ncout, "lat", "sdn_uom_urn", "SDN:P06:DEGN")
-  ncatt_put(ncout, "HEAD", "sdn_uom_urn", "SDN:P06:UAAA")
-  ncatt_put(ncout, "PRES", "sdn_uom_urn", "SDN:P06:UPDB")
-  ncatt_put(ncout, "SVEL", "sdn_uom_urn", "SDN:P06:UVAA")
+  ncatt_put(ncout, "lat", "sdn_uom_urn", "SDN:P06::DEGN")
+  ncatt_put(ncout, "HEAD", "sdn_uom_urn", "SDN:P06::UAAA")
+  ncatt_put(ncout, "PRES", "sdn_uom_urn", "SDN:P06::UPDB")
+  ncatt_put(ncout, "SVEL", "sdn_uom_urn", "SDN:P06::UVAA")
   ncatt_put(ncout, "ELTMEP01", "sdn_uom_urn", "SDN:P06::UTBB")
   ncatt_put(ncout, "time_string", "sdn_uom_urn", "SDN:P06::TISO")
   
