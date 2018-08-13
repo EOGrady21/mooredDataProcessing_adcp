@@ -41,6 +41,17 @@ and current directionality is logical.
 This function is designed to read a csv with columns ensemble number and heading.
 Please format csv in this way to avoid errors. Please see ADCP processing
 guide for instructions on how to calculate alternate headings.
+
+*NOTE If attempting to use this function and the times of the instruments are
+at different sampling intervals, it may be necessary to manually insert the
+data using \code{\link[oce:oceSetData]{oceSetData}}. In this case the user
+can pull the data into the chosen oce object and edit it manually which may
+include removing data points or averaging data points to match the sampling
+interval of the ADCP. There may be other cases where a similar method is
+required, if there is a consistent specific case which requires an extra
+function please suggest to developers. More information can also be found in
+the Moored ADCP processing guide
+https://gccode.ssc-spc.gc.ca/dfo-mar-odis/MooredDataProcessing/Documentation
 }
 \examples{
 
