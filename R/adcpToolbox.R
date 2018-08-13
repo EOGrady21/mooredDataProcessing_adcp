@@ -568,12 +568,7 @@ odf2adp <- function(files, metadata) {
 #'@param metadata csv file listing metadata names and values to be inserted into
 #'  global attributes of net CDF
 #'
-#'  @export
-
-
-
-
-##nc metadata
+#'@export
 oceNc_create <- function(adp, name,  metadata){
   if (!inherits(adp, "adp")){
     stop("method is only for objects of class '", "adp", "'")

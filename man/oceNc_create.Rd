@@ -10,9 +10,7 @@ oceNc_create(adp, name, metadata)
 \item{name}{name of the NetCDF file to be produced}
 
 \item{metadata}{csv file listing metadata names and values to be inserted into
- global attributes of net CDF
-
- @export}
+global attributes of net CDF}
 
 \item{obj}{an adp object from the oce class}
 }
