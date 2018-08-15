@@ -1881,6 +1881,8 @@ adpCombine <- function(adp, raw, ncin = '', dt = NULL){
 #'
 
 adpNC <- function(adp, name){
+  require(lubridate)
+  
   if (!inherits(adp, "adp")){
     stop("method is only for objects of class '", "adp", "'")
   }
@@ -2066,8 +2068,9 @@ adpNC <- function(adp, name){
   #Note from Mathieu: naming authority should be reverse DNS naming scheme (eg. gov.noaa.ncei), unable to find applicable name for BIO - DFO, left blank for now
  # ncatt_put(ncout, 0, "naming_authority", 'MEDS, BODC, CF')
   ncatt_put(ncout, 0, "comment", "Data has been combined from archived ODF files")
-  ncatt_put(ncout, 0, "time_coverage_duration", (tail(adp[['time']], n = 1) - adp[['time']][[1]]))
-  ncatt_put(ncout, 0, "time_coverage_duration_units", "days")
+  #FIX ME CHANGE TO ISO8601
+  ncatt_put(ncout, 0, "time_coverage_duration", tail(adp[['time']], n = 1) - adp[['time']][[1]])
+  # ncatt_put(ncout, 0, "time_coverage_duration_units", "days") #unnessecary with time_coverage_duration format
   ncatt_put(ncout, 0, "cdm_data_type", "station")
   ncatt_put(ncout, 0, "sea_name", adp[['sea_name']])
   ncatt_put(ncout, 0, "publisher_name", adp[['publisher_name']])
@@ -2220,8 +2223,8 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 0, "creator_type", "person")
   
   ncatt_put(ncout, 0, "program", adp[['description']])
-  ncatt_put(ncout, 0, "time_coverage_start", adp[['time_coverage_start']])
-  ncatt_put(ncout, 0, "time_coverage_end", adp[['time_coverage_end']])
+  ncatt_put(ncout, 0, "time_coverage_start", strftime(adp[['time']][[1]] , "%Y-%m-%dT%H:%M:%S%z"))
+  ncatt_put(ncout, 0, "time_coverage_end", strftime(adp[['time']][[length(adp[['time']])]] , "%Y-%m-%dT%H:%M:%S%z"))
   ncatt_put(ncout, 0, "geospatial_lat_min", adp[['latitude']])
   ncatt_put(ncout, 0, "geospatial_lat_max", adp[['latitude']])
   ncatt_put(ncout, 0, "geospatial_lat_units", "degrees_north")
