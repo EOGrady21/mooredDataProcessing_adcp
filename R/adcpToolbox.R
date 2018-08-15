@@ -2040,6 +2040,11 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 'time_string', 'note', 'time values as ISO8601 string, YY-MM-DD hh:mm:ss')
   ncatt_put(ncout, 'time_string', 'time_zone', 'UTC')
   
+  ncatt_put(ncout, 'distance', 'axis', 'Z')
+  ncatt_put(ncout, 'time' , 'axis', 'T')
+  ncatt_put(ncout, 'lat', 'axis', 'Y')
+  ncatt_put(ncout, 'lon', 'axis', 'X')
+  
   ####global####
   ncatt_put(ncout, 0, "Conventions", 'CF-1.6')
   ncatt_put(ncout, 0, "creator_institution", adp[['institution']])
@@ -2058,7 +2063,8 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 0, 'cruise_number', adp[['cruiseNumber']])
   ncatt_put(ncout, 0, 'summary', adp[['summary']])
   ncatt_put(ncout, 0, "mooring_number", adp[['station']])
-  ncatt_put(ncout, 0, "naming_authority", 'MEDS, BODC, CF')
+  #Note from Mathieu: naming authority should be reverse DNS naming scheme (eg. gov.noaa.ncei), unable to find applicable name for BIO - DFO, left blank for now
+ # ncatt_put(ncout, 0, "naming_authority", 'MEDS, BODC, CF')
   ncatt_put(ncout, 0, "comment", "Data has been combined from archived ODF files")
   ncatt_put(ncout, 0, "time_coverage_duration", (tail(adp[['time']], n = 1) - adp[['time']][[1]]))
   ncatt_put(ncout, 0, "time_coverage_duration_units", "days")
@@ -2079,8 +2085,7 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 0, "janus", adp[['janus']])
   ncatt_put(ncout, 0, "pings_per_ensemble", adp[['pings_per_ensemble']])
   ncatt_put(ncout, 0, "valid_correlation_range", adp[['valid_correlation_range']])
-  ncatt_put(ncout, 0, "minmax_percent_good", adp[['minmax_percent_good']])
-  ncatt_put(ncout, 0,"minmax_percent_good", "100")
+  ncatt_put(ncout, 0,"minmax_percent_good", "0-100")
   ncatt_put(ncout, 0, "error_velocity_threshold", adp[['error_velocity_threshold']])
   ncatt_put(ncout, 0, "transmit_pulse_length_cm", adp[['transmit_pulse_length_cm']])
   ncatt_put(ncout, 0, "false_target_reject_values", adp[['false_target_reject_values']])
@@ -2236,7 +2241,8 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 0, "geospatial_vertical_positive", 'down')
   
   ncatt_put(ncout, 0, "project", adp[['project']])
-  ncatt_put(ncout,0, "_FillValue", "1e35")
+ #Notes from Mathieu O. - this is better as individual variable attribute
+   #ncatt_put(ncout,0, "_FillValue", "1e35")
   ncatt_put(ncout, 0, "featureType", "timeSeriesProfile")
   ncatt_put(ncout, 0, "date_modified", date())
   
@@ -2436,8 +2442,8 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, "PGDP_04", "data_min", min(adp[['g', 'numeric']][,,4], na.rm= TRUE))
   ncatt_put(ncout, "PGDP_04", "data_max", max(adp[['g', 'numeric']][,,4], na.rm= TRUE))
   
-  ncatt_put(ncout, "hght", "data_min", min(adp[['depth', 'numeric']]))
-  ncatt_put(ncout, "hght", "data_max", max(adp[['depth', 'numeric']]))
+  ncatt_put(ncout, "hght", "data_min", min(((adp[['sensor_depth']]- adp[['bin1Distance']]) - adp[['distance']])))
+  ncatt_put(ncout, "hght", "data_max", max(((adp[['sensor_depth']]- adp[['bin1Distance']]) - adp[['distance']])))
   
   ncatt_put(ncout, "DEPH", "data_min", min(adp[['depth']]))
   ncatt_put(ncout, "DEPH", "data_max", max(adp[['depth']]))
