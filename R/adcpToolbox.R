@@ -1978,7 +1978,7 @@ adpNC <- function(adp, name){
   dlname <- "roll"
   r_def <- ncvar_def("ROLL", "degrees", list(  timedim , stationdim), FillValue, dlname, prec = "float")
   
-  dlname <- "height of sea surface"
+  dlname <- "average height of sea surface above each bin"
   hght_def <- ncvar_def("hght", "m", list(  distdim, stationdim ), FillValue, dlname, prec = "float")
   
   dlname <- "ADCP Transducer Temp."
@@ -2043,6 +2043,8 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 'time_string', 'time_zone', 'UTC')
   
   ncatt_put(ncout, 'distance', 'axis', 'Z')
+  ncatt_put(ncout, 'hght', 'axis', 'Z')
+  ncatt_put(ncout, 'hght', 'positive', 'down')
   ncatt_put(ncout, 'time' , 'axis', 'T')
   ncatt_put(ncout, 'lat', 'axis', 'Y')
   ncatt_put(ncout, 'lon', 'axis', 'X')
@@ -2243,7 +2245,8 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 0, "geospatial_vertical_units", "metres")
   ncatt_put(ncout, 0, "geospatial_vertical_positive", 'down')
   
-  ncatt_put(ncout, 0, "project", adp[['project']])
+  #Notes from M.O/D.C project should be filled out with more specific name in future, unable to determine for archived files
+ # ncatt_put(ncout, 0, "project", adp[['project']])
  #Notes from Mathieu O. - this is better as individual variable attribute
    #ncatt_put(ncout,0, "_FillValue", "1e35")
   ncatt_put(ncout, 0, "featureType", "timeSeriesProfile")
@@ -2266,7 +2269,7 @@ adpNC <- function(adp, name){
   }
   
   
-  ncatt_put(ncout, 0, "institution", adp[['institution']])
+  ncatt_put(ncout, 0, "institution", "Bedford Institute of Oceanography, DFO")
   
   
   ####BODC P01 names####
