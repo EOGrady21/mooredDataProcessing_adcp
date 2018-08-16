@@ -2225,8 +2225,8 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 0, "creator_type", "person")
   
   ncatt_put(ncout, 0, "program", adp[['description']])
-  ncatt_put(ncout, 0, "time_coverage_start", strftime(adp[['time']][[1]] , "%Y-%m-%dT%H:%M:%S%z"))
-  ncatt_put(ncout, 0, "time_coverage_end", strftime(adp[['time']][[length(adp[['time']])]] , "%Y-%m-%dT%H:%M:%S%z"))
+  ncatt_put(ncout, 0, "time_coverage_start", strftime(adp[['time']][[1]] , "%Y-%m-%dT%H:%M:%S%z", tz = 'UTC'))
+  ncatt_put(ncout, 0, "time_coverage_end", strftime(adp[['time']][[length(adp[['time']])]] , "%Y-%m-%dT%H:%M:%S%z", tz = 'UTC'))
   ncatt_put(ncout, 0, "geospatial_lat_min", adp[['latitude']])
   ncatt_put(ncout, 0, "geospatial_lat_max", adp[['latitude']])
   ncatt_put(ncout, 0, "geospatial_lat_units", "degrees_north")
@@ -2234,13 +2234,13 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 0, "geospatial_lon_max", adp[['longitude']])
   ncatt_put(ncout, 0, "geospatial_lon_units", "degrees_east")
   
-  if (length(grep(adp[['orientation']], pattern = "*up*", ignore.case = TRUE)) >0){
-    ncatt_put(ncout, 0, "geospatial_vertical_min", adp[['sensor_depth']] + max(adp[['distance']], na.rm = TRUE))
-    ncatt_put(ncout, 0, "geospatial_vertical_max", adp[['sensor_depth']] + min(adp[['distance']], na.rm = TRUE))
-  }
   if (length(grep(adp[['orientation']], pattern = "*down*", ignore.case = TRUE)) >0){
-    ncatt_put(ncout, 0, "geospatial_vertical_min", adp[['sensor_depth']] + min(adp[['distance']], na.rm = TRUE))
-    ncatt_put(ncout, 0, "geospatial_vertical_max", adp[['sensor_depth']] + max(adp[['distance']], na.rm = TRUE))
+    ncatt_put(ncout, 0, "geospatial_vertical_min", adp[['sensor_depth']] )
+    ncatt_put(ncout, 0, "geospatial_vertical_max", adp[['sensor_depth']] - max(adp[['distance']], na.rm = TRUE))
+  }
+  if (length(grep(adp[['orientation']], pattern = "*up*", ignore.case = TRUE)) >0){
+    ncatt_put(ncout, 0, "geospatial_vertical_min", adp[['sensor_depth']] - min(adp[['distance']], na.rm = TRUE))
+    ncatt_put(ncout, 0, "geospatial_vertical_max", adp[['sensor_depth']])
   }
   ncatt_put(ncout, 0, "geospatial_vertical_units", "metres")
   ncatt_put(ncout, 0, "geospatial_vertical_positive", 'down')
