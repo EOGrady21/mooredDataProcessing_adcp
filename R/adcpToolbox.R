@@ -2383,7 +2383,7 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, "ELTMEP01", "standard_name", "time")
   ncatt_put(ncout, "lat", "standard_name", "latitude")
   ncatt_put(ncout, "lon", "standard_name", "longitude")
-  ncatt_put(ncout, "DEPH", "standard_name", "depth")
+  ncatt_put(ncout, "DEPH", "standard_name", "depth") #should maybe be change to hght
   #ncatt_put(ncout, "Tx", "standard_name", "")
   ncatt_put(ncout, "PTCH", "standard_name", "platform_pitch_angle")
   ncatt_put(ncout, "ROLL", "standard_name", "platform_roll_angle")
