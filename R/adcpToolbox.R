@@ -2083,13 +2083,13 @@ adpNC <- function(adp, name){
   
   
   ncatt_put(ncout, 0, "firmware_version", adp[['firmware_version']])
-  ncatt_put(ncout, 0, "frequency", paste0(adp[['frequency']], "Khz"))
+  ncatt_put(ncout, 0, "frequency", paste0(adp[['frequency']], "  Khz"))
   ncatt_put(ncout, 0, "beam_pattern", adp[['beam_pattern']])
   ncatt_put(ncout, 0, "janus", adp[['janus']])
   ncatt_put(ncout, 0, "pings_per_ensemble", adp[['pings_per_ensemble']])
   ncatt_put(ncout, 0, "valid_correlation_range", adp[['valid_correlation_range']])
   ncatt_put(ncout, 0,"minmax_percent_good", "0-100")
-  ncatt_put(ncout, 0, "error_velocity_threshold", adp[['error_velocity_threshold']])
+  ncatt_put(ncout, 0, "error_velocity_threshold", paste0(adp[['error_velocity_threshold']], "   mm/s"))
   ncatt_put(ncout, 0, "transmit_pulse_length_cm", adp[['transmit_pulse_length_cm']])
   ncatt_put(ncout, 0, "false_target_reject_values", adp[['false_target_reject_values']])
   ncatt_put(ncout, 0, "serial_number", adp[['serial_number']])
@@ -2232,11 +2232,11 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 0, "geospatial_lon_max", adp[['longitude']])
   ncatt_put(ncout, 0, "geospatial_lon_units", "degrees_east")
   
-  if (adp[['orientation']] == 'up' ){
+  if (length(grep(adp[['orientation']], pattern = "*up*", ignore.case = TRUE)) >0){
     ncatt_put(ncout, 0, "geospatial_vertical_min", adp[['sensor_depth']] + max(adp[['distance']], na.rm = TRUE))
     ncatt_put(ncout, 0, "geospatial_vertical_max", adp[['sensor_depth']] + min(adp[['distance']], na.rm = TRUE))
   }
-  if (adp[['orientation']] == 'down' ){
+  if (length(grep(adp[['orientation']], pattern = "*down*", ignore.case = TRUE)) >0){
     ncatt_put(ncout, 0, "geospatial_vertical_min", adp[['sensor_depth']] + min(adp[['distance']], na.rm = TRUE))
     ncatt_put(ncout, 0, "geospatial_vertical_max", adp[['sensor_depth']] + max(adp[['distance']], na.rm = TRUE))
   }
