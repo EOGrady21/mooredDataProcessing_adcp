@@ -2069,7 +2069,7 @@ adpNC <- function(adp, name){
  # ncatt_put(ncout, 0, "naming_authority", 'MEDS, BODC, CF')
   ncatt_put(ncout, 0, "comment", "Data has been combined from archived ODF files")
   #FIX ME CHANGE TO ISO8601
-  ncatt_put(ncout, 0, "time_coverage_duration", tail(adp[['time']], n = 1) - adp[['time']][[1]])
+  ncatt_put(ncout, 0, "time_coverage_duration", paste0("P", round(tail(adp[['time']], n = 1) - adp[['time']][[1]], digits = 3), "D"))
   # ncatt_put(ncout, 0, "time_coverage_duration_units", "days") #unnessecary with time_coverage_duration format
   ncatt_put(ncout, 0, "cdm_data_type", "station")
   ncatt_put(ncout, 0, "sea_name", adp[['sea_name']])
