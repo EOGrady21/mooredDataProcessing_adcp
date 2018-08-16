@@ -2235,11 +2235,11 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, 0, "geospatial_lon_units", "degrees_east")
   
 
-  if (length(grep(adp[['orientation']], pattern = "*up*", ignore.case = TRUE)) >0){
+  if (length(grep(adp[['orientation']], pattern = "*down*", ignore.case = TRUE)) >0){
     ncatt_put(ncout, 0, "geospatial_vertical_min", adp[['sensor_depth']] )
     ncatt_put(ncout, 0, "geospatial_vertical_max", adp[['sensor_depth']] - max(adp[['distance']], na.rm = TRUE))
   }
-  if (length(grep(adp[['orientation']], pattern = "*down*", ignore.case = TRUE)) >0){
+  if (length(grep(adp[['orientation']], pattern = "*up*", ignore.case = TRUE)) >0){
     ncatt_put(ncout, 0, "geospatial_vertical_min", adp[['sensor_depth']] - max(adp[['distance']], na.rm = TRUE))
     ncatt_put(ncout, 0, "geospatial_vertical_max", adp[['sensor_depth']])
   }
