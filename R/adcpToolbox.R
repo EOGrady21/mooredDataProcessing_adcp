@@ -2083,7 +2083,7 @@ adpNC <- function(adp, name){
   
   
   ncatt_put(ncout, 0, "firmware_version", adp[['firmware_version']])
-  ncatt_put(ncout, 0, "frequency", adp[['frequency']])
+  ncatt_put(ncout, 0, "frequency", paste0(adp[['frequency']], "Khz"))
   ncatt_put(ncout, 0, "beam_pattern", adp[['beam_pattern']])
   ncatt_put(ncout, 0, "janus", adp[['janus']])
   ncatt_put(ncout, 0, "pings_per_ensemble", adp[['pings_per_ensemble']])
