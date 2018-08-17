@@ -1733,7 +1733,7 @@ adpCombine <- function(adp, raw, ncin = '', dt = NULL){
     #check in progress
     
     if(length(na.omit(a[['time']])) != length(adp[['time']])){
-      warning("time vectors do not match in length, attempt to rectify, please confirm!")
+      warning("time vectors do not match in length, attempt to rectify, please confirm! v4")
       l <- length(adp[['time']])
       tt <- na.omit(a[['time']]) 
       length(tt) <- l
@@ -1741,8 +1741,9 @@ adpCombine <- function(adp, raw, ncin = '', dt = NULL){
       a <- oceSetData(a, 'time', tt)
       p <- length(as.POSIXct(a[['time']], tz = 'UTC') < as.POSIXct(adp[['time']][[1]], tz = 'UTC')[[TRUE]])
       o <- p+l
-      limitvec[o] <- 1
-      limitmat[o,] <- 1
+      browser()
+      limitvec[o] <- 0
+      limitmat[o,] <- 0
     }
     
     #limit other transferable data
