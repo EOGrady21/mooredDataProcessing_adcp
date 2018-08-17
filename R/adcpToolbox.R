@@ -1738,13 +1738,13 @@ adpCombine <- function(adp, raw, ncin = '', dt = NULL){
       tt <- na.omit(a[['time']]) 
       length(tt) <- l
       tt[l] <- adp[['time']][l]
-      p <- a[['time']][1:500][a[['time']] == NA]
+      p <- a[['time']][1:500][is.na(a[['time']])]
       a <- oceSetData(a, 'time', tt)
       o <- p+l
-     
       limitvec[o] <- 0
       limitmat[o,] <- 0
     }
+    
     
     #limit other transferable data
     PTCH[limitvec == 4] <- NA
@@ -1767,7 +1767,7 @@ adpCombine <- function(adp, raw, ncin = '', dt = NULL){
     CMAG_03[limitmat == 4] <- NA
     CMAG_04[limitmat == 4] <- NA
     
-    
+    browser()
     
     ####Check distances match####
     if (length(a[['distance']]) != length(adp[['distance']])){
