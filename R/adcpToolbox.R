@@ -1738,7 +1738,7 @@ adpCombine <- function(adp, raw, ncin = '', dt = NULL){
       tt <- na.omit(a[['time']]) 
       length(tt) <- l
       tt[l] <- adp[['time']][l]
-      p <- length(a[['time']][1:500][is.na(a[['time']])])
+      p <- length(limitvec[1:(0.5*length(limitvec))][limitvec == 4])
       a <- oceSetData(a, 'time', tt)
       o <- p+l
       browser()
