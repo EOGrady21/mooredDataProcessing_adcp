@@ -1772,7 +1772,7 @@ adpCombine <- function(adp, raw, ncin = '', dt = NULL){
     CMAG_03[limitmat == 4] <- NA
     CMAG_04[limitmat == 4] <- NA
     
-    browser()
+  
     
     ####Check distances match####
     if (length(a[['distance']]) != length(adp[['distance']])){
