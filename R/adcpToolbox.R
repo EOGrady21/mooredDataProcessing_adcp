@@ -1738,7 +1738,7 @@ adpCombine <- function(adp, raw, ncin = '', dt = NULL){
       tt <- na.omit(a[['time']]) 
       length(tt) <- l
       tt[l] <- adp[['time']][l]
-      p <- a[['time']][1:500][is.na(a[['time']])]
+      p <- length(a[['time']][1:500][is.na(a[['time']])])
       a <- oceSetData(a, 'time', tt)
       o <- p+l
       limitvec[o] <- 0
