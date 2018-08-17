@@ -1721,13 +1721,24 @@ adpCombine <- function(adp, raw, ncin = '', dt = NULL){
     
     
     
-    #create 'flag mask' where 4 = bad vlaue (outside bounds)
+    #create 'flag mask' where 4 = bad value (outside bounds)
     limitmat[as.POSIXct(a[['time']], tz = 'UTC') < as.POSIXct(adp[['time']][[1]], tz = 'UTC') | as.POSIXct(a[['time']], tz = 'UTC') > as.POSIXct(adp[['time']][[length(adp[['time']])]], tz = 'UTC')] <- 4
     limitvec[as.POSIXct(a[['time']], tz = 'UTC') < as.POSIXct(adp[['time']][[1]], tz = 'UTC') | as.POSIXct(a[['time']], tz = 'UTC') > as.POSIXct(adp[['time']][[length(adp[['time']])]], tz = 'UTC')] <- 4
     
     
     #limit time variable
     a[['time']][limitvec == 4] <- NA
+    
+    
+    #check in progress
+    
+    if(length(na.omit(a[['time']])) != length(adp[['time']])){
+      warning("time vectors do not match in length, attempt to rectify, please confirm!")
+      l <- length(adp[['time']])
+      na.omit(a[['time']])[l] <- adp[['time']][l]
+      limitvec[l] <- 1
+      limitmat[l,] <- 1
+    }
     
     #limit other transferable data
     PTCH[limitvec == 4] <- NA
