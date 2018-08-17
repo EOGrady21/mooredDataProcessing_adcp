@@ -1736,6 +1736,7 @@ adpCombine <- function(adp, raw, ncin = '', dt = NULL){
       warning("time vectors do not match in length, attempt to rectify, please confirm!")
       l <- length(adp[['time']])
       tt <- na.omit(a[['time']]) 
+      length(tt) <- l
       tt[l] <- adp[['time']][l]
       a <- oceSetData(a, 'time', tt)
       p <- length(as.POSIXct(a[['time']], tz = 'UTC') < as.POSIXct(adp[['time']][[1]], tz = 'UTC')[[TRUE]])
