@@ -1547,7 +1547,9 @@ adpCombine <- function(adp, raw, ncin = '', dt = NULL){
       false_target_reject_values <- ncatt_get(ni, 0, 'false_target_reject_values')
       serial_number <- ncatt_get(ni, 0, 'ADCP_serial_number')
       data_type <- ncatt_get(ni, 0, 'DATA_TYPE')
-      D <- ncvar_get(ni, 'depth')# changed from D_3 to depth to accomodate older files where there is no depth variable
+      D <- ncvar_get(ni, 'D_3')
+      # changed from D_3 to depth to accomodate older files where there is no depth variable
+      #reverted back to D_3, depth axis represent bin depth not instrument depth which is what is needed
       Tx <- ncvar_get(ni, 'Tx_1211')
       nc_close(ni)
       
