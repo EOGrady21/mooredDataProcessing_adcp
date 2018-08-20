@@ -528,6 +528,13 @@ odf2adp <- function(files, metadata) {
     eval(parse(text=paste0(vr, "<- ", vr, "[, o]")))
   }
   
+  #pre 2000 ODFs do not include  vertical or error velocity
+  # if(is.null(w)){
+  #   r <- length(u[,1])
+  #   c <- length(u[1,])
+  #    w <- matrix(data = NA, nrow = r, ncol = c)
+  # }
+  
   distance <- max(depth) - depth
   adp <- as.adp(t, distance, v=abind(u, v, w, error, along=3), a=a, q=unknown)
   for (m in names(d@metadata)) {
@@ -1540,7 +1547,7 @@ adpCombine <- function(adp, raw, ncin = '', dt = NULL){
       false_target_reject_values <- ncatt_get(ni, 0, 'false_target_reject_values')
       serial_number <- ncatt_get(ni, 0, 'ADCP_serial_number')
       data_type <- ncatt_get(ni, 0, 'DATA_TYPE')
-      D <- ncvar_get(ni, 'D_3')
+      D <- ncvar_get(ni, 'depth')# changed from D_3 to depth to accomodate older files where there is no depth variable
       Tx <- ncvar_get(ni, 'Tx_1211')
       nc_close(ni)
       
