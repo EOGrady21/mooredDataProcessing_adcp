@@ -1548,6 +1548,7 @@ adpCombine <- function(adp, raw, ncin = '', dt = NULL){
       serial_number <- ncatt_get(ni, 0, 'ADCP_serial_number')
       data_type <- ncatt_get(ni, 0, 'DATA_TYPE')
       
+      depth <- FALSE
       if (length(grep(names(ni$var), pattern = 'D_3')) >0){
       D <- ncvar_get(ni, 'D_3')
       depth <- TRUE
