@@ -2334,7 +2334,7 @@ adpNC <- function(adp, name){
   ncatt_put(ncout, "Tx", "sdn_parameter_urn", "SDN:P01::TEMPPR01")
   ncatt_put(ncout, "ELTMEP01", "sdn_parameter_urn", "SDN:P01::ELTMEP01")
   ncatt_put(ncout, "PTCH", "sdn_parameter_urn", "SDN:P01::PTCHEI01")
-  ncatt_put(ncout, "ROLL", "sdn_parameter_urn", "SDN:P01::ROLLFEI01")
+  ncatt_put(ncout, "ROLL", "sdn_parameter_urn", "SDN:P01::ROLLEI01")
   ncatt_put(ncout, "lon", "sdn_parameter_urn", "SDN:P01::ALONZZ01")
   ncatt_put(ncout, "lat", "sdn_parameter_urn", "SDN:P01::ALATZZ01")
   ncatt_put(ncout, "HEAD", "sdn_parameter_urn", "SDN:P01::HEADCM01")
