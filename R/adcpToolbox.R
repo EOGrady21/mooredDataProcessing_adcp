@@ -779,7 +779,7 @@ oceNc_create <- function(adp, name,  metadata){
     ncvar_put(ncout, pg4_def, adp[['g', 'numeric']][,,4])
     ncvar_put(ncout, p_def, adp[['pitch']])
     ncvar_put(ncout, r_def, adp[['roll']])
-    ncvar_put(ncout, hght_def, (adp[['sensor_depth']]- adp[['distance']]))
+    ncvar_put(ncout, hght_def, (adp[['distance']] - adp[['sensor_depth']]))
     ncvar_put(ncout, Tx_def, adp[['temperature']])
     ncvar_put(ncout, D_def, adp[['depth']])
     ncvar_put(ncout, qc_u_def, adp@metadata$flags$v[,,1])
